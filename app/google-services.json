@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "74942442858",
+    "project_id": "teacharmenia",
+    "storage_bucket": "teacharmenia.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:74942442858:android:a2f079e40a0b42b8e28913",
+        "android_client_info": {
+          "package_name": "com.appricut.easylezo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7BjnNyD4xPUa2xTQeg1UuYT074XHDh_c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
