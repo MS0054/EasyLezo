@@ -71,31 +71,24 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(mainViewModel: MainViewModel = viewModel()) {
     var selectedCategory by remember { mutableStateOf<String?>(null) }
-    var sentences by remember { mutableStateOf<List<Sentence>>(emptyList()) }
+    val sentences by mainViewModel.sentences.collectAsState()
     val coroutineScope = rememberCoroutineScope()
-    val repository = FirestoreRepository()
+
 
     if (selectedCategory == null) {
         // نمایش لیست Categories
         CategoryListScreen(viewModel = mainViewModel, onCategoryClick = { categoryId ->
             // وقتی روی یک کتگوری کلیک شد، جملات رو دریافت کن
             coroutineScope.launch {
-                sentences = repository.getSentences(categoryId)
-                Log.i("categoryName", categoryId)
+                mainViewModel.fetchSentences(categoryId)
                 selectedCategory = categoryId
             }
         })
     } else {
         // نمایش جملات برای کتگوری انتخاب شده
-        SentenceListScreen(sentences = sentences)
-
-//        // دکمه برگشت به لیست کتگوری‌ها
-//        Button(onClick = {
-//            selectedCategory = null
-//            sentences = emptyList()
-//        }, modifier = Modifier.padding(16.dp)) {
-//            Text(text = "Back")
-//        }
+        SentenceListScreen(sentences = sentences, onBackClicked = {
+            selectedCategory = null
+        })
     }
 }
 
@@ -134,7 +127,7 @@ fun CategoryListScreen(viewModel: MainViewModel, onCategoryClick: (String) -> Un
 
 
 @Composable
-fun SentenceListScreen(sentences: List<Sentence>) {
+fun SentenceListScreen(sentences: List<Sentence>, onBackClicked: () -> Unit) {
     Column {
         Row(
             modifier = Modifier.fillMaxWidth().padding(8.dp,8.dp),
@@ -143,7 +136,7 @@ fun SentenceListScreen(sentences: List<Sentence>) {
             IconButton(
                 modifier = Modifier.size(60.dp),
                 onClick = {
-
+                    onBackClicked()
                 }
             ) {
                 Icon(
@@ -206,5 +199,6 @@ fun SentenceListScreen(sentences: List<Sentence>) {
 @Composable
 fun GreetingPreview() {
     EasyLezoTheme {
+        MainScreen()
     }
 }
