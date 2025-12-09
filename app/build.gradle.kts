@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.gms.google.services)
+    alias(libs.plugins.hilt.plugin)
+    kotlin("kapt")
 }
 
 android {
@@ -60,6 +62,7 @@ dependencies {
 
 
     implementation( platform("com.google.firebase:firebase-bom:32.2.2"))
+    implementation ("com.google.firebase:firebase-auth-ktx")
     implementation ("com.google.firebase:firebase-firestore-ktx")
     implementation ("com.google.firebase:firebase-analytics-ktx")
 
@@ -74,4 +77,13 @@ dependencies {
     //      image loader like picasso
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+
+
+    implementation ("com.google.dagger:hilt-android:2.51")
+    kapt ("com.google.dagger:hilt-android-compiler:2.51")
+
+    // برای ViewModel‌ها
+    implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
+//  for Pager
+    implementation("androidx.compose.foundation:foundation:1.6.0")
 }

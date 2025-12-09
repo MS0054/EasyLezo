@@ -1,4 +1,4 @@
-package com.appricut.easylezo.data
+package com.appricut.easylezo.data.model
 
 data class Category(
     val id: String = "",
