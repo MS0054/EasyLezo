@@ -10,12 +10,10 @@ import javax.inject.Singleton
 class SentenceRepository @Inject constructor(
     private val db: FirebaseFirestore
 ) {
-
     private val categoriesCol = db.collection("categories")
     private fun sentencesCol(categoryId: String) =
         categoriesCol.document(categoryId).collection("sentences")
 
-    // --- Fetch Sentences ---
     suspend fun fetchSentences(categoryId: String): List<Sentence> {
         val snap = sentencesCol(categoryId).get().await()
         return snap.documents.map { doc ->
@@ -30,32 +28,31 @@ class SentenceRepository @Inject constructor(
         }
     }
 
-    // --- Add Sentence ---
     suspend fun addSentence(categoryId: String, s: Sentence): String {
-        val map = mapOf(
-            "ar" to s.ar,
-            "en" to s.en,
-            "fa" to s.fa,
-            "image" to s.image,
-            "level" to s.level
-        )
-        val ref = sentencesCol(categoryId).add(map).await()
+        val ref = sentencesCol(categoryId).add(
+            mapOf(
+                "ar" to s.ar,
+                "en" to s.en,
+                "fa" to s.fa,
+                "image" to s.image,
+                "level" to s.level
+            )
+        ).await()
         return ref.id
     }
 
-    // --- Update Sentence ---
     suspend fun updateSentence(categoryId: String, s: Sentence) {
-        val map = mapOf(
-            "ar" to s.ar,
-            "en" to s.en,
-            "fa" to s.fa,
-            "image" to s.image,
-            "level" to s.level
-        )
-        sentencesCol(categoryId).document(s.id).set(map).await()
+        sentencesCol(categoryId).document(s.id).set(
+            mapOf(
+                "ar" to s.ar,
+                "en" to s.en,
+                "fa" to s.fa,
+                "image" to s.image,
+                "level" to s.level
+            )
+        ).await()
     }
 
-    // --- Delete Sentence ---
     suspend fun deleteSentence(categoryId: String, sentenceId: String) {
         sentencesCol(categoryId).document(sentenceId).delete().await()
     }

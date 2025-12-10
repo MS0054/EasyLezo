@@ -13,7 +13,6 @@ class CategoryRepository @Inject constructor(
 
     private val categoriesCol = db.collection("categories")
 
-    // --- Fetch All Categories ---
     suspend fun fetchAllCategories(): List<Category> {
         val snap = categoriesCol.get().await()
         return snap.documents.map { doc ->
@@ -25,26 +24,20 @@ class CategoryRepository @Inject constructor(
         }
     }
 
-    // --- Add Category ---
     suspend fun addCategory(category: Category): String {
-        val map = mapOf(
+        val ref = categoriesCol.add(mapOf(
             "name" to category.name,
             "image" to category.image
-        )
-        val ref = categoriesCol.add(map).await()
+        )).await()
         return ref.id
     }
 
-    // --- Update Category ---
     suspend fun updateCategory(category: Category) {
-        val map = mapOf(
-            "name" to category.name,
-            "image" to category.image
-        )
-        categoriesCol.document(category.id).set(map).await()
+        categoriesCol.document(category.id).set(
+            mapOf("name" to category.name, "image" to category.image)
+        ).await()
     }
 
-    // --- Delete Category ---
     suspend fun deleteCategory(categoryId: String) {
         categoriesCol.document(categoryId).delete().await()
     }

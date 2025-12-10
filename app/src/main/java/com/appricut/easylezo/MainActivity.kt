@@ -11,7 +11,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.appricut.easylezo.ui.AppNavGraph
-import com.appricut.easylezo.ui.screen.main.MainScreen
 import com.appricut.easylezo.ui.theme.EasyLezoTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,12 +22,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             EasyLezoTheme {
-                // یک Surface برای کل محتوا
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Surface(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
+                        modifier = Modifier.fillMaxSize().padding(innerPadding),
                         color = MaterialTheme.colorScheme.background
                     ) {
                         AppNavGraph()
