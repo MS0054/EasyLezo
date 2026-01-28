@@ -1,5 +1,6 @@
 package com.appricut.easylezo.ui.screen.admin
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.appricut.easylezo.data.model.Category
@@ -40,9 +41,11 @@ class AdminViewModel @Inject constructor(
     }
 
     fun selectCategory(categoryId: String) = viewModelScope.launch {
+        Log.i("gogogo,", "111 :$categoryId")
         _selectedCategoryId.value = categoryId
         _loading.value = true; _error.value = null
-        try { _sentences.value = adminUseCase.fetchSentences(categoryId) }
+        try { _sentences.value = adminUseCase.fetchSentences(categoryId)
+            Log.i("gogogo,", "111 :${_sentences.value}")}
         catch (e: Exception) { _error.value = e.message }
         finally { _loading.value = false }
     }
@@ -52,6 +55,21 @@ class AdminViewModel @Inject constructor(
         try { val id = adminUseCase.addCategory(cat); refreshCategories(); onComplete(true, id) }
         catch (e: Exception) { onComplete(false, e.message) }
         finally { _loading.value = false }
+    }
+
+    fun updateCategory(cat: Category, onComplete: (Boolean, String?) -> Unit = { _, _ -> }) = viewModelScope.launch {
+        _loading.value = true
+        _error.value = null
+        try {
+            adminUseCase.updateCategory(cat)   // ← فراخوانی یوزکیس
+            refreshCategories()                // ← بعد از آپدیت، لیست دوباره لود شود
+            onComplete(true, null)
+        } catch (e: Exception) {
+            _error.value = e.message
+            onComplete(false, e.message)
+        } finally {
+            _loading.value = false
+        }
     }
 
     fun deleteCategory(categoryId: String, onComplete: (Boolean, String?) -> Unit = { _, _ -> }) = viewModelScope.launch {

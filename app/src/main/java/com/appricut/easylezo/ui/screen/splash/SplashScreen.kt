@@ -20,18 +20,15 @@ fun SplashScreen(
     onNavigate: (String) -> Unit
 ) {
     val auth = Firebase.auth
-    val mainVm: AuthViewModel = hiltViewModel()
+    val authVm: AuthViewModel = hiltViewModel()
 
     LaunchedEffect(Unit) {
         val current = auth.currentUser
         if (current == null) {
-            Log.i("hohoho","11111")
-            onNavigate(Screen.Auth.route)
+            onNavigate(Screen.UserHome.route)
         } else {
-            mainVm.checkAdmin()
-            Log.i("hohoho","22222")
-            Log.i("hohoho","33333 "+mainVm.isAdmin.value.toString())
-            mainVm.isAdmin.filterNotNull().first().let { isAdmin ->
+            authVm.checkAdmin()
+            authVm.isAdmin.filterNotNull().first().let { isAdmin ->
                 if (isAdmin) onNavigate(Screen.Admin.route)
                 else onNavigate(Screen.UserHome.route)
             }

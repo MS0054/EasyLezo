@@ -11,7 +11,7 @@ class CategoryRepository @Inject constructor(
     private val db: FirebaseFirestore
 ) {
 
-    private val categoriesCol = db.collection("categories")
+    private val categoriesCol = db.collection("Categories")
 
     suspend fun fetchAllCategories(): List<Category> {
         val snap = categoriesCol.get().await()

@@ -16,11 +16,10 @@ fun AuthScreen(
     onSuccess: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
-
     var email by remember { mutableStateOf("") }
     var pass by remember { mutableStateOf("") }
     var display by remember { mutableStateOf("") }
-    var isSignUp by remember { mutableStateOf(true) }
+    var isSignUp by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     LaunchedEffect(state) {

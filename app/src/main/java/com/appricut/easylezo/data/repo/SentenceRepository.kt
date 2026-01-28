@@ -10,9 +10,9 @@ import javax.inject.Singleton
 class SentenceRepository @Inject constructor(
     private val db: FirebaseFirestore
 ) {
-    private val categoriesCol = db.collection("categories")
+    private val categoriesCol = db.collection("Categories")
     private fun sentencesCol(categoryId: String) =
-        categoriesCol.document(categoryId).collection("sentences")
+        categoriesCol.document(categoryId).collection("Sentences")
 
     suspend fun fetchSentences(categoryId: String): List<Sentence> {
         val snap = sentencesCol(categoryId).get().await()

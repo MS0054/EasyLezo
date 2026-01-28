@@ -44,9 +44,13 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
 
         composable(Screen.UserHome.route) {
             val mainVm: MainViewModel = hiltViewModel()
-            CategoryListScreen(viewModel = mainVm) { category ->
+            CategoryListScreen(viewModel = mainVm, onCategorySelected= { category->
                 navController.navigate(Screen.Sentences.createRoute(category.id))
-            }
+            } , onProfileSelected = {
+                navController.navigate(Screen.Auth.route)
+            })
+
+
         }
 
         composable(Screen.Sentences.route) { backStackEntry ->
