@@ -3,8 +3,8 @@ package com.appricut.easylezo.ui.screen.admin
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.appricut.easylezo.data.model.Category
-import com.appricut.easylezo.data.model.Sentence
+import com.appricut.easylezo.domain.model.Category
+import com.appricut.easylezo.domain.model.Sentence
 import com.appricut.easylezo.domain.usecase.AdminUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -79,6 +79,16 @@ class AdminViewModel @Inject constructor(
         finally { _loading.value = false }
     }
 
+
+    fun saveCategoryOrder(sorted: List<Category>) = viewModelScope.launch {
+        try {
+            _categories.value = sorted // آپدیت state
+            adminUseCase.updateCategoriesOrder(sorted)
+        } catch (e: Exception) {
+            _error.value = e.message
+        }
+    }
+
     fun addSentence(categoryId: String, s: Sentence, onComplete: (Boolean, String?) -> Unit = { _, _ -> }) = viewModelScope.launch {
         _loading.value = true
         try { val id = adminUseCase.addSentence(categoryId, s); selectCategory(categoryId); onComplete(true, id) }
@@ -91,6 +101,34 @@ class AdminViewModel @Inject constructor(
         try { adminUseCase.deleteSentence(categoryId, sentenceId); selectCategory(categoryId); onComplete(true, null) }
         catch (e: Exception) { onComplete(false, e.message) }
         finally { _loading.value = false }
+    }
+
+    fun updateSentence(
+        categoryId: String,
+        s: Sentence,
+        onComplete: (Boolean, String?) -> Unit = { _, _ -> }
+    ) = viewModelScope.launch {
+        _loading.value = true
+        _error.value = null
+        try {
+            adminUseCase.updateSentence(categoryId, s)
+            selectCategory(categoryId) // بعد از آپدیت، لیست جمله‌ها رفرش شود
+            onComplete(true, null)
+        } catch (e: Exception) {
+            _error.value = e.message
+            onComplete(false, e.message)
+        } finally {
+            _loading.value = false
+        }
+    }
+
+    fun saveSentenceOrder(categoryId: String, sorted: List<Sentence>) = viewModelScope.launch {
+        try {
+            _sentences.value = sorted // آپدیت state
+            adminUseCase.updateSentencesOrder(categoryId, sorted)
+        } catch (e: Exception) {
+            _error.value = e.message
+        }
     }
 
 

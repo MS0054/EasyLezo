@@ -70,6 +70,11 @@ dependencies {
     implementation ("androidx.compose.ui:ui:1.5.0")
     implementation ("androidx.compose.material3:material3:1.2.0")
     implementation ("androidx.activity:activity-compose:1.8.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+//    Reorder Lazy Column
+    implementation("sh.calvin.reorderable:reorderable:3.0.0")
+    implementation("org.burnoutcrew.composereorderable:reorderable:0.9.6")
 
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation ("androidx.activity:activity-compose:1.8.0")
@@ -78,10 +83,18 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
 
+    // Room
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+
+    kapt("androidx.room:room-compiler:2.6.1")
 
     implementation ("com.google.dagger:hilt-android:2.51")
     kapt ("com.google.dagger:hilt-android-compiler:2.51")
 
+
+    // GSON
+    implementation("com.google.code.gson:gson:2.10.1")
     // برای ViewModel‌ها
     implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
 //  for Pager
