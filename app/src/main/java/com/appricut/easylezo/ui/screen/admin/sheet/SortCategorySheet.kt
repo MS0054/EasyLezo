@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.appricut.easylezo.domain.model.Category
+import com.appricut.easylezo.core.domain.model.Category
 
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "EasyLezo"
 include(":app")
- 
+include(":core")
+include(":admin")

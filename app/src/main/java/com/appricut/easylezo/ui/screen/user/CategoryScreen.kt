@@ -24,7 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.appricut.easylezo.domain.model.Category
+import com.appricut.easylezo.core.domain.model.Category
 import com.appricut.easylezo.ui.component.LanguageAwareText
 import com.appricut.easylezo.ui.screen.language.sheet.AppLanguageSheet
 

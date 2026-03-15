@@ -2,7 +2,7 @@ package com.appricut.easylezo.ui.screen.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.appricut.easylezo.domain.usecase.AuthUseCase
+import com.appricut.easylezo.core.domain.usecase.AuthUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

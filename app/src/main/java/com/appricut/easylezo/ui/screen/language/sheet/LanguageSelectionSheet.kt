@@ -26,7 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.appricut.easylezo.domain.model.Language
+import com.appricut.easylezo.core.domain.model.Language
 import com.appricut.easylezo.ui.component.LanguageAwareText
 
 @OptIn(ExperimentalMaterial3Api::class)

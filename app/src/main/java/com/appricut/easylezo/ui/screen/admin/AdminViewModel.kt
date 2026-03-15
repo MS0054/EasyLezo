@@ -3,9 +3,9 @@ package com.appricut.easylezo.ui.screen.admin
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.appricut.easylezo.domain.model.Category
-import com.appricut.easylezo.domain.model.Sentence
-import com.appricut.easylezo.domain.usecase.AdminUseCase
+import com.appricut.easylezo.core.domain.model.Category
+import com.appricut.easylezo.core.domain.model.Sentence
+import com.appricut.easylezo.core.domain.usecase.AdminUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

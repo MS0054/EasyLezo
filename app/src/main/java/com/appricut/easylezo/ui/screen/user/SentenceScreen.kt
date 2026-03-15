@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.appricut.easylezo.domain.model.Sentence
+import com.appricut.easylezo.core.domain.model.Sentence
 import com.appricut.easylezo.ui.component.LanguageAwareText
 import com.appricut.easylezo.ui.screen.admin.sheet.ShowSentenceSheet
 

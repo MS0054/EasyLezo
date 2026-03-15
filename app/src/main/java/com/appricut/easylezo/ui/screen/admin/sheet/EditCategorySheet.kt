@@ -5,7 +5,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.appricut.easylezo.domain.model.Category
+import com.appricut.easylezo.core.domain.model.Category
 
 @Composable
 fun EditCategoryBottomSheet(

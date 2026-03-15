@@ -3,8 +3,8 @@ package com.appricut.easylezo.ui.screen.user
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.appricut.easylezo.domain.model.Sentence
-import com.appricut.easylezo.domain.usecase.sentence.GetSentencesUseCase
+import com.appricut.easylezo.core.domain.model.Sentence
+import com.appricut.easylezo.core.domain.usecase.sentence.GetSentencesUseCase
 import com.appricut.easylezo.ui.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -33,7 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.appricut.easylezo.domain.model.AppLanguages
+import com.appricut.easylezo.core.domain.model.AppLanguages
 import com.appricut.easylezo.ui.UiState
 import com.appricut.easylezo.ui.component.LanguageAwareText
 

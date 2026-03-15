@@ -2,8 +2,8 @@ package com.appricut.easylezo.ui.screen.language
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.appricut.easylezo.domain.model.Metadata
-import com.appricut.easylezo.domain.usecase.metadata.GetMetadataUseCase
+import com.appricut.easylezo.core.domain.model.Metadata
+import com.appricut.easylezo.core.domain.usecase.metadata.GetMetadataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

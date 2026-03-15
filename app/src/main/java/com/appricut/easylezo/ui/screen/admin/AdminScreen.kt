@@ -21,8 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.appricut.easylezo.domain.model.Category
-import com.appricut.easylezo.domain.model.Sentence
+import com.appricut.easylezo.core.domain.model.Category
+import com.appricut.easylezo.core.domain.model.Sentence
 import com.appricut.easylezo.ui.screen.admin.sheet.AddCategoryBottomSheet
 import com.appricut.easylezo.ui.screen.admin.sheet.AddSentenceBottomSheet
 import com.appricut.easylezo.ui.screen.admin.sheet.ConfirmBottomSheet

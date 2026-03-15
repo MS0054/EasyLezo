@@ -1,6 +1,6 @@
 package com.appricut.easylezo.ui.screen.language
 
-import com.appricut.easylezo.domain.model.AppLanguages
+import com.appricut.easylezo.core.domain.model.AppLanguages
 import com.appricut.easylezo.ui.screen.auth.AuthUiState
 
 data class AppLanguagesUiState(
