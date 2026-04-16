@@ -6,9 +6,10 @@ data class AppLanguages(
     var to: String = "",
     val fromLanguage: Language? = Language(),
     val toLanguage: Language? = Language(),
-    val fromLanguages: List<Language> = emptyList(),
+    var languages: List<Language> = emptyList(),
+    var fromLanguages: List<Language> = emptyList(),
     val toLanguages: List<Language> = emptyList(),
-    val app: String = ""
+    var app: String = ""
 ){
     val isDefault: Boolean get() = from.isEmpty() || to.isEmpty()
 }

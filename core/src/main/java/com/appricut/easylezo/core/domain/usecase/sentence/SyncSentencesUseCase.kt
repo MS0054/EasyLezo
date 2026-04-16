@@ -6,7 +6,7 @@ import javax.inject.Inject
 class SyncSentencesUseCase @Inject constructor(
     private val sentenceRepository: SentenceRepository
 ) {
-    suspend operator fun invoke() {
-        sentenceRepository.syncSentences()
+    suspend operator fun invoke(isForce: Boolean = false) {
+        sentenceRepository.syncSentences(isForce)
     }
 }

@@ -6,7 +6,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
     fun observeUser(): Flow<User>
+    fun observeUsers(): Flow<List<User>>
     suspend fun syncUser(uid: String)
-    suspend fun updateServerUserAppLanguages(appLanguages: AppLanguages)
+    suspend fun searchUser(name: String?, email: String?): List<User>
+    suspend fun syncUsers(limit: Long)
+    suspend fun updateUser(user: User)
+    suspend fun updateUserAppLanguagesServer(appLanguages: AppLanguages)
 
 }

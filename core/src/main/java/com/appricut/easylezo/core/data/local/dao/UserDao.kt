@@ -13,8 +13,17 @@ interface UserDao {
     @Query("SELECT * FROM user LIMIT 1")
     fun observeUser(): Flow<UserEntity?>
 
+    @Query("SELECT * FROM user")
+    fun observeUsers(): Flow<List<UserEntity?>?>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(user: UserEntity)
+    suspend fun insert(user: UserEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(users: List<UserEntity>)
+
+//    @Query("DELETE FROM user WHERE uid = :uid")
+//    suspend fun delete(user: UserEntity)
 
     @Query("DELETE FROM user")
     suspend fun clearAll()

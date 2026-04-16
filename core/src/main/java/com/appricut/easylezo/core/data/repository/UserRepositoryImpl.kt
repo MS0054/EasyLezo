@@ -1,5 +1,7 @@
 package com.appricut.easylezo.core.data.repository
 
+import android.util.Log
+import androidx.compose.runtime.LaunchedEffect
 import com.appricut.easylezo.core.data.local.dao.UserDao
 import com.appricut.easylezo.core.data.mapper.toDomain
 import com.appricut.easylezo.core.data.mapper.toDto
@@ -7,6 +9,7 @@ import com.appricut.easylezo.core.data.mapper.toEntity
 import com.appricut.easylezo.core.data.remote.api.UserApi
 import com.appricut.easylezo.core.data.remote.model.AppLanguagesDto
 import com.appricut.easylezo.core.domain.model.AppLanguages
+import com.appricut.easylezo.core.domain.model.Language
 import com.appricut.easylezo.core.domain.model.User
 import com.appricut.easylezo.core.domain.repository.AppLanguagesRepository
 import com.appricut.easylezo.core.domain.repository.MetadataRepository
@@ -17,6 +20,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.collections.map
 
 @Singleton
 class UserRepositoryImpl @Inject constructor(
@@ -30,6 +34,17 @@ class UserRepositoryImpl @Inject constructor(
         return userDao.observeUser().map { user -> user?.toDomain() ?: User() }
     }
 
+    override fun observeUsers(): Flow<List<User>> {
+        val a = userDao.observeUsers()
+            .map { list -> list?.map {
+                it?.toDomain() ?: User()
+            } ?: emptyList() }
+        return a
+    }
+    override suspend fun searchUser(name: String?, email: String?): List<User> {
+        return userApi.searchUsers(name, email).map { it.toDomain() }
+    }
+
     override suspend fun syncUser(uid: String) {
 
         val metadata = metadataRepository.observeMetadata().first()
@@ -37,11 +52,11 @@ class UserRepositoryImpl @Inject constructor(
             val newUserData = userApi.getUser(uid)
 
             userDao.clearAll()
-            userDao.insertAll(newUserData.toEntity())
+            userDao.insert(newUserData.toEntity())
 
             if (newUserData.appLanguages == AppLanguagesDto()) {
                 val appLanguages = appLanguagesRepository.observeAppLanguages().first()
-                updateServerUserAppLanguages(appLanguages)
+                updateUserAppLanguagesServer(appLanguages)
             } else {
                 appLanguagesRepository.updateLocalAppLanguages(newUserData.appLanguages.toDomain())
             }
@@ -51,9 +66,20 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun syncUsers(limit: Long) {
+        val users = userApi.getUsers(limit)
+        userDao.clearAll()
+        userDao.insertAll(users.map { it.toEntity() })
+    }
+
+    override suspend fun updateUser(user: User) {
+        userApi.updateUser(user.toDto())
+        syncUsers(100)
+    }
 
 
-    override suspend fun updateServerUserAppLanguages(appLanguages: AppLanguages) {
+
+    override suspend fun updateUserAppLanguagesServer(appLanguages: AppLanguages) {
         val user = userDao.observeUser().firstOrNull()
         val uid = user?.uid ?: return // اگر UID وجود نداشت، عملیات متوقف می‌شود
 

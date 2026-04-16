@@ -8,6 +8,8 @@ data class CategoryEntity(
     @PrimaryKey
     val id: String = "",
     val name: String = "",
+    val image: String = "",
     val order: Int = 0,
-    val image: String = ""
+    val createdAt: Long = 0,
+    val updatedAt: Long = 0
 )

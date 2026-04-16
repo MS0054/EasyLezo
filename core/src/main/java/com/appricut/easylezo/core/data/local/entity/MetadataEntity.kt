@@ -17,6 +17,9 @@ data class MetadataEntity(
     @Embedded(prefix = "settings_")
     val settings: Settings = Settings(),
 
-    @Embedded(prefix = "resource_")
-    val resource: Resource = Resource()
+    // this field has specific TypeConverter instead of Embedded
+    val resources: List<Resource> = emptyList(),
+
+    @Embedded(prefix = "appLanguage_")
+    val appLanguages: AppLanguagesEntity = AppLanguagesEntity()
 )

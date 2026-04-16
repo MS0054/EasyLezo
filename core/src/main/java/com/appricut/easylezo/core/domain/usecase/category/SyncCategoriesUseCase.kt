@@ -6,7 +6,7 @@ import javax.inject.Inject
 class SyncCategoriesUseCase @Inject constructor(
     private val categoryRepository: CategoryRepository
 ) {
-    suspend operator fun invoke() {
-        categoryRepository.syncCategories()
+    suspend operator fun invoke(isForce: Boolean = false) {
+        categoryRepository.syncLocal(isForce)
     }
 }

@@ -12,10 +12,6 @@ class DecideUserRoleUseCase @Inject constructor(
     suspend operator fun invoke(): UserRole {
         authRepository.checkAdmin()
         return if (
-            authRepository.isAdmin()
-                .filterNotNull()
-                .first()
-        ) UserRole.ADMIN
-        else UserRole.USER
+            authRepository.isAdmin().filterNotNull().first()) UserRole.ADMIN else UserRole.USER
     }
 }

@@ -17,10 +17,10 @@ fun AppLanguages.toDto() =
     AppLanguagesDto(id, from, to, app)
 
 fun AppLanguagesEntity.toDomain() =
-    AppLanguages(id, from, to, null,null, emptyList(), emptyList(), app)
+    AppLanguages(id, from, to, null,null, emptyList(), emptyList(),emptyList(), app)
 
 fun AppLanguagesDto.toDomain() =
-    AppLanguages(id, from, to, null,null, emptyList(), emptyList(), app)
+    AppLanguages(id, from, to, null,null, emptyList(), emptyList(),emptyList(), app)
 
 
 fun AppLanguagesEntity.toDto() =

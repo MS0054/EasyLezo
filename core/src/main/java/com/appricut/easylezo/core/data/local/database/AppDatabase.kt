@@ -15,13 +15,14 @@ import com.appricut.easylezo.core.data.local.entity.LanguageEntity
 import com.appricut.easylezo.core.data.local.entity.MetadataEntity
 import com.appricut.easylezo.core.data.local.entity.SentenceEntity
 import com.appricut.easylezo.core.data.local.entity.UserEntity
+import com.appricut.easylezo.core.data.local.entity.converter.ResourceConverter
 import com.appricut.easylezo.core.data.local.entity.converter.TranslateConverter
 
 @Database(
     entities = [LanguageEntity::class, MetadataEntity::class, UserEntity::class, AppLanguagesEntity::class, CategoryEntity::class, SentenceEntity::class],
     version = 1
 )
-@TypeConverters(TranslateConverter::class)
+@TypeConverters(TranslateConverter::class, ResourceConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun languageDao(): LanguageDao
     abstract fun metadataDao(): MetadataDao

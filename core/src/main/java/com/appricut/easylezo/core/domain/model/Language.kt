@@ -7,6 +7,7 @@ data class Language(
     val flag: String = "",
     val isFromLanguage: Boolean = false,
     val isToLanguage: Boolean = false,
-    val order: Int = 0
-
+    val order: Int = 0,
+    val createdAt: Long = 0,
+    val updatedAt: Long = 0
 )

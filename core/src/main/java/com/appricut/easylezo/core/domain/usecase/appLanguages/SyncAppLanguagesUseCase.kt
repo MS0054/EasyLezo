@@ -31,7 +31,7 @@ class SyncAppLanguagesUseCase @Inject constructor(
         appLanguagesRepository.updateLocalAppLanguages(newAppLanguage)
         // ۲. تلاش برای آپدیت سرور
         try {
-            userRepository.updateServerUserAppLanguages(newAppLanguage)
+            userRepository.updateUserAppLanguagesServer(newAppLanguage)
         } catch (e: Exception) {
             // اگر آفلاین بود، اینجا مدیریت می‌شود (مثلاً با WorkManager برای بعدا)
         }

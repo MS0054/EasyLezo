@@ -1,12 +1,18 @@
 package com.appricut.easylezo.core.data.remote.api
 
+import android.util.Log
 import com.appricut.easylezo.core.data.local.entity.AppLanguagesEntity
+import com.appricut.easylezo.core.data.mapper.toDto
+import com.appricut.easylezo.core.data.remote.model.AppLanguagesDto
+import com.appricut.easylezo.core.data.remote.model.LastUpdateDto
 import com.appricut.easylezo.core.data.remote.model.MetadataDto
 import com.appricut.easylezo.core.data.remote.model.SentenceDto
+import com.appricut.easylezo.core.data.remote.model.SettingsDto
 import com.appricut.easylezo.core.domain.model.AppLanguages
 import com.appricut.easylezo.core.domain.model.LastUpdate
 import com.appricut.easylezo.core.domain.model.Metadata
 import com.appricut.easylezo.core.domain.model.Resource
+import com.appricut.easylezo.core.domain.model.ResourceDto
 import com.appricut.easylezo.core.domain.model.Sentence
 import com.appricut.easylezo.core.domain.model.Settings
 import com.appricut.easylezo.core.domain.model.Translate
@@ -39,6 +45,39 @@ class MetadataApiImpl @Inject constructor(
 //            resource = firestoreDto.resource
 //        )
     }
+
+    override suspend fun updateMetadataLastUpdate(lastUpdate: LastUpdateDto) {
+        try {
+            metadataCol.document("Main").update("lastUpdate", lastUpdate).await()
+        } catch (e: Exception) {
+            // مدیریت خطا (مثلاً عدم دسترسی یا قطعی اینترنت)
+            throw e
+        }
+    }
+
+    override suspend fun updateMetadataAppLanguages(appLanguages: AppLanguagesDto) {
+        try {
+            metadataCol.document("Main").update("appLanguages", appLanguages).await()
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun updateMetadataSettings(settings: SettingsDto) {
+        try {
+            metadataCol.document("Main").update("settings", settings).await()
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun updateMetadataResources(resources: List<ResourceDto>) {
+        try {
+            metadataCol.document("Main").update("resources", resources).await()
+        } catch (e: Exception) {
+        }
+    }
+
 
     suspend fun dothis(){
                 val userLanguages2 = AppLanguages(
@@ -78,7 +117,7 @@ class MetadataApiImpl @Inject constructor(
     }
     suspend fun dothis2(){
 
-        val metadata = Metadata(
+        val metadata = MetadataDto(
             id = 1L,
             lastUpdate = LastUpdate(
                 category = 7,
@@ -91,17 +130,15 @@ class MetadataApiImpl @Inject constructor(
                 existNewSentenceData=true
             ),
             settings = Settings(
-                id = 1L,
-                appLanguages = AppLanguagesEntity(
-
-                    from = "English",
-                    to ="Persian",
-                    app = "English"
-                )
+                id = 1L
             ),
-        resource = Resource(
+            resources = emptyList(),
+            appLanguages = AppLanguagesDto(
+                from = "English",
+                to ="Persian",
+                app = "English"
+            ),
 
-        )
         )
 
 

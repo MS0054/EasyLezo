@@ -27,7 +27,6 @@ import com.appricut.easylezo.core.data.repository.CategoryRepository2
 import com.appricut.easylezo.core.data.repository.CategoryRepositoryImpl
 import com.appricut.easylezo.core.data.repository.LanguageRepositoryImpl
 import com.appricut.easylezo.core.data.repository.MetadataRepositoryImpl
-import com.appricut.easylezo.core.data.repository.SentenceRepository2
 import com.appricut.easylezo.core.data.repository.SentenceRepositoryImpl
 import com.appricut.easylezo.core.data.repository.UserRepositoryImpl
 import com.appricut.easylezo.core.domain.repository.AppLanguagesRepository
@@ -37,8 +36,7 @@ import com.appricut.easylezo.core.domain.repository.LanguageRepository
 import com.appricut.easylezo.core.domain.repository.MetadataRepository
 import com.appricut.easylezo.core.domain.repository.SentenceRepository
 import com.appricut.easylezo.core.domain.repository.UserRepository
-import com.appricut.easylezo.core.domain.usecase.AdminUseCase
-import com.appricut.easylezo.core.domain.usecase.AuthUseCase
+import com.appricut.easylezo.core.domain.usecase.auth.AuthUseCase
 import com.appricut.easylezo.core.domain.usecase.category.GetCategoriesUseCase
 import com.appricut.easylezo.core.domain.usecase.user.UserUseCase
 import com.appricut.easylezo.core.domain.usecase.language.GetLanguagesUseCase
@@ -50,6 +48,7 @@ import com.appricut.easylezo.core.domain.usecase.user.SyncUserUseCase
 import com.appricut.easylezo.core.domain.usecase.appLanguages.SyncAppLanguagesUseCase
 import com.appricut.easylezo.core.domain.usecase.user.DecideUserRoleUseCase
 import com.appricut.easylezo.core.domain.usecase.appLanguages.GetAppLanguagesUseCase
+import com.appricut.easylezo.core.domain.usecase.category.AddLanguageUseCase
 import com.appricut.easylezo.core.domain.usecase.sentence.GetSentencesUseCase
 import com.appricut.easylezo.core.domain.usecase.sentence.SyncSentencesUseCase
 import com.google.firebase.auth.FirebaseAuth
@@ -84,10 +83,6 @@ object AppModule {
     @Singleton
     @Provides
     fun provideAuthRepository2(auth: FirebaseAuth, db: FirebaseFirestore) = AuthRepository2(auth, db)
-
-    @Singleton
-    @Provides
-    fun provideSentenceRepository2(db: FirebaseFirestore) = SentenceRepository2(db)
 
     @Provides
     @Singleton
@@ -230,10 +225,7 @@ object AppModule {
     fun provideDecideUserRoleUseCase(authRepo: AuthRepository) = DecideUserRoleUseCase(authRepo)
     @Singleton
     @Provides
-    fun provideUserUseCase(categoryRepo: CategoryRepository2, sentenceRepo: SentenceRepository2) = UserUseCase(categoryRepo, sentenceRepo)
-    @Singleton
-    @Provides
-    fun provideAdminUseCase(categoryRepo: CategoryRepository2, sentenceRepo: SentenceRepository2) = AdminUseCase(categoryRepo, sentenceRepo)
+    fun provideUserUseCase(categoryRepo: CategoryRepository2) = UserUseCase(categoryRepo)
     @Singleton
     @Provides
     fun provideGetAppLanguagesUseCase(getLanguagesUseCase: GetLanguagesUseCase, appLanguagesRepository: AppLanguagesRepository) = GetAppLanguagesUseCase(getLanguagesUseCase,  appLanguagesRepository)

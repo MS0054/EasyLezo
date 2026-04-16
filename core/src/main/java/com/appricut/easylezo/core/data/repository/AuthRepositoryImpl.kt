@@ -21,5 +21,9 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun getUid(): String = authApi.currentUserUid()
 
+    override fun signOut() {
+        authApi.signOut()
+    }
+
     override fun isAdmin(): Flow<Boolean?> = _isAdmin
 }

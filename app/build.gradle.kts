@@ -15,7 +15,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.appricut.easylezo.admin"
+        applicationId = "com.appricut.easylezo"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

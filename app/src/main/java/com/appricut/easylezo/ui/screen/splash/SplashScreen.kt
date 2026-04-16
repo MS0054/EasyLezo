@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -17,10 +18,9 @@ fun SplashScreen(
     splashViewModel: SplashViewModel,
     onNavigate: (String) -> Unit
 ) {
-//    val auth = Firebase.auth
-//
 
-    splashViewModel.start()
+    val context = LocalContext.current
+    splashViewModel.start(context)
 
     LaunchedEffect(Unit) {
         splashViewModel.screen
@@ -28,8 +28,6 @@ fun SplashScreen(
             .first()
             .let { onNavigate(it.route) }
     }
-
-
 
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

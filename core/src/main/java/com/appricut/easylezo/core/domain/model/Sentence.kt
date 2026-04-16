@@ -5,11 +5,13 @@ data class Sentence(
     val categoryId: String = "",
     val level: String = "",
     val image: String = "",
-    val ar: String = "",
-    val en: String = "",
-    val fa: String = "",
     val fromText:String = "",
     val toText: String= "",
     val order: Int = 0,
-    val translations: List<Translate> = emptyList()
+    val createdAt: Long = 0,
+    val updatedAt: Long = 0,
+    val translations: List<Translate> = emptyList(),
 )
+
+
+

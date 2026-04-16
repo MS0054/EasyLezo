@@ -87,6 +87,7 @@ dependencies {
 
     // Hilt
     api(libs.hilt.android)
+    implementation("androidx.hilt:hilt-work:1.3.0")
     ksp(libs.hilt.compiler)
 
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
@@ -97,6 +98,14 @@ dependencies {
     // Reorder LazyColumn
     implementation("sh.calvin.reorderable:reorderable:3.0.0")
 
+    // generate voice
+    implementation ("io.github.whitemagic2014:tts-edge-java:1.3.3")
+
+    // Exoplayer
+    api(libs.androidx.media3.exoplayer)
+    api(libs.androidx.media3.exoplayer.dash)
+    api(libs.androidx.media3.ui)
+
     // Testing
     testImplementation(libs.junit)
 
@@ -105,4 +114,9 @@ dependencies {
 
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("io.mockk:mockk:1.13.5")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("app.cash.turbine:turbine:1.0.0")
 }
