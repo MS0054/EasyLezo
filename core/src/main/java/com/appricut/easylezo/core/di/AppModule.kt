@@ -8,6 +8,7 @@ import com.appricut.easylezo.core.data.local.dao.LanguageDao
 import com.appricut.easylezo.core.data.local.dao.MetadataDao
 import com.appricut.easylezo.core.data.local.dao.SentenceDao
 import com.appricut.easylezo.core.data.local.dao.UserDao
+import com.appricut.easylezo.core.data.manager.SyncManagerImpl
 import com.appricut.easylezo.core.data.remote.api.AuthApi
 import com.appricut.easylezo.core.data.remote.api.AuthApiImpl
 import com.appricut.easylezo.core.data.remote.api.CategoryApi
@@ -29,6 +30,7 @@ import com.appricut.easylezo.core.data.repository.LanguageRepositoryImpl
 import com.appricut.easylezo.core.data.repository.MetadataRepositoryImpl
 import com.appricut.easylezo.core.data.repository.SentenceRepositoryImpl
 import com.appricut.easylezo.core.data.repository.UserRepositoryImpl
+import com.appricut.easylezo.core.domain.manager.SyncManager
 import com.appricut.easylezo.core.domain.repository.AppLanguagesRepository
 import com.appricut.easylezo.core.domain.repository.AuthRepository
 import com.appricut.easylezo.core.domain.repository.CategoryRepository
@@ -56,6 +58,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -74,6 +77,8 @@ object AppModule {
     @Singleton
     @Provides
     fun provideAppDataStore(context: Context) = AppDataStore(context)
+
+
 
 
 
@@ -196,6 +201,13 @@ object AppModule {
     @Provides
     fun provideSentenceApi(db: FirebaseFirestore): SentenceApi = SentenceApiImpl(db)
 
+
+
+//    --- WordManager ---
+
+    @Singleton
+    @Provides
+    fun provideSyncManager(@ApplicationContext context: Context): SyncManager = SyncManagerImpl(context)
 
 
 

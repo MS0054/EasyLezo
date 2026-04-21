@@ -137,8 +137,7 @@ fun DraggableLazyColumn(
     ) {
         itemsIndexed(items, key = { _, item -> item.id }) { index, item ->
             Box(
-                modifier = Modifier.animateItemPlacement(
-                    animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+                modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null, placementSpec = spring(stiffness = Spring.StiffnessMediumLow)
                 )
             ) {
                 itemContent(item, draggingItemIndex == index)

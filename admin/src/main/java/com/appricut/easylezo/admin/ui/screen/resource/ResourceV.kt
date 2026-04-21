@@ -30,9 +30,6 @@ class ResourceV @Inject constructor(
     private val addMetadataResourceUseCase: AddMetadataResourceUseCase,
     private val updateMetadataResourceUseCase: UpdateMetadataResourceUseCase,
     private val deleteMetadataResourceUseCase: DeleteMetadataResourceUseCase,
-    private val addCategoryUseCase: AddCategoryUseCase,
-    private val deleteCategoryUseCase: DeleteCategoryUseCase,
-
 ) : BaseViewModel() {
 
 

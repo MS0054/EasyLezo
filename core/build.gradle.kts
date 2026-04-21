@@ -87,10 +87,17 @@ dependencies {
 
     // Hilt
     api(libs.hilt.android)
-    implementation("androidx.hilt:hilt-work:1.3.0")
     ksp(libs.hilt.compiler)
 
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    // Hilt WorkManger
+    api("androidx.hilt:hilt-work:1.3.0")
+    ksp("androidx.hilt:hilt-compiler:1.3.0")
+
+
+    api("androidx.hilt:hilt-navigation-compose:1.3.0")
+
+//    Coroutine Worker
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 
     // Gson
     implementation("com.google.code.gson:gson:2.10.1")

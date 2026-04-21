@@ -2,7 +2,6 @@ package com.appricut.easylezo.core.data.repository
 
 import com.appricut.easylezo.core.data.local.dao.CategoryDao
 import com.appricut.easylezo.core.data.mapper.toDomain
-import com.appricut.easylezo.core.data.mapper.toDto
 import com.appricut.easylezo.core.data.mapper.toEntity
 import com.appricut.easylezo.core.data.remote.api.CategoryApi
 import com.appricut.easylezo.core.domain.model.Category
@@ -24,12 +23,13 @@ class CategoryRepositoryImpl @Inject constructor(
 ) : CategoryRepository {
 
     override fun observe(): Flow<List<Category>> {
-        return categoryDao.observeCategories()
+        return categoryDao.observe()
             .map { list -> list?.map { it?.toDomain() ?: Category() } ?: emptyList() }
     }
-
+    override fun observeUnsyncedStatus(): Flow<Boolean> {
+        return categoryDao.observeUnsyncedStatus()
+    }
     override suspend fun syncLocal(isForce: Boolean) {
-
         val metadata = metadataRepository.observeMetadata().first()
         if (metadata.lastUpdate.existNewCategoryData || isForce) {
             val newCategories = categoryApi.getCategories()
@@ -41,33 +41,16 @@ class CategoryRepositoryImpl @Inject constructor(
             metadataRepository.clearAndInsert(metadata)
         }
     }
-
     override suspend fun addCategoryLocal(category: Category) {
-        return categoryDao.upsert(category.toEntity())
-    }
-    override suspend fun addCategoryServer(category: Category) {
-        categoryApi.addCategory(category.toDto())
-        addCategoryLocal(category)
+        return categoryDao.upsert(category.toEntity().copy(isSynced = false))
     }
     override suspend fun updateCategoryLocal(category: Category) {
-        return categoryDao.upsert(category.toEntity())
+        return categoryDao.upsert(category.toEntity().copy(isSynced = false))
     }
-    override suspend fun updateCategoryServer(category: Category) {
-        categoryApi.updateCategory(category.toDto())
-        updateCategoryLocal(category)
-    }
-    override suspend fun deleteCategoryLocal(category: Category) {
-        return categoryDao.delete(category.toEntity())
-    }
-    override suspend fun deleteCategoryServer(category: Category) {
-        categoryApi.deleteCategory(category.toDto())
-        deleteCategoryLocal(category)
+    override suspend fun deleteCategoryLocal(id: String) {
+        return categoryDao.softDelete(id)
     }
     override suspend fun sortCategoryLocal(categories: List<Category>) {
-        return categoryDao.upsertAll(categories.map { it.toEntity() })
-    }
-    override suspend fun sortCategoryServer(categories: List<Category>) {
-        categoryApi.sortCategories(categories.map { it.toDto() })
-        sortCategoryLocal(categories)
+        return categoryDao.upsertAll(categories.map { it.toEntity().copy(isSynced = false) })
     }
 }

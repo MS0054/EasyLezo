@@ -1,21 +1,19 @@
 package com.appricut.easylezo.admin.ui.screen.category
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.appricut.easylezo.admin.ui.UiEvent
 import com.appricut.easylezo.admin.ui.UiState
 import com.appricut.easylezo.admin.ui.screen.BaseViewModel
 import com.appricut.easylezo.core.domain.model.Category
 import com.appricut.easylezo.core.domain.usecase.category.AddCategoryUseCase
+import com.appricut.easylezo.core.domain.usecase.category.ObserveUnsyncedStatusUseCase
 import com.appricut.easylezo.core.domain.usecase.category.DeleteCategoryUseCase
 import com.appricut.easylezo.core.domain.usecase.category.GetCategoriesUseCase
 import com.appricut.easylezo.core.domain.usecase.category.SortCategoryUseCase
+import com.appricut.easylezo.core.domain.usecase.category.SyncCategoryUseCase
 import com.appricut.easylezo.core.domain.usecase.category.UpdateCategoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
@@ -28,7 +26,9 @@ class CategoryV @Inject constructor(
     private val addCategoryUseCase: AddCategoryUseCase,
     private val updateCategoryUseCase: UpdateCategoryUseCase,
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
-    private val sortCategoryUseCase: SortCategoryUseCase
+    private val sortCategoryUseCase: SortCategoryUseCase,
+    private val syncCategoryUseCase: SyncCategoryUseCase,
+    private val observeUnsyncedStatusUseCase: ObserveUnsyncedStatusUseCase
 ) : BaseViewModel() {
 
 
@@ -51,7 +51,16 @@ class CategoryV @Inject constructor(
                 }
                 .collect { categories ->
                     _categoryUiState.value = UiState(data = categories)
+                    observeSyncStatus()
                 }
+        }
+    }
+
+    private fun observeSyncStatus() {
+        viewModelScope.launch {
+            observeUnsyncedStatusUseCase().collect { needsSync ->
+                activeSyncButton(needsSync)
+            }
         }
     }
 
@@ -76,10 +85,18 @@ class CategoryV @Inject constructor(
         )
     }
 
-    fun deleteCategory(category: Category) {
+    fun deleteCategory(id: String) {
         launchWithEvent(
-            action = { deleteCategoryUseCase(category) },
+            action = { deleteCategoryUseCase(id) },
             successMessage = "Deleted"
+        )
+    }
+
+    fun syncCategory(workerTag: String = "sync_category") {
+        launchSyncWithEvent(
+            action = { syncCategoryUseCase(workerTag) },
+            workerTag = workerTag,
+            successMessage = "Category Synced"
         )
     }
 }

@@ -15,7 +15,7 @@ import com.appricut.easylezo.core.domain.model.Category
 fun EditCategorySheet(
     category: Category,
     onSubmit: (Category) -> Unit,
-    onDelete: (Category) -> Unit
+    onDelete: (String) -> Unit
 ) {
 
     var name by remember { mutableStateOf(category.name) }
@@ -25,7 +25,7 @@ fun EditCategorySheet(
         Row (Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.SpaceBetween) {
             Text(text = "Edit Category", style = MaterialTheme.typography.headlineSmall)
             Row {
-                IconButton (onClick = { onDelete(category)}) { Icon(Icons.Default.Delete, tint = Color.Red, contentDescription = null) }
+                IconButton (onClick = { onDelete(category.id)}) { Icon(Icons.Default.Delete, tint = Color.Red, contentDescription = null) }
                 Button(onClick = {
                     onSubmit(category.copy(
                         id = category.id,

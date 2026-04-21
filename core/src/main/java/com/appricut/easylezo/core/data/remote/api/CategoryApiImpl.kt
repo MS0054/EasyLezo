@@ -1,8 +1,9 @@
 package com.appricut.easylezo.core.data.remote.api
 
+import android.util.Log
 import com.appricut.easylezo.core.data.remote.model.CategoryDto
-import com.appricut.easylezo.core.data.remote.model.LanguageDto
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,7 +16,6 @@ class CategoryApiImpl @Inject constructor(
 
     private val categoriesCol = db.collection("Categories")
 
-
     override suspend fun getCategories(): List<CategoryDto> {
         val snap = categoriesCol.orderBy("order").get().await()
         return snap.documents.mapNotNull { doc ->
@@ -23,44 +23,25 @@ class CategoryApiImpl @Inject constructor(
         }
     }
 
-    override suspend fun addCategory(category: CategoryDto) {
-        try {
-            categoriesCol.add(category).await()
-        } catch (e: Exception) {
-            // manage network error
-            throw e
-        }
-    }
-
-    override suspend fun updateCategory(category: CategoryDto) {
-        try {
-            categoriesCol.document(category.id).set(category).await()
-        } catch (e: Exception) {
-            // manage network error
-            throw e
-        }
-    }
-
-    override suspend fun deleteCategory(category: CategoryDto) {
-        try {
-            categoriesCol.document(category.id).delete().await()
-        } catch (e: Exception) {
-            // manage network error
-            throw e
-        }
-    }
-
-    override suspend fun sortCategories(categories: List<CategoryDto>) {
+    override suspend fun syncCategories(categories: List<CategoryDto>) {
+        Log.i("CategoryApiImpl", "syncCategories: $categories")
         val batch = db.batch()
-
-        categories.forEach { cat ->
-            batch.update(
-                categoriesCol.document(cat.id),
-                "order",
-                cat.order
-            )
+        categories.forEach { dto ->
+            val docRef = categoriesCol.document(dto.id)
+            if (dto.isDeleted) {
+                batch.delete(docRef)
+            } else {
+                val dataMap = mutableMapOf<String, Any?>(
+                    "id" to dto.id,
+                    "name" to dto.name,
+                    "order" to dto.order,
+                    "createdAt" to dto.createdAt,
+                    "updatedAt" to dto.updatedAt,
+                    "image" to dto.image
+                )
+                batch.set(docRef, dataMap, SetOptions.merge())
+            }
         }
-
         batch.commit().await()
     }
 }

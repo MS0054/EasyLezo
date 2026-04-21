@@ -26,4 +26,26 @@ abstract class BaseViewModel : ViewModel() {
             }
         }
     }
+
+    protected fun activeSyncButton(isSynced: Boolean) {
+        viewModelScope.launch {
+            _event.emit(UiEvent.SyncStatue(isSynced))
+        }
+    }
+
+    protected fun launchSyncWithEvent(
+        successMessage: String,
+        workerTag: String,
+        action: suspend () -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                _event.emit(UiEvent.StartSync(workerTag))
+                action()
+                _event.emit(UiEvent.Success(successMessage))
+            } catch (e: Exception) {
+                _event.emit(UiEvent.Error(e.message ?: "خطایی رخ داد"))
+            }
+        }
+    }
 }

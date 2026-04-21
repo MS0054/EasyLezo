@@ -1,11 +1,7 @@
 package com.appricut.easylezo.core.data.local.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 import androidx.room.Upsert
 import com.appricut.easylezo.core.data.local.entity.CategoryEntity
 import kotlinx.coroutines.flow.Flow
@@ -13,30 +9,21 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CategoryDao {
 
-    @Query("SELECT * FROM category ORDER BY `order` ASC")
-    fun observeCategories(): Flow<List<CategoryEntity?>?>
-
+    @Query("SELECT * FROM category WHERE isDeleted = 0 ORDER BY `order` ASC")
+    fun observe(): Flow<List<CategoryEntity?>?>
+    @Query("SELECT * FROM category WHERE isSynced = 0")
+    suspend fun observeUnsynced(): List<CategoryEntity>
+    @Query("SELECT EXISTS(SELECT 1 FROM category WHERE isSynced = 0)")
+    fun observeUnsyncedStatus(): Flow<Boolean>
+    @Query("UPDATE category SET isSynced = 1 WHERE id IN (:ids)")
+    suspend fun markAsSynced(ids: List<String>)
+    @Query("UPDATE category SET isDeleted = 1, isSynced = 0 WHERE id = :id")
+    suspend fun softDelete(id: String)
     @Upsert
     suspend fun upsertAll(categories: List<CategoryEntity>)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(list: List<CategoryEntity>)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(category: CategoryEntity)
-
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun update(category: CategoryEntity)
-
     @Upsert
     suspend fun upsert(category: CategoryEntity)
-
-    @Delete
-    suspend fun delete(category: CategoryEntity)
-
-    @Query("DELETE FROM category")
-    suspend fun clearAll()
-
     @Query("DELETE FROM category WHERE id NOT IN (:remainingIds)")
     suspend fun deleteOldIds(remainingIds: List<String>)
+
 }

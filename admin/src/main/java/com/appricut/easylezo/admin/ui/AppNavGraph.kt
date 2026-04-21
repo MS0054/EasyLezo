@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.DropdownMenu
@@ -23,7 +22,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -74,22 +71,7 @@ sealed class Screen(val route: String) {
 }
 
 enum class RefreshData {
-    PROGRESS, DONE, ERROR,
-}
-
-// draw Circle object composable
-
-
-@Composable
-fun CircleIcon(
-    color: Color,
-    size: Dp = 24.dp
-) {
-    Box(
-        modifier = Modifier
-            .size(size)
-            .background(color = color, shape = CircleShape)
-    )
+    PROGRESS, DONE, ERROR, SYNC
 }
 
 @Composable
@@ -98,7 +80,8 @@ fun AppNavGraph() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     var refreshStatus by remember { mutableStateOf(RefreshData.DONE) }
-    val refreshIconColor = remember { mutableStateOf(Color.Gray) }
+    var isSynced by remember { mutableStateOf(false) }
+    var refreshIconColor by remember { mutableStateOf(Color.Gray) }
     val currentRoute = navBackStackEntry?.destination?.route
     val splashV: SplashV = hiltViewModel()
     val authV: AuthV = hiltViewModel()
@@ -127,16 +110,15 @@ fun AppNavGraph() {
                 }
             }
         },
-        onRefresh = { refreshStatus = it }
+        onRefresh = { refreshStatus = it },
+        isSynced = { isSynced = it }
     )
-
-    when (refreshStatus) {
-        RefreshData.PROGRESS -> refreshIconColor.value = Color.Yellow
-        RefreshData.DONE -> refreshIconColor.value = Color.Gray
-        RefreshData.ERROR -> refreshIconColor.value = Color.Red
+    refreshIconColor = when (refreshStatus) {
+        RefreshData.PROGRESS -> Color.Yellow
+        RefreshData.DONE -> Color.Gray
+        RefreshData.ERROR -> Color.Red
+        RefreshData.SYNC -> Color.Cyan
     }
-
-
     Scaffold(
         topBar = {
             DynamicHeader(
@@ -144,6 +126,7 @@ fun AppNavGraph() {
                 currentRoute = currentRoute,
                 onScreenOpen = { navController.navigate(it.route) },
                 onSheetOpen = { sheetV.openSheet(it) },
+                isSynced = isSynced,
                 onRefresh = { splashV.start(true)}
             )
         }
@@ -184,6 +167,7 @@ fun MyNavHost(
         startDestination = Screen.Splash.route,
         modifier = modifier
     ) {
+
         composable(Screen.Splash.route) {
             SplashScreen(splashV) { route ->
                 navController.navigate(route) { popUpTo(Screen.Splash.route) { inclusive = true } }
@@ -203,7 +187,7 @@ fun MyNavHost(
                 categoryV,
                 onEdit = { sheetV.openSheet(AppSheet.EditCategory(it)) },
                 onAdd = { sheetV.openSheet(AppSheet.AddCategory(it)) },
-                openSentences = { navController.navigate(Screen.Sentence.createRoute(it)) }
+                openSentences = { navController.navigate(Screen.Sentence.createRoute(it)) },
             )
         }
         composable(Screen.Language.route) {
@@ -244,15 +228,15 @@ fun MyNavHost(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DynamicHeader(
-    refreshIconColor: MutableState<Color>,
+    refreshIconColor: Color,
     currentRoute: String?,
     onScreenOpen: (Screen) -> Unit,
     onSheetOpen: (AppSheet) -> Unit,
+    isSynced: Boolean,
     onRefresh: () -> Unit
 ) {
     var showMenu by remember { mutableStateOf(false) }
-//    val refreshIconColor = remember { mutableStateOf(RefreshData.PROGRESS) }
-
+    var onSyncClicked: () -> Unit = {}
     TopAppBar(
         title = {
             if ((currentRoute != Screen.Auth.route) && (currentRoute != Screen.Splash.route)) {
@@ -304,9 +288,8 @@ fun DynamicHeader(
             }
         },
         actions = {
-            Box(modifier = Modifier.size(12.dp).background(color = refreshIconColor.value, shape = CircleShape))
-
             if (currentRoute == Screen.Category.route) {
+                if (isSynced) onSyncClicked = { onSheetOpen(AppSheet.Sync) }
                 IconButton(onClick = { onSheetOpen(AppSheet.SortCategory) }) {
                     Icon(Icons.Default.List, contentDescription = null)
                 }
@@ -326,6 +309,12 @@ fun DynamicHeader(
                     Icon(Icons.Default.Add, contentDescription = null)
                 }
             }
+            Box(  modifier = Modifier.padding(end = 16.dp).size(16.dp).background(color = refreshIconColor.copy(.4f), shape = CircleShape).clickable(
+                onClick = { onSyncClicked() }
+            ))
+
+
+
         },
         )
 }

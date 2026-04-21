@@ -1,5 +1,6 @@
 package com.appricut.easylezo.admin.ui.sheet
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -7,27 +8,33 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.appricut.easylezo.admin.ui.RefreshData
 import com.appricut.easylezo.admin.ui.UiEvent
 import com.appricut.easylezo.admin.ui.screen.admin.sheet.ConfirmSheet
-import com.appricut.easylezo.admin.ui.screen.metadata.sheet.LastUpdateSheet
+import com.appricut.easylezo.admin.ui.screen.auth.AuthV
 import com.appricut.easylezo.admin.ui.screen.category.CategoryV
 import com.appricut.easylezo.admin.ui.screen.category.sheet.AddCategorySheet
-import com.appricut.easylezo.admin.ui.screen.metadata.sheet.AppLanguagesSheet
-import com.appricut.easylezo.admin.ui.screen.metadata.sheet.SettingsSheet
-import com.appricut.easylezo.admin.ui.screen.auth.AuthV
-import com.appricut.easylezo.admin.ui.screen.resource.sheet.AddResourceSheet
-import com.appricut.easylezo.admin.ui.screen.language.sheet.AddLanguageSheet
 import com.appricut.easylezo.admin.ui.screen.category.sheet.EditCategorySheet
-import com.appricut.easylezo.admin.ui.screen.resource.sheet.EditResourceSheet
-import com.appricut.easylezo.admin.ui.screen.language.sheet.EditLanguageSheet
 import com.appricut.easylezo.admin.ui.screen.category.sheet.SortCategorySheet
-import com.appricut.easylezo.admin.ui.screen.language.sheet.SortLanguageSheet
 import com.appricut.easylezo.admin.ui.screen.language.LanguageV
+import com.appricut.easylezo.admin.ui.screen.language.sheet.AddLanguageSheet
+import com.appricut.easylezo.admin.ui.screen.language.sheet.EditLanguageSheet
+import com.appricut.easylezo.admin.ui.screen.language.sheet.SortLanguageSheet
 import com.appricut.easylezo.admin.ui.screen.metadata.MetadataV
+import com.appricut.easylezo.admin.ui.screen.metadata.sheet.AppLanguagesSheet
+import com.appricut.easylezo.admin.ui.screen.metadata.sheet.LastUpdateSheet
+import com.appricut.easylezo.admin.ui.screen.metadata.sheet.SettingsSheet
 import com.appricut.easylezo.admin.ui.screen.resource.ResourceV
+import com.appricut.easylezo.admin.ui.screen.resource.sheet.AddResourceSheet
+import com.appricut.easylezo.admin.ui.screen.resource.sheet.EditResourceSheet
 import com.appricut.easylezo.admin.ui.screen.sentence.SentenceV
 import com.appricut.easylezo.admin.ui.screen.sentence.sheet.AddSentenceSheet
 import com.appricut.easylezo.admin.ui.screen.sentence.sheet.EditSentenceSheet
@@ -49,10 +56,12 @@ fun SheetManager(
     metadataV: MetadataV,
     resourceV: ResourceV,
     onLogoutSuccess: () -> Unit,
-    onRefresh: (RefreshData) -> Unit
+    onRefresh: (RefreshData) -> Unit,
+    isSynced: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
     val currentSheet = sheetV.currentSheet
+    var workerTag by remember { mutableStateOf("") }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     // (event listener)
@@ -67,20 +76,48 @@ fun SheetManager(
         ).collect { event ->
             when (event) {
                 is UiEvent.Started -> {
+                    Log.i("zoooo", "2")
                     sheetV.closeSheet()
                     onRefresh(RefreshData.PROGRESS)
                 }
+                is UiEvent.SyncStatue -> {
+                    Log.i("zoooo", "1: ${event.isSynced}")
+                    isSynced(event.isSynced)
+                    if (event.isSynced) onRefresh(RefreshData.SYNC) else onRefresh(RefreshData.DONE)
+                }
+                is UiEvent.StartSync -> {
+                    Log.i("zoooo", "3")
+                    workerTag = event.workerTag
+                }
                 is UiEvent.Success -> {
-                    onRefresh(RefreshData.DONE)
+                    Log.i("zoooo", "4")
+//                    onRefresh(RefreshData.DONE)
                     Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                 }
                 is UiEvent.Error -> {
+                    Log.i("zoooo", "5")
                     onRefresh(RefreshData.ERROR)
                     Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
     }
+
+    LaunchedEffect(workerTag) {
+        Log.i("zoooo", "6")
+        if (workerTag.isNotEmpty()) {
+            WorkManager.getInstance(context).getWorkInfosByTagFlow(workerTag).collect { workInfos ->
+                val workInfo = workInfos.firstOrNull()
+                when (workInfo?.state) {
+                    WorkInfo.State.RUNNING -> onRefresh(RefreshData.PROGRESS)
+                    WorkInfo.State.SUCCEEDED -> { onRefresh(RefreshData.DONE) ; workerTag = "" }
+                    WorkInfo.State.FAILED -> { onRefresh(RefreshData.ERROR) ; workerTag = "" }
+                    else -> {}
+                }
+            }
+        }
+    }
+
 
     if (currentSheet != AppSheet.None) {
         ModalBottomSheet(
@@ -91,6 +128,20 @@ fun SheetManager(
             modifier = Modifier.fillMaxSize()
         ) {
             when (currentSheet) {
+
+                is AppSheet.Sync -> {
+                    ConfirmSheet(
+                        title = "Sync",
+                        text = "Do you want to sync?",
+                        onConfirm = {
+                            categoryV.syncCategory()
+                            sheetV.closeSheet()
+                        },
+                        onDismiss = {
+                            sheetV.closeSheet()
+                        }
+                    )
+                }
                 is AppSheet.Settings -> {
                     val settings = metadataV.metadataSettingsUiState.value.data ?: Settings()
                     SettingsSheet (
@@ -173,9 +224,9 @@ fun SheetManager(
                     EditCategorySheet(
                         category = currentSheet.category,
                         onSubmit = {
-                            categoryV.updateCategory(it)                        },
+                            categoryV.updateCategory(it)},
                         onDelete = {
-                            categoryV.deleteCategory(it)                        }
+                            categoryV.deleteCategory(it)}
                     )
                 }
                 is AppSheet.AddSentence -> {

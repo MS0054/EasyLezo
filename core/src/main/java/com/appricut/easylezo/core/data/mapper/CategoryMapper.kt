@@ -8,12 +8,15 @@ fun CategoryDto.toEntity() =
     CategoryEntity(id, name, image, order, createdAt, updatedAt)
 
 fun Category.toEntity() =
-    CategoryEntity(id, name, image, order, createdAt, updatedAt)
+    CategoryEntity(id, name, image, order, createdAt, updatedAt, isSynced, isDeleted)
 
 fun Category.toDto() =
-    CategoryDto(id, name, image, order, createdAt, updatedAt)
+    CategoryDto(id, name, image, order, createdAt, updatedAt, isSynced, isDeleted)
+
+fun CategoryEntity.toDto() =
+    CategoryDto(id, name, image, order, createdAt, updatedAt, isSynced, isDeleted)
 
 fun CategoryEntity.toDomain() =
-    Category(id, name, image, order, createdAt, updatedAt)
+    Category(id, name, image, order, createdAt, updatedAt, isSynced, isDeleted)
 
 
