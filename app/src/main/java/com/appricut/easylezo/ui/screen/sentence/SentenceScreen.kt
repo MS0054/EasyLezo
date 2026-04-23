@@ -120,17 +120,17 @@ fun SentenceItem(sentence: Sentence, onClick: () -> Unit) {
 
             Box(
                 modifier = Modifier
-                    .size(64.dp)
+                    .size(90.dp)
                     .background(
                         MaterialTheme.colorScheme.background,
-                        RoundedCornerShape(topStart = 25.dp, bottomStart = 25.dp)
+                        RoundedCornerShape(topStart = 30.dp, bottomStart = 25.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
                 IconButton(
                     modifier = Modifier
-                        .size(48.dp)
-                        .background(MaterialTheme.colorScheme.onTertiary, RoundedCornerShape(16.dp)),
+                        .size(64.dp)
+                        .background(MaterialTheme.colorScheme.onTertiary, RoundedCornerShape(20.dp)),
                     onClick = onClick
                 ) {
                     Icon(Icons.Rounded.PlayArrow, contentDescription = "Play")

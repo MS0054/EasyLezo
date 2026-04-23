@@ -4,9 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.appricut.easylezo.core.domain.model.AppLanguages
 import com.appricut.easylezo.core.domain.model.Category
-import com.appricut.easylezo.core.domain.model.Sentence
 import com.appricut.easylezo.core.domain.usecase.category.GetCategoriesUseCase
-import com.appricut.easylezo.core.domain.usecase.user.UserUseCase
 import com.appricut.easylezo.core.domain.usecase.appLanguages.SyncAppLanguagesUseCase
 import com.appricut.easylezo.core.domain.usecase.appLanguages.GetAppLanguagesUseCase
 import com.appricut.easylezo.ui.UiState

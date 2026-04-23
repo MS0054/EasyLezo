@@ -33,11 +33,11 @@ class CategoryApiImpl @Inject constructor(
             } else {
                 val dataMap = mutableMapOf<String, Any?>(
                     "id" to dto.id,
-                    "name" to dto.name,
                     "order" to dto.order,
                     "createdAt" to dto.createdAt,
                     "updatedAt" to dto.updatedAt,
-                    "image" to dto.image
+                    "image" to dto.image,
+                    "translations" to dto.translations
                 )
                 batch.set(docRef, dataMap, SetOptions.merge())
             }

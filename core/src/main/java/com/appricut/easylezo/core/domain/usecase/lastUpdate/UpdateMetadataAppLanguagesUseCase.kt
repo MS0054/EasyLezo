@@ -12,5 +12,6 @@ class UpdateMetadataAppLanguagesUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(appLanguages: AppLanguages) {
         metadataRepository.updateMetadataAppLanguages(appLanguages)
+        metadataRepository.syncMetadata(true)
     }
 }

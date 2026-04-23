@@ -13,7 +13,6 @@ fun Sentence.toEntity() =
 fun Sentence.toDto() =
     SentenceDto(id, categoryId, level, image, order, createdAt, updatedAt, translations)
 
-
 fun SentenceEntity.toDomain() =
     Sentence(id, categoryId, level, image, "","",order, createdAt, updatedAt, translations)
 

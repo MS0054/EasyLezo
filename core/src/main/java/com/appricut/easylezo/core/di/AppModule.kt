@@ -24,7 +24,6 @@ import com.appricut.easylezo.core.data.remote.api.UserApiImpl
 import com.appricut.easylezo.core.data.repository.AppLanguagesRepositoryImpl
 import com.appricut.easylezo.core.data.repository.AuthRepository2
 import com.appricut.easylezo.core.data.repository.AuthRepositoryImpl
-import com.appricut.easylezo.core.data.repository.CategoryRepository2
 import com.appricut.easylezo.core.data.repository.CategoryRepositoryImpl
 import com.appricut.easylezo.core.data.repository.LanguageRepositoryImpl
 import com.appricut.easylezo.core.data.repository.MetadataRepositoryImpl
@@ -40,7 +39,6 @@ import com.appricut.easylezo.core.domain.repository.SentenceRepository
 import com.appricut.easylezo.core.domain.repository.UserRepository
 import com.appricut.easylezo.core.domain.usecase.auth.AuthUseCase
 import com.appricut.easylezo.core.domain.usecase.category.GetCategoriesUseCase
-import com.appricut.easylezo.core.domain.usecase.user.UserUseCase
 import com.appricut.easylezo.core.domain.usecase.language.GetLanguagesUseCase
 import com.appricut.easylezo.core.domain.usecase.metadata.GetMetadataUseCase
 import com.appricut.easylezo.core.domain.usecase.category.SyncCategoriesUseCase
@@ -237,9 +235,6 @@ object AppModule {
     fun provideDecideUserRoleUseCase(authRepo: AuthRepository) = DecideUserRoleUseCase(authRepo)
     @Singleton
     @Provides
-    fun provideUserUseCase(categoryRepo: CategoryRepository2) = UserUseCase(categoryRepo)
-    @Singleton
-    @Provides
     fun provideGetAppLanguagesUseCase(getLanguagesUseCase: GetLanguagesUseCase, appLanguagesRepository: AppLanguagesRepository) = GetAppLanguagesUseCase(getLanguagesUseCase,  appLanguagesRepository)
     @Singleton
     @Provides
@@ -252,7 +247,7 @@ object AppModule {
     fun provideSyncCategoriesUseCase(categoryRepository: CategoryRepository)= SyncCategoriesUseCase(categoryRepository)
     @Singleton
     @Provides
-    fun provideGetCategoriesUseCase(categoryRepository: CategoryRepository)= GetCategoriesUseCase(categoryRepository)
+    fun provideGetCategoriesUseCase(categoryRepository: CategoryRepository, appLanguagesRepository: AppLanguagesRepository)= GetCategoriesUseCase(categoryRepository, appLanguagesRepository)
     @Singleton
     @Provides
     fun provideGetSentencesUseCase(sentenceRepository: SentenceRepository, appLanguagesRepository: AppLanguagesRepository) = GetSentencesUseCase(sentenceRepository, appLanguagesRepository)

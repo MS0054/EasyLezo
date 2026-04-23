@@ -41,7 +41,7 @@ class MetadataRepositoryImpl @Inject constructor(
         return metadataApi.getMetadata().toDomain()
     }
 
-    override suspend fun syncMetadata() {
+    override suspend fun syncMetadata(isForce: Boolean) {
 
         val newMetadata = metadataApi.getMetadata()
         val currentMetadata = metadataDao.observeMetadata().first() ?: MetadataEntity()
@@ -54,7 +54,7 @@ class MetadataRepositoryImpl @Inject constructor(
         }
 
         val appLanguages = appLanguagesRepository.observeAppLanguages().firstOrNull()
-        if (appLanguages == null || appLanguages.isDefault) {
+        if (appLanguages == null || appLanguages.isDefault || isForce) {
             appLanguagesRepository.updateLocalAppLanguages(newMetadata.appLanguages.toDomain())
         }
         clearAndInsert(newMetadata.toDomain())

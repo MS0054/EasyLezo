@@ -85,7 +85,7 @@ fun CategoryS(
                             ) {
                                 Column(modifier = Modifier.padding(12.dp)) {
                                     Text(
-                                        cat.name,
+                                        cat.fromText,
                                         fontSize = 16.sp,
                                         style = MaterialTheme.typography.titleLarge
                                     )

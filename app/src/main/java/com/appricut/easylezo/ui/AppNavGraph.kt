@@ -14,11 +14,14 @@ import com.appricut.easylezo.ui.screen.category.CategoryListScreen
 import com.appricut.easylezo.ui.screen.category.CategoryViewModel
 import com.appricut.easylezo.ui.screen.sentence.SentenceListScreen
 import com.appricut.easylezo.ui.screen.sentence.SentenceViewModel
+import com.appricut.easylezo.ui.screen.settings.SettingsScreen
+import com.appricut.easylezo.ui.screen.settings.SettingsViewModel
 
 sealed class Screen(val route: String) {
     object Splash : Screen("splash")
     object Auth : Screen("auth")
     object Category : Screen("category")
+    object Settings : Screen("settings")
     object Sentences : Screen("sentences/{categoryId}/{categoryName}") {
         fun createRoute(
             categoryId: String,
@@ -35,6 +38,12 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
             val splashVM: SplashViewModel = hiltViewModel()
             SplashScreen(splashVM) { route ->
                 navController.navigate(route) { popUpTo(Screen.Splash.route) { inclusive = true } }
+            }
+        }
+        composable(Screen.Settings.route) {
+            val settingsVm: SettingsViewModel = hiltViewModel()
+            SettingsScreen (settingsVm){
+                navController.navigate(Screen.Category.route)
             }
         }
 
@@ -54,9 +63,9 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
             CategoryListScreen(
                 categoryViewModel,
                 { category ->
-                    navController.navigate(Screen.Sentences.createRoute(category.id, category.name))
+                    navController.navigate(Screen.Sentences.createRoute(category.id, category.fromText))
                 }, {
-                    navController.navigate(Screen.Auth.route)
+                    navController.navigate(Screen.Settings.route)
                 })
         }
 

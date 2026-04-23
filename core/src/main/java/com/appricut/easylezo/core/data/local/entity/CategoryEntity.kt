@@ -2,16 +2,17 @@ package com.appricut.easylezo.core.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.appricut.easylezo.core.domain.model.Translate
 
 @Entity(tableName = "category")
 data class CategoryEntity(
     @PrimaryKey
     val id: String = "",
-    val name: String = "",
     val image: String = "",
     val order: Int = 0,
     val createdAt: Long = 0,
     val updatedAt: Long = 0,
     val isSynced: Boolean = true,
-    val isDeleted: Boolean = false
+    val isDeleted: Boolean = false,
+    val translations: List<Translate> = emptyList()
 )

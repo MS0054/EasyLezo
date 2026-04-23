@@ -1,12 +1,10 @@
 package com.appricut.easylezo.admin.ui.screen.metadata
 
-import android.util.Log
-import androidx.lifecycle.ViewModel
+
 import androidx.lifecycle.viewModelScope
 import com.appricut.easylezo.admin.ui.UiState
 import com.appricut.easylezo.admin.ui.screen.BaseViewModel
 import com.appricut.easylezo.core.domain.model.AppLanguages
-import com.appricut.easylezo.core.domain.model.Category
 import com.appricut.easylezo.core.domain.model.LastUpdate
 import com.appricut.easylezo.core.domain.model.Settings
 import com.appricut.easylezo.core.domain.usecase.appLanguages.GetMetadataAppLanguagesUseCase

@@ -83,7 +83,7 @@ fun CategoryDragItem(category: Category, isDragging: Boolean) {
             )
             Spacer(Modifier.width(12.dp))
             Text(
-                category.name,
+                category.fromText,
                 style = MaterialTheme.typography.titleMedium
             )
         }

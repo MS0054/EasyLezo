@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
@@ -116,7 +117,7 @@ fun HeaderSection(onSettingsClick: () -> Unit, onProfileClick: () -> Unit) {
         }
         LanguageAwareText("L I N G O", style = MaterialTheme.typography.headlineMedium)
         IconButton(onClick = onProfileClick) {
-            Icon(imageVector = Icons.Filled.Person, contentDescription = "Profile")
+            Icon(imageVector = Icons.Filled.Settings, contentDescription = "")
         }
     }
 }
@@ -218,7 +219,7 @@ fun CategoryCard(category: Category, onCardClick: () -> Unit) {
             if (category.image.isNotEmpty()) {
                 AsyncImage(
                     model = category.image,
-                    contentDescription = category.name,
+                    contentDescription = null,
                     modifier = Modifier.size(180.dp).padding(16.dp),
                     contentScale = ContentScale.Crop
                 )
@@ -228,12 +229,19 @@ fun CategoryCard(category: Category, onCardClick: () -> Unit) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                LanguageAwareText(
-                    text = category.name,
-                    fontSize = 16.sp,
-                    modifier = Modifier.padding(start = 8.dp),
-                    style = MaterialTheme.typography.headlineLarge
-                )
+                Column {
+                    LanguageAwareText(
+                        text = category.fromText,
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(start = 8.dp),
+                    )
+                    LanguageAwareText(
+                        text = category.toText,
+                        fontSize = 13.sp,
+                        modifier = Modifier.padding(start = 8.dp),
+                    )
+                }
+
                 Box(
                     modifier = Modifier
                         .size(56.dp, 64.dp)

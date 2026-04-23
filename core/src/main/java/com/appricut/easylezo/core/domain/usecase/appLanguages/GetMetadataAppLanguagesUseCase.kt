@@ -13,13 +13,14 @@ class GetMetadataAppLanguagesUseCase @Inject constructor(
     private val metadataRepository: MetadataRepository
 ) {
     operator fun invoke(): Flow<AppLanguages> {
-        val serverDataFlow = flow {
-            emit(metadataRepository.observeMetadataServer())
-        }
+//        val serverDataFlow = flow {
+//            emit(metadataRepository.observeMetadataServer())
+//        }
+        val localAppLanguages = metadataRepository.observeMetadata()
 
         val databaseFlow = getLanguagesUseCase()
 
-        return databaseFlow.combine(serverDataFlow) { languagesList, serverMetadata ->
+        return databaseFlow.combine(localAppLanguages) { languagesList, serverMetadata ->
             AppLanguages().apply {
                 languages = languagesList
                 from = serverMetadata.appLanguages.from

@@ -171,7 +171,7 @@ fun SheetManager(
                         }
                     )
                 }
-                is AppSheet.AppLanguage ->{
+                is AppSheet.AppLanguage -> {
                     val metadataAppLanguages = metadataV.metadataAppLanguagesUiState.value.data ?: AppLanguages()
                     AppLanguagesSheet(
                         metadataAppLanguages = metadataAppLanguages,
@@ -202,7 +202,9 @@ fun SheetManager(
                     )
                 }
                 is AppSheet.AddCategory -> {
+                    val languages = languageV.languageUiState.value.data ?: emptyList()
                     AddCategorySheet(
+                        languages = languages,
                         maxOrder = currentSheet.maxOrder,
                         onDismiss = { sheetV.closeSheet() },
                         onSubmit = {
@@ -221,7 +223,9 @@ fun SheetManager(
                     )
                 }
                 is AppSheet.EditCategory -> {
+                    val languages = languageV.languageUiState.value.data ?: emptyList()
                     EditCategorySheet(
+                        languages = languages,
                         category = currentSheet.category,
                         onSubmit = {
                             categoryV.updateCategory(it)},

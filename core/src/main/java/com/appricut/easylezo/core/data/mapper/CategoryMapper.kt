@@ -5,18 +5,18 @@ import com.appricut.easylezo.core.data.remote.model.CategoryDto
 import com.appricut.easylezo.core.domain.model.Category
 
 fun CategoryDto.toEntity() =
-    CategoryEntity(id, name, image, order, createdAt, updatedAt)
+    CategoryEntity(id, image, order, createdAt, updatedAt, translations = translations)
 
 fun Category.toEntity() =
-    CategoryEntity(id, name, image, order, createdAt, updatedAt, isSynced, isDeleted)
+    CategoryEntity(id, image, order, createdAt, updatedAt, isSynced, isDeleted, translations)
 
 fun Category.toDto() =
-    CategoryDto(id, name, image, order, createdAt, updatedAt, isSynced, isDeleted)
+    CategoryDto(id, image, order, createdAt, updatedAt, isSynced, isDeleted, translations)
 
 fun CategoryEntity.toDto() =
-    CategoryDto(id, name, image, order, createdAt, updatedAt, isSynced, isDeleted)
+    CategoryDto(id, image, order, createdAt, updatedAt, isSynced, isDeleted, translations)
 
 fun CategoryEntity.toDomain() =
-    Category(id, name, image, order, createdAt, updatedAt, isSynced, isDeleted)
+    Category(id, image, order, "","",createdAt, updatedAt, isSynced, isDeleted, translations)
 
 

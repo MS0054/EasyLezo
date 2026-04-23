@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MetadataRepository {
     fun observeMetadata(): Flow<Metadata>
-    suspend fun syncMetadata()
+    suspend fun syncMetadata(isForce: Boolean = false)
     suspend fun observeMetadataServer(): Metadata
     suspend fun clearAndInsert(metadata: Metadata)
     suspend fun updateMetadataLastUpdate( lastUpdate: LastUpdate)
