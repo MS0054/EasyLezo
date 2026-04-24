@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -14,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.appricut.easylezo.core.domain.model.Sentence
@@ -30,7 +32,8 @@ import com.appricut.easylezo.ui.screen.sentence.SentenceViewModel
 fun SentenceListScreen(
     categoryId: String,
     categoryName: String,
-    sentenceViewModel: SentenceViewModel
+    sentenceViewModel: SentenceViewModel,
+    onBack: () -> Unit
 ) {
     val sentenceUiState by sentenceViewModel.sentenceUiState.collectAsState()
 
@@ -54,8 +57,16 @@ fun SentenceListScreen(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(categoryName, style = MaterialTheme.typography.headlineMedium)
-        Spacer(Modifier.height(24.dp))
+        Box(modifier = Modifier.fillMaxWidth()) {
+            IconButton(
+                modifier = Modifier.padding(end = 16.dp),
+                onClick = {onBack()}) {
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
+            }
+            LanguageAwareText(modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, text = categoryName, style = MaterialTheme.typography.headlineSmall)
+
+        }
+        Spacer(Modifier.height(36.dp))
 
         when {
             sentenceUiState.isLoading -> {
@@ -120,7 +131,7 @@ fun SentenceItem(sentence: Sentence, onClick: () -> Unit) {
 
             Box(
                 modifier = Modifier
-                    .size(90.dp)
+                    .size(64.dp)
                     .background(
                         MaterialTheme.colorScheme.background,
                         RoundedCornerShape(topStart = 30.dp, bottomStart = 25.dp)
@@ -129,11 +140,11 @@ fun SentenceItem(sentence: Sentence, onClick: () -> Unit) {
             ) {
                 IconButton(
                     modifier = Modifier
-                        .size(64.dp)
-                        .background(MaterialTheme.colorScheme.onTertiary, RoundedCornerShape(20.dp)),
+                        .size(64.dp),
+//                        .background(MaterialTheme.colorScheme.onTertiary, RoundedCornerShape(20.dp)),
                     onClick = onClick
                 ) {
-                    Icon(Icons.Rounded.PlayArrow, contentDescription = "Play")
+                    Icon(Icons.Rounded.PlayArrow, contentDescription = "Play", Modifier.size(32.dp))
                 }
             }
         }

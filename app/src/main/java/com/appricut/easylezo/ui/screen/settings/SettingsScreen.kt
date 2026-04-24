@@ -28,13 +28,13 @@ fun SettingsScreen(
 ) {
 
     Column (
-        modifier = Modifier.padding(16.dp, 16.dp)
+        modifier = Modifier.padding(16.dp)
     ){
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                modifier = Modifier.padding(8.dp),
+                modifier = Modifier.padding(end = 16.dp),
                 onClick = {onBack()}) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null,)
             }

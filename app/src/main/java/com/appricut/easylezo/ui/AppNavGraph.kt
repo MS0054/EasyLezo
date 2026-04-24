@@ -73,7 +73,9 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
             val categoryId = backStackEntry.arguments?.getString("categoryId") ?: ""
             val categoryName = backStackEntry.arguments?.getString("categoryName") ?: ""
             val sentenceViewModel: SentenceViewModel = hiltViewModel()
-            SentenceListScreen(categoryId, categoryName, sentenceViewModel)
+            SentenceListScreen(categoryId, categoryName, sentenceViewModel){
+                navController.navigate(Screen.Category.route)
+            }
         }
 
 //        composable(Screen.Admin.route) {
