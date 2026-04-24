@@ -43,8 +43,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
         composable(Screen.Settings.route) {
             val settingsVm: SettingsViewModel = hiltViewModel()
             SettingsScreen (settingsVm){
-                navController.navigate(Screen.Category.route)
-            }
+                navController.popBackStack()            }
         }
 
         composable(Screen.Auth.route) {
@@ -74,20 +73,8 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
             val categoryName = backStackEntry.arguments?.getString("categoryName") ?: ""
             val sentenceViewModel: SentenceViewModel = hiltViewModel()
             SentenceListScreen(categoryId, categoryName, sentenceViewModel){
-                navController.navigate(Screen.Category.route)
+                navController.popBackStack()
             }
         }
-
-//        composable(Screen.Admin.route) {
-//            val authVm: AuthViewModel = hiltViewModel()
-//            val adminVm: AdminViewModel = hiltViewModel()
-//            AdminScreen( adminVm, authVm) {
-//                navController.navigate(Screen.Splash.route) {
-//                    popUpTo(Screen.Auth.route) {
-//                        inclusive = true
-//                    }
-//                }
-//            }
-//        }
     }
 }
