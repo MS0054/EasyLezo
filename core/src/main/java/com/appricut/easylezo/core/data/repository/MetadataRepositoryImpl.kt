@@ -15,6 +15,7 @@ import com.appricut.easylezo.core.domain.model.LastUpdate
 import com.appricut.easylezo.core.domain.model.Metadata
 import com.appricut.easylezo.core.domain.model.Resource
 import com.appricut.easylezo.core.domain.model.Settings
+import com.appricut.easylezo.core.domain.model.UpdateInfo
 import com.appricut.easylezo.core.domain.repository.AppLanguagesRepository
 import com.appricut.easylezo.core.domain.repository.MetadataRepository
 import kotlinx.coroutines.flow.Flow
@@ -76,6 +77,11 @@ class MetadataRepositoryImpl @Inject constructor(
 
     override suspend fun updateMetadataSettings(settings: Settings) {
         metadataApi.updateMetadataSettings(settings.toDto())
+        syncMetadata()
+    }
+
+    override suspend fun updateMetadataUpdateInfo(updateInfo: UpdateInfo) {
+        metadataApi.updateMetadataUpdateInfo(updateInfo.toDto())
         syncMetadata()
     }
 

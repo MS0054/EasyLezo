@@ -79,6 +79,7 @@ dependencies {
     api("com.google.firebase:firebase-auth-ktx")
     api("com.google.firebase:firebase-firestore-ktx")
     api("com.google.firebase:firebase-analytics-ktx")
+    api("com.google.firebase:firebase-messaging-ktx")
 
     // Room
     implementation(libs.room.runtime)

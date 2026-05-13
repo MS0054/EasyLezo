@@ -17,7 +17,6 @@ class GetCategoriesUseCase @Inject constructor(
         val appLanguagesFlow = appLanguagesRepository.observeAppLanguages()
 
         return categoriesFlow.combine(appLanguagesFlow) { categories, languages ->
-            Log.i("zoooo", languages.toString())
             categories.map { category ->
                 val fromText = category.translations.find { it.language == languages.from }?.text ?: ""
                 val toText = category.translations.find { it.language == languages.to }?.text ?: ""

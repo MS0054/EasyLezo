@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import com.appricut.easylezo.core.domain.model.LastUpdate
 import com.appricut.easylezo.core.domain.model.Resource
 import com.appricut.easylezo.core.domain.model.Settings
+import com.appricut.easylezo.core.domain.model.UpdateInfo
 
 @Entity(tableName = "metadata")
 data class MetadataEntity(
@@ -13,6 +14,9 @@ data class MetadataEntity(
 
     @Embedded(prefix = "lastUpdate_")
     var lastUpdate: LastUpdate = LastUpdate(),
+
+    @Embedded(prefix = "updateInfo_")
+    val updateInfo: UpdateInfo = UpdateInfo(),
 
     @Embedded(prefix = "settings_")
     val settings: Settings = Settings(),

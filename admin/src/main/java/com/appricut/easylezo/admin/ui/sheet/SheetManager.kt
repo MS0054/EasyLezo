@@ -32,6 +32,7 @@ import com.appricut.easylezo.admin.ui.screen.metadata.MetadataV
 import com.appricut.easylezo.admin.ui.screen.metadata.sheet.AppLanguagesSheet
 import com.appricut.easylezo.admin.ui.screen.metadata.sheet.LastUpdateSheet
 import com.appricut.easylezo.admin.ui.screen.metadata.sheet.SettingsSheet
+import com.appricut.easylezo.admin.ui.screen.metadata.sheet.UpdateInfoSheet
 import com.appricut.easylezo.admin.ui.screen.resource.ResourceV
 import com.appricut.easylezo.admin.ui.screen.resource.sheet.AddResourceSheet
 import com.appricut.easylezo.admin.ui.screen.resource.sheet.EditResourceSheet
@@ -42,6 +43,7 @@ import com.appricut.easylezo.admin.ui.screen.sentence.sheet.SortSentenceSheet
 import com.appricut.easylezo.admin.ui.screen.user.UserV
 import com.appricut.easylezo.core.domain.model.AppLanguages
 import com.appricut.easylezo.core.domain.model.Settings
+import com.appricut.easylezo.core.domain.model.UpdateInfo
 import kotlinx.coroutines.flow.merge
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,26 +78,21 @@ fun SheetManager(
         ).collect { event ->
             when (event) {
                 is UiEvent.Started -> {
-                    Log.i("zoooo", "2")
                     sheetV.closeSheet()
                     onRefresh(RefreshData.PROGRESS)
                 }
                 is UiEvent.SyncStatue -> {
-                    Log.i("zoooo", "1: ${event.isSynced}")
                     isSynced(event.isSynced)
                     if (event.isSynced) onRefresh(RefreshData.SYNC) else onRefresh(RefreshData.DONE)
                 }
                 is UiEvent.StartSync -> {
-                    Log.i("zoooo", "3")
                     workerTag = event.workerTag
                 }
                 is UiEvent.Success -> {
-                    Log.i("zoooo", "4")
 //                    onRefresh(RefreshData.DONE)
                     Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                 }
                 is UiEvent.Error -> {
-                    Log.i("zoooo", "5")
                     onRefresh(RefreshData.ERROR)
                     Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                 }
@@ -104,7 +101,6 @@ fun SheetManager(
     }
 
     LaunchedEffect(workerTag) {
-        Log.i("zoooo", "6")
         if (workerTag.isNotEmpty()) {
             WorkManager.getInstance(context).getWorkInfosByTagFlow(workerTag).collect { workInfos ->
                 val workInfo = workInfos.firstOrNull()
@@ -139,6 +135,16 @@ fun SheetManager(
                         },
                         onDismiss = {
                             sheetV.closeSheet()
+                        }
+                    )
+                }
+                is AppSheet.UpdateInfo -> {
+                    val updateInfo = metadataV.metadataUpdateInfoUiState.value.data ?: UpdateInfo()
+                    UpdateInfoSheet (
+                        updateInfo = updateInfo,
+                        onDismiss = { sheetV.closeSheet() },
+                        onSubmit = {
+                            metadataV.updateMetadataUpdateInfo(it)
                         }
                     )
                 }
