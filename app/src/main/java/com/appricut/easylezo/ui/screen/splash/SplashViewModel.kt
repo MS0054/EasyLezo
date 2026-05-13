@@ -4,8 +4,10 @@ import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.appricut.easylezo.core.domain.model.UpdateResult
 import com.appricut.easylezo.core.domain.usecase.category.SyncCategoriesUseCase
 import com.appricut.easylezo.core.domain.usecase.language.SyncLanguagesUseCase
+import com.appricut.easylezo.core.domain.usecase.metadata.CheckUpdateUseCase
 import com.appricut.easylezo.core.domain.usecase.metadata.SyncMetadataUseCase
 import com.appricut.easylezo.core.domain.usecase.sentence.SyncSentencesUseCase
 import com.appricut.easylezo.core.domain.usecase.user.DecideUserRoleUseCase
@@ -25,31 +27,56 @@ class SplashViewModel @Inject constructor(
     private val syncCategoriesUseCase: SyncCategoriesUseCase,
     private val decideUserRoleUseCase: DecideUserRoleUseCase,
     private val syncSentencesUseCase: SyncSentencesUseCase,
+    private val checkUpdateUseCase: CheckUpdateUseCase
 ) : ViewModel() {
 
 
-
+    private val _updateState = MutableStateFlow<UpdateStatus>(UpdateStatus.Idle)
+    val updateState = _updateState.asStateFlow()
     private val _screen = MutableStateFlow<Screen?>(null)
     val screen = _screen.asStateFlow()
 
-    fun start(context: Context) {
+    init {
+        start()
+    }
+
+
+    fun start() {
         viewModelScope.launch {
             try {
                 syncMetadataUseCase()
-                syncCategoriesUseCase()
-                syncLanguagesUseCase()
-                syncSentencesUseCase()
+                checkAppUpdate()
+//                syncCategoriesUseCase()
+//                syncLanguagesUseCase()
+//                syncSentencesUseCase()
                 // اجرا به صورت همزمان برای صرفه‌جویی در زمان
-//                joinAll(
-//                    async { syncMetadataUseCase() },
-//                    async { syncCategoriesUseCase() },
-//                    async { syncLanguagesUseCase() },
-//                    async { syncSentencesUseCase() }
-//                )
-                _screen.value = Screen.Category
+                joinAll(
+                    async { syncCategoriesUseCase() },
+                    async { syncLanguagesUseCase() },
+                    async { syncSentencesUseCase() }
+                )
+//                _screen.value = Screen.Category
             } catch (e: Exception) {
-                Toast.makeText(context, "$e", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(context, "$e", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
+    fun checkAppUpdate() {
+        viewModelScope.launch {
+            try {
+                val updateInfo = checkUpdateUseCase()
+                _updateState.value = UpdateStatus.Success(updateInfo)
+            } catch (e: Exception) {
+                _updateState.value = UpdateStatus.Error
+            }
+        }
+    }
+}
+
+
+sealed class UpdateStatus {
+    object Idle : UpdateStatus()
+    data class Success(val updateResult: UpdateResult) : UpdateStatus()
+    object Error : UpdateStatus()
 }

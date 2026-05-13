@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.appricut.easylezo.admin.ui.component.LanguageAwareText
 import com.appricut.easylezo.core.domain.model.Category
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -84,7 +85,7 @@ fun CategoryS(
                                     )
                             ) {
                                 Column(modifier = Modifier.padding(12.dp)) {
-                                    Text(
+                                    LanguageAwareText(
                                         cat.fromText,
                                         fontSize = 16.sp,
                                         style = MaterialTheme.typography.titleLarge

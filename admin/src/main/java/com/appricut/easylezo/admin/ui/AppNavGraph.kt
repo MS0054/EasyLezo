@@ -283,6 +283,9 @@ fun DynamicHeader(
                     text = { Text("Settings", color = Color.Gray) },
                     onClick = { showMenu = false; onSheetOpen(AppSheet.Settings) })
                 DropdownMenuItem(
+                    text = { Text("updateInfo", color = Color.Gray) },
+                    onClick = { showMenu = false; onSheetOpen(AppSheet.UpdateInfo) })
+                DropdownMenuItem(
                     text = { Text("UpdateDatabase", color = Color.Gray) },
                     onClick = { showMenu = false; onSheetOpen(AppSheet.LastUpdate) })
             }

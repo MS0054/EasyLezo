@@ -16,6 +16,7 @@ import com.appricut.easylezo.core.domain.model.ResourceDto
 import com.appricut.easylezo.core.domain.model.Sentence
 import com.appricut.easylezo.core.domain.model.Settings
 import com.appricut.easylezo.core.domain.model.Translate
+import com.appricut.easylezo.core.domain.model.UpdateInfoDto
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -70,6 +71,14 @@ class MetadataApiImpl @Inject constructor(
             throw e
         }
     }
+    override suspend fun updateMetadataUpdateInfo(updateInfo: UpdateInfoDto) {
+        try {
+            metadataCol.document("Main").update("updateInfo", updateInfo).await()
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
 
     override suspend fun updateMetadataResources(resources: List<ResourceDto>) {
         try {

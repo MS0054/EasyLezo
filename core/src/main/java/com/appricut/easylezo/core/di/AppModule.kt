@@ -21,6 +21,7 @@ import com.appricut.easylezo.core.data.remote.api.SentenceApi
 import com.appricut.easylezo.core.data.remote.api.SentenceApiImpl
 import com.appricut.easylezo.core.data.remote.api.UserApi
 import com.appricut.easylezo.core.data.remote.api.UserApiImpl
+import com.appricut.easylezo.core.data.repository.AppInfoProviderImpl
 import com.appricut.easylezo.core.data.repository.AppLanguagesRepositoryImpl
 import com.appricut.easylezo.core.data.repository.AuthRepository2
 import com.appricut.easylezo.core.data.repository.AuthRepositoryImpl
@@ -30,6 +31,7 @@ import com.appricut.easylezo.core.data.repository.MetadataRepositoryImpl
 import com.appricut.easylezo.core.data.repository.SentenceRepositoryImpl
 import com.appricut.easylezo.core.data.repository.UserRepositoryImpl
 import com.appricut.easylezo.core.domain.manager.SyncManager
+import com.appricut.easylezo.core.domain.repository.AppInfoProvider
 import com.appricut.easylezo.core.domain.repository.AppLanguagesRepository
 import com.appricut.easylezo.core.domain.repository.AuthRepository
 import com.appricut.easylezo.core.domain.repository.CategoryRepository
@@ -169,6 +171,10 @@ object AppModule {
         sentenceDao,
         sentenceApi
     )
+
+    @Singleton
+    @Provides
+    fun provideAppInfoProvider(@ApplicationContext context: Context): AppInfoProvider = AppInfoProviderImpl(context)
 
 
 

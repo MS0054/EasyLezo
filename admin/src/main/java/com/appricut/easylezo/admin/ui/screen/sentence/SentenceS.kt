@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
+import com.appricut.easylezo.admin.ui.component.LanguageAwareText
 import com.appricut.easylezo.core.domain.model.Sentence
 import java.io.File
 
@@ -108,7 +109,7 @@ fun SentenceS(
                                         )
                                 ) {
                                     Row {
-                                        Text(
+                                        LanguageAwareText(
                                             index.toString(),
                                             textAlign = TextAlign.Center,
                                             modifier = Modifier
@@ -120,12 +121,12 @@ fun SentenceS(
                                             style = MaterialTheme.typography.bodySmall
                                         )
                                         Column(modifier = Modifier.padding(12.dp, 10.dp)) {
-                                            Text(
+                                            LanguageAwareText(
                                                 sentence.fromText,
                                                 fontSize = 16.sp,
                                                 style = MaterialTheme.typography.titleLarge
                                             )
-                                            Text(
+                                            LanguageAwareText(
                                                 sentence.toText,
                                                 fontSize = 13.sp,
                                                 style = MaterialTheme.typography.titleLarge

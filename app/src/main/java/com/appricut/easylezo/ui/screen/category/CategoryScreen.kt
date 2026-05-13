@@ -116,9 +116,10 @@ fun HeaderSection(onSettingsClick: () -> Unit, onProfileClick: () -> Unit) {
             Icon(painter = painterResource(R.drawable.outline_translate_24), contentDescription = "Settings")
         }
         LanguageAwareText("L I N G O", style = MaterialTheme.typography.headlineMedium)
-        IconButton(onClick = onProfileClick) {
-            Icon(imageVector = Icons.Filled.Settings, contentDescription = "")
-        }
+
+//        IconButton(onClick = onProfileClick) {
+//            Icon(imageVector = Icons.Filled.Settings, contentDescription = "")
+//        }
     }
 }
 

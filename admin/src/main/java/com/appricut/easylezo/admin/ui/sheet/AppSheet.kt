@@ -14,6 +14,7 @@ sealed class AppSheet {
     object LastUpdate : AppSheet()
     object AppLanguage : AppSheet()
     object Settings: AppSheet()
+    object UpdateInfo: AppSheet()
     object Sync: AppSheet()
     object AddResource: AppSheet()
     class EditResource(val resource: Resource): AppSheet()

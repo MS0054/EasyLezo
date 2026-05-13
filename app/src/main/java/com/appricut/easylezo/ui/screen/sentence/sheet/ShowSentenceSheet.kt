@@ -38,7 +38,7 @@ fun ShowSentenceSheet(
                 .padding(20.dp)
         ) {
             LanguageAwareText(
-                text = sentence?.fromText ?: "",
+                text = sentence?.toText ?: "",
                 fontSize = 32.sp,
                 style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier.fillMaxWidth(),
@@ -48,7 +48,7 @@ fun ShowSentenceSheet(
             Spacer(Modifier.height(32.dp))
 
             LanguageAwareText(
-                text = sentence?.toText ?: "",
+                text = sentence?.fromText ?: "",
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
