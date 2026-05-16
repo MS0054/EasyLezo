@@ -1,8 +1,5 @@
 package com.appricut.easylezo.core.data.remote.api
 
-import android.util.Log
-import com.appricut.easylezo.core.data.local.entity.AppLanguagesEntity
-import com.appricut.easylezo.core.data.mapper.toDto
 import com.appricut.easylezo.core.data.remote.model.AppLanguagesDto
 import com.appricut.easylezo.core.data.remote.model.LastUpdateDto
 import com.appricut.easylezo.core.data.remote.model.MetadataDto
@@ -10,10 +7,7 @@ import com.appricut.easylezo.core.data.remote.model.SentenceDto
 import com.appricut.easylezo.core.data.remote.model.SettingsDto
 import com.appricut.easylezo.core.domain.model.AppLanguages
 import com.appricut.easylezo.core.domain.model.LastUpdate
-import com.appricut.easylezo.core.domain.model.Metadata
-import com.appricut.easylezo.core.domain.model.Resource
 import com.appricut.easylezo.core.domain.model.ResourceDto
-import com.appricut.easylezo.core.domain.model.Sentence
 import com.appricut.easylezo.core.domain.model.Settings
 import com.appricut.easylezo.core.domain.model.Translate
 import com.appricut.easylezo.core.domain.model.UpdateInfoDto

@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,13 +41,18 @@ fun LanguageSelectionSheet(
     onLanguageSelected: (Language) -> Unit,
     onDismiss: () -> Unit
 ) {
+
+    val sheetState = rememberModalBottomSheetState (
+        skipPartiallyExpanded = true
+    )
+
     ModalBottomSheet (
         onDismissRequest = onDismiss,
+        sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.surface,
     ) {
         Column (
             modifier = Modifier
-                .fillMaxSize() // تمام صفحه شدن
                 .padding(bottom = 16.dp)
         ) {
             // تیتر شیت
@@ -60,7 +68,7 @@ fun LanguageSelectionSheet(
 
             // لیست زبان‌ها
             LazyColumn (
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().wrapContentHeight()
             ) {
                 items(languages) { language ->
                     LanguageRowItem(

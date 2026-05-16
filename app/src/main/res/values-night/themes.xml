@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.EasyLezo" parent="android:Theme.Material.NoActionBar" />
+    <style name="Theme.EasyLezo.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@android:color/system_background_dark</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.EasyLezo</item>
+    </style>
+</resources>

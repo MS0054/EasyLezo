@@ -1,6 +1,7 @@
 package com.appricut.easylezo.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -32,22 +33,23 @@ sealed class Screen(val route: String) {
 
 @Composable
 fun AppNavGraph(navController: NavHostController = rememberNavController()) {
-    NavHost( navController,Screen.Splash.route) {
+    val splashVM: SplashViewModel = hiltViewModel()
+    val settingsVm: SettingsViewModel = hiltViewModel()
+    val authVm: AuthViewModel = hiltViewModel()
+    val categoryViewModel: CategoryViewModel = hiltViewModel()
+    val sentenceViewModel: SentenceViewModel = hiltViewModel()
 
+    NavHost( navController,Screen.Splash.route) {
         composable(Screen.Splash.route) {
-            val splashVM: SplashViewModel = hiltViewModel()
             SplashScreen(splashVM) { route ->
                 navController.navigate(route) { popUpTo(Screen.Splash.route) { inclusive = true } }
             }
         }
         composable(Screen.Settings.route) {
-            val settingsVm: SettingsViewModel = hiltViewModel()
             SettingsScreen (settingsVm){
                 navController.popBackStack()            }
         }
-
         composable(Screen.Auth.route) {
-            val authVm: AuthViewModel = hiltViewModel()
             AuthScreen(authVm) {
                 navController.navigate(Screen.Splash.route) {
                     popUpTo(Screen.Auth.route) {
@@ -56,9 +58,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
                 }
             }
         }
-
         composable(Screen.Category.route) {
-            val categoryViewModel: CategoryViewModel = hiltViewModel()
             CategoryListScreen(
                 categoryViewModel,
                 { category ->
@@ -67,11 +67,9 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
                     navController.navigate(Screen.Settings.route)
                 })
         }
-
         composable(Screen.Sentences.route,) { backStackEntry ->
             val categoryId = backStackEntry.arguments?.getString("categoryId") ?: ""
             val categoryName = backStackEntry.arguments?.getString("categoryName") ?: ""
-            val sentenceViewModel: SentenceViewModel = hiltViewModel()
             SentenceListScreen(categoryId, categoryName, sentenceViewModel){
                 navController.popBackStack()
             }
