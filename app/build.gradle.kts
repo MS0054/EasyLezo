@@ -19,7 +19,7 @@ android {
         minSdk = 24
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 //        consumerProguardFiles("consumer-rules.pro")
@@ -77,6 +77,9 @@ dependencies {
     ksp(libs.hilt.compiler)
 
     implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
+
+    // Splash
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
     // Testing
     testImplementation(libs.junit)
