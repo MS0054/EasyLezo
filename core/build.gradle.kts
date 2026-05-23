@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-    namespace = "com.appricut.easylezo.core"
+    namespace = "am.mojtaba.armengo.core"
     compileSdk = 35
 
     defaultConfig {

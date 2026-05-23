@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "74942442858",
-    "project_id": "teacharmenia",
-    "storage_bucket": "teacharmenia.firebasestorage.app"
+    "project_number": "906570310314",
+    "project_id": "armengo-c4583",
+    "storage_bucket": "armengo-c4583.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:74942442858:android:a2f079e40a0b42b8e28913",
+        "mobilesdk_app_id": "1:906570310314:android:d0418ac3a2fdd0557ae6d3",
         "android_client_info": {
-          "package_name": "com.appricut.easylezo"
+          "package_name": "am.mojtaba.armengo"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC7BjnNyD4xPUa2xTQeg1UuYT074XHDh_c"
+          "current_key": "AIzaSyBXN0ybENmgonoFRH0s_xf4lAK6Lgf9Vp0"
         }
       ],
       "services": {
@@ -26,15 +26,15 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:74942442858:android:8a20adac291e1109e28913",
+        "mobilesdk_app_id": "1:906570310314:android:789146cf8df2c45b7ae6d3",
         "android_client_info": {
-          "package_name": "com.appricut.easylezo.admin"
+          "package_name": "am.mojtaba.armengo.admin"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC7BjnNyD4xPUa2xTQeg1UuYT074XHDh_c"
+          "current_key": "AIzaSyBXN0ybENmgonoFRH0s_xf4lAK6Lgf9Vp0"
         }
       ],
       "services": {
