@@ -11,11 +11,11 @@ plugins {
 }
 
 android {
-    namespace = "com.appricut.easylezo.app"
+    namespace = "am.mojtaba.armengo.app"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.appricut.easylezo"
+        applicationId = "am.mojtaba.armengo"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

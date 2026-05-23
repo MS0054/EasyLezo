@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:name=".G"
+        android:name="am.mojtaba.armengo.admin.G"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EasyLezo">
         <activity
-            android:name=".AdminActivity"
+            android:name="am.mojtaba.armengo.admin.AdminActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.EasyLezo">
