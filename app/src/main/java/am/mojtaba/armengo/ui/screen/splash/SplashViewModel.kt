@@ -3,11 +3,11 @@ package am.mojtaba.armengo.ui.screen.splash
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import am.mojtaba.armengo.core.domain.model.UpdateResult
-import am.mojtaba.armengo.core.domain.usecase.category.SyncCategoriesUseCase
-import am.mojtaba.armengo.core.domain.usecase.language.SyncLanguagesUseCase
+import am.mojtaba.armengo.core.domain.usecase.category.SyncCategoryFromServerUseCase
+import am.mojtaba.armengo.core.domain.usecase.language.SyncLanguageFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.metadata.CheckUpdateUseCase
 import am.mojtaba.armengo.core.domain.usecase.metadata.SyncMetadataUseCase
-import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentencesUseCase
+import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.user.DecideUserRoleUseCase
 import am.mojtaba.armengo.ui.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,10 +21,10 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val syncMetadataUseCase: SyncMetadataUseCase,
-    private val syncLanguagesUseCase: SyncLanguagesUseCase,
-    private val syncCategoriesUseCase: SyncCategoriesUseCase,
+    private val syncLanguageFromServerUseCase: SyncLanguageFromServerUseCase,
+    private val syncCategoryFromServerUseCase: SyncCategoryFromServerUseCase,
     private val decideUserRoleUseCase: DecideUserRoleUseCase,
-    private val syncSentencesUseCase: SyncSentencesUseCase,
+    private val syncSentenceFromServerUseCase: SyncSentenceFromServerUseCase,
     private val checkUpdateUseCase: CheckUpdateUseCase
 ) : ViewModel() {
 
@@ -49,9 +49,9 @@ class SplashViewModel @Inject constructor(
 //                syncSentencesUseCase()
                 // اجرا به صورت همزمان برای صرفه‌جویی در زمان
                 joinAll(
-                    async { syncCategoriesUseCase() },
-                    async { syncLanguagesUseCase() },
-                    async { syncSentencesUseCase() }
+                    async { syncCategoryFromServerUseCase() },
+                    async { syncLanguageFromServerUseCase() },
+                    async { syncSentenceFromServerUseCase() }
                 )
 //                _screen.value = Screen.Category
             } catch (e: Exception) {

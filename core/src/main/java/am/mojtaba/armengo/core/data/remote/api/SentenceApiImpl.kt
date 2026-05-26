@@ -1,8 +1,10 @@
 package am.mojtaba.armengo.core.data.remote.api
 
+import am.mojtaba.armengo.core.data.remote.model.LanguageDto
 import android.os.Environment
 import am.mojtaba.armengo.core.data.remote.model.SentenceDto
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import io.github.whitemagic2014.tts.TTS
 import io.github.whitemagic2014.tts.TTSVoice
 import io.github.whitemagic2014.tts.bean.Voice
@@ -11,6 +13,7 @@ import java.io.File
 import java.util.stream.Collectors
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.collections.forEach
 
 @Singleton
 class SentenceApiImpl @Inject constructor(
@@ -26,43 +29,27 @@ class SentenceApiImpl @Inject constructor(
         }
     }
 
-    override suspend fun addSentence(sentence: SentenceDto) {
-        try {
-            sentencesCol.add(sentence).await()
-        } catch (e: Exception) {
-            // manage network error
-            throw e
-        }
-    }
-
-    override suspend fun updateSentence(sentence: SentenceDto) {
-        try {
-            sentencesCol.document(sentence.id).set(sentence).await()
-        } catch (e: Exception) {
-            // manage network error
-            throw e
-        }
-    }
-
-    override suspend fun deleteSentence(sentence: SentenceDto) {
-        try {
-            sentencesCol.document(sentence.id).delete().await()
-        } catch (e: Exception) {
-            // manage network error
-            throw e
-        }
-    }
-
-    override suspend fun sortSentences(sentences: List<SentenceDto>) {
+    override suspend fun syncSentences(sentences: List<SentenceDto>) {
         val batch = db.batch()
-
-        sentences.forEach { sentence ->
-            batch.update(
-                sentencesCol.document(sentence.id),
-                "order",
-                sentence.order
-            )
+        sentences.forEach { dto ->
+            val docRef = sentencesCol.document(dto.id)
+            if (dto.isDeleted) {
+                batch.delete(docRef)
+            } else {
+                val dataMap = mutableMapOf<String, Any?>(
+                    "id" to dto.id,
+                    "categoryId" to dto.categoryId,
+                    "level" to dto.level,
+                    "image" to dto.image,
+                    "order" to dto.order,
+                    "createdAt" to dto.createdAt,
+                    "updatedAt" to dto.updatedAt,
+                    "translations" to dto.translations
+                )
+                batch.set(docRef, dataMap, SetOptions.merge())
+            }
         }
+        batch.commit().await()
     }
 
     override suspend fun downloadVoices(sentences: List<SentenceDto>) {

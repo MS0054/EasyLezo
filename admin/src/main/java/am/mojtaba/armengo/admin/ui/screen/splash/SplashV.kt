@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import am.mojtaba.armengo.admin.ui.Screen
 import am.mojtaba.armengo.core.data.datastore.enums.UserRole
-import am.mojtaba.armengo.core.domain.usecase.category.SyncCategoriesUseCase
+import am.mojtaba.armengo.core.domain.usecase.category.SyncCategoryFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.category.SyncUsersUseCase
-import am.mojtaba.armengo.core.domain.usecase.language.SyncLanguagesUseCase
+import am.mojtaba.armengo.core.domain.usecase.language.SyncLanguageFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.metadata.SyncMetadataUseCase
-import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentencesUseCase
+import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.user.DecideUserRoleUseCase
 import android.util.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,10 +20,10 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashV @Inject constructor(
     private val decideUserRoleUseCase: DecideUserRoleUseCase,
-    private val syncLanguagesUseCase: SyncLanguagesUseCase,
-    private val syncCategoriesUseCase: SyncCategoriesUseCase,
+    private val syncLanguageFromServerUseCase: SyncLanguageFromServerUseCase,
+    private val syncCategoryFromServerUseCase: SyncCategoryFromServerUseCase,
     private val syncMetadataUseCase: SyncMetadataUseCase,
-    private val syncSentencesUseCase: SyncSentencesUseCase,
+    private val syncSentenceFromServerUseCase: SyncSentenceFromServerUseCase,
     private val syncUsersUseCase: SyncUsersUseCase
 ) : ViewModel() {
 
@@ -43,9 +43,9 @@ class SplashV @Inject constructor(
                 _screen.value = when (role) {
                     UserRole.ADMIN -> {
                         syncMetadataUseCase()
-                        syncCategoriesUseCase(isForce)
-                        syncSentencesUseCase(isForce)
-                        syncLanguagesUseCase(isForce)
+                        syncCategoryFromServerUseCase(isForce)
+                        syncSentenceFromServerUseCase(isForce)
+                        syncLanguageFromServerUseCase(isForce)
                         syncUsersUseCase(100)
                         Screen.Category
                     }

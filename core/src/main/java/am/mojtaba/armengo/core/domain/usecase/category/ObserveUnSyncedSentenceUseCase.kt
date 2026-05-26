@@ -1,11 +1,11 @@
 package am.mojtaba.armengo.core.domain.usecase.category
 
-import am.mojtaba.armengo.core.domain.model.Sentence
 import am.mojtaba.armengo.core.domain.repository.SentenceRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class SortSentenceUseCase @Inject constructor(
+class ObserveUnSyncedSentenceUseCase @Inject constructor(
     private val sentenceRepository: SentenceRepository
 ) {
-    suspend operator fun invoke(sentences: List<Sentence>) = sentenceRepository.sortSentenceLocal(sentences)
+    operator fun invoke(): Flow<Boolean> = sentenceRepository.observeUnsynced()
 }

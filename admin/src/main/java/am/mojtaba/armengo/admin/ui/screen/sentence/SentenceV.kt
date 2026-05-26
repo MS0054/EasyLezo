@@ -7,9 +7,14 @@ import am.mojtaba.armengo.core.domain.model.Sentence
 import am.mojtaba.armengo.core.domain.usecase.category.AddSentenceUseCase
 import am.mojtaba.armengo.core.domain.usecase.category.DeleteSentenceUseCase
 import am.mojtaba.armengo.core.domain.usecase.category.DownloadVoiceOfSentencesUseCase
+import am.mojtaba.armengo.core.domain.usecase.category.ObserveUnSyncedLanguageUseCase
+import am.mojtaba.armengo.core.domain.usecase.category.ObserveUnSyncedSentenceUseCase
 import am.mojtaba.armengo.core.domain.usecase.category.SortSentenceUseCase
+import am.mojtaba.armengo.core.domain.usecase.category.SyncLanguageToServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.category.UpdateSentenceUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.GetSentencesUseCase
+import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
+import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceToServerUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,6 +31,9 @@ class SentenceV @Inject constructor(
     private val updateSentenceUseCase: UpdateSentenceUseCase,
     private val sortSentencesUseCase: SortSentenceUseCase,
     private val deleteSentenceUseCase: DeleteSentenceUseCase,
+    private val syncSentenceFromServerUseCase: SyncSentenceFromServerUseCase,
+    private val syncSentenceToServerUseCase: SyncSentenceToServerUseCase,
+    private val observeUnSyncedSentenceUseCase : ObserveUnSyncedSentenceUseCase,
     private val downloadVoiceOfSentencesUseCase: DownloadVoiceOfSentencesUseCase
 
 ) : BaseViewModel() {
@@ -36,6 +44,9 @@ class SentenceV @Inject constructor(
 
     private val _selectedCategoryId = MutableStateFlow<String?>(null)
     val selectedCategoryId: StateFlow<String?> = _selectedCategoryId.asStateFlow()
+
+    private val _unsyncedSentenceUiState = MutableStateFlow(UiState<Boolean>())
+    val unsyncedSentenceUiState: StateFlow<UiState<Boolean>> = _unsyncedSentenceUiState.asStateFlow()
 
 
 
@@ -54,17 +65,33 @@ class SentenceV @Inject constructor(
                 .collect { sentences ->
 //                    downloadVoices(sentences)
                     _sentenceUiState.value = UiState(data = sentences)
+                    isExistUnSyncedSentence()
                 }
         }
     }
 
-    suspend fun downloadVoices(sentences: List<Sentence>): Boolean {
-        return try {
-            downloadVoiceOfSentencesUseCase(sentences)
-            true
-        } catch (e: Exception) {
-            false
+    fun isExistUnSyncedSentence(){
+        viewModelScope.launch {
+            observeUnSyncedSentenceUseCase().collect { isSyncNeeded ->
+                isSyncNeeded(isSyncNeeded)
+                _unsyncedSentenceUiState.value = UiState(data = isSyncNeeded)
+            }
         }
+    }
+
+    fun syncSentenceToServer(workerTag: String = "sync_sentence") {
+        launchSyncWithEvent(
+            action = { syncSentenceToServerUseCase(workerTag) },
+            workerTag = workerTag,
+            successMessage = "Sentence Synced To Server"
+        )
+    }
+
+    fun rejectSentenceChanges() {
+        launchWithEvent(
+            action = { syncSentenceFromServerUseCase(true) },
+            successMessage = "Rejected Changes"
+        )
     }
 
     fun addSentence(sentence: Sentence) {
@@ -88,11 +115,20 @@ class SentenceV @Inject constructor(
         )
     }
 
-    fun deleteSentence(sentence: Sentence) {
+    fun deleteSentence(id: String) {
         launchWithEvent(
-            action = { deleteSentenceUseCase(sentence) },
+            action = { deleteSentenceUseCase(id) },
             successMessage = "Deleted"
         )
+    }
+
+    suspend fun downloadVoices(sentences: List<Sentence>): Boolean {
+        return try {
+            downloadVoiceOfSentencesUseCase(sentences)
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 
 }

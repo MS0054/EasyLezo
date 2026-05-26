@@ -9,7 +9,7 @@ import am.mojtaba.armengo.core.domain.model.User
 sealed class AppSheet {
     object None : AppSheet()
 
-    object LogoutConfirm : AppSheet()
+    object Logout : AppSheet()
 
     object LastUpdate : AppSheet()
     object AppLanguage : AppSheet()

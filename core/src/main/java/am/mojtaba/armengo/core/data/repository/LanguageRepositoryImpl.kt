@@ -21,13 +21,14 @@ class LanguageRepositoryImpl @Inject constructor(
     private val languageApi: LanguageApi,
 ) : LanguageRepository {
 
-    override fun observeLanguages(): Flow<List<Language>> {
-        return languageDao.observeLanguages()
+    override fun observe(): Flow<List<Language>> {
+        return languageDao.observe()
             .map { list -> list?.map { it?.toDomain() ?: Language() } ?: emptyList()   }
     }
-
-    override suspend fun syncLanguages( isForce: Boolean ) {
-
+    override fun observeUnsyncedStatus(): Flow<Boolean> {
+        return languageDao.observeUnsyncedStatus()
+    }
+    override suspend fun syncFromServer(isForce: Boolean ) {
         val metadata = metadataRepository.observeMetadata().first()
         if (metadata.lastUpdate.existNewLanguageData || isForce) {
             val newLanguages = languageApi.getLanguages()
@@ -40,31 +41,15 @@ class LanguageRepositoryImpl @Inject constructor(
         }
     }
     override suspend fun addLanguageLocal(language: Language) {
-        return languageDao.insert(language.toEntity())
-    }
-    override suspend fun addLanguageServer(language: Language) {
-        languageApi.addLanguage(language.toDto())
-        syncLanguages(true)
+        return languageDao.upsert(language.toEntity().copy(isSynced = false))
     }
     override suspend fun updateLanguageLocal(language: Language) {
-        return languageDao.update(language.toEntity())
+        return languageDao.upsert(language.toEntity().copy(isSynced = false))
     }
-    override suspend fun updateLanguageServer(language: Language) {
-        languageApi.updateLanguage(language.toDto())
-        syncLanguages(true)
-    }
-    override suspend fun deleteLanguageLocal(language: Language) {
-        return languageDao.delete(language.toEntity())
-    }
-    override suspend fun deleteLanguageServer(language: Language) {
-        languageApi.deleteLanguage(language.toDto())
-        syncLanguages(true)
+    override suspend fun deleteLanguageLocal(id: String) {
+        return languageDao.softDelete(id)
     }
     override suspend fun sortLanguageLocal(languages: List<Language>) {
-        return languageDao.insertAll(languages.map { it.toEntity() })
-    }
-    override suspend fun sortLanguageServer(languages: List<Language>) {
-        languageApi.sortLanguages(languages.map { it.toDto() })
-        syncLanguages(true)
+        return languageDao.upsertAll(languages.map { it.toEntity().copy(isSynced = false) })
     }
 }

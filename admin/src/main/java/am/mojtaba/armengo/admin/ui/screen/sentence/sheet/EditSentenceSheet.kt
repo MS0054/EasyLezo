@@ -37,7 +37,7 @@ import am.mojtaba.armengo.core.domain.model.Translate
 fun EditSentenceSheet(
     languages: List<Language>,
     sentence: Sentence,
-    onDelete: (Sentence) -> Unit,
+    onDelete: (String) -> Unit,
     onSubmit: (Sentence) -> Unit
 ) {
 
@@ -51,7 +51,7 @@ fun EditSentenceSheet(
         Row (Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("Edit Sentence", style = MaterialTheme.typography.headlineSmall)
             Row {
-                IconButton(onClick = { onDelete(sentence) }) { Icon(Icons.Default.Delete, tint = Color.Red, contentDescription = null) }
+                IconButton(onClick = { onDelete(sentence.id) }) { Icon(Icons.Default.Delete, tint = Color.Red, contentDescription = null) }
                 Button(onClick = {
                     val updatedTranslations = translationMap.map { (code, text) -> Translate(language = code, text = text) }
                     onSubmit(sentence.copy(

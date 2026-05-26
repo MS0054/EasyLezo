@@ -55,6 +55,7 @@ import am.mojtaba.armengo.admin.ui.screen.user.UserV
 import am.mojtaba.armengo.admin.ui.sheet.AppSheet
 import am.mojtaba.armengo.admin.ui.sheet.SheetManager
 import am.mojtaba.armengo.admin.ui.sheet.SheetV
+import android.util.Log
 
 sealed class Screen(val route: String) {
     data object Splash : Screen("splash")
@@ -80,7 +81,7 @@ fun AppNavGraph() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     var refreshStatus by remember { mutableStateOf(RefreshData.DONE) }
-    var isSynced by remember { mutableStateOf(false) }
+    var isSyncNeeded by remember { mutableStateOf(false) }
     var refreshIconColor by remember { mutableStateOf(Color.Gray) }
     val currentRoute = navBackStackEntry?.destination?.route
     val splashV: SplashV = hiltViewModel()
@@ -111,7 +112,9 @@ fun AppNavGraph() {
             }
         },
         onRefresh = { refreshStatus = it },
-        isSynced = { isSynced = it }
+        isSyncNeeded = {
+            Log.i("YAYA", "isSyncNeeded: $it")
+            isSyncNeeded = isSyncNeeded || it } // if was true don't change it
     )
     refreshIconColor = when (refreshStatus) {
         RefreshData.PROGRESS -> Color.Yellow
@@ -126,7 +129,7 @@ fun AppNavGraph() {
                 currentRoute = currentRoute,
                 onScreenOpen = { navController.navigate(it.route) },
                 onSheetOpen = { sheetV.openSheet(it) },
-                isSynced = isSynced,
+                isSyncNeeded = isSyncNeeded,
                 onRefresh = { splashV.start(true)}
             )
         }
@@ -232,7 +235,7 @@ fun DynamicHeader(
     currentRoute: String?,
     onScreenOpen: (Screen) -> Unit,
     onSheetOpen: (AppSheet) -> Unit,
-    isSynced: Boolean,
+    isSyncNeeded: Boolean,
     onRefresh: () -> Unit
 ) {
     var showMenu by remember { mutableStateOf(false) }
@@ -275,7 +278,7 @@ fun DynamicHeader(
                     onClick = { showMenu = false; onScreenOpen(Screen.Resource) })
                 DropdownMenuItem(
                     text = { Text("Logout", color = Color.Red) },
-                    onClick = { showMenu = false; onSheetOpen(AppSheet.LogoutConfirm) })
+                    onClick = { showMenu = false; onSheetOpen(AppSheet.Logout) })
                 DropdownMenuItem(
                     text = { Text("AppLanguages", color = Color.Gray) },
                     onClick = { showMenu = false; onSheetOpen(AppSheet.AppLanguage) })
@@ -292,7 +295,7 @@ fun DynamicHeader(
         },
         actions = {
             if (currentRoute == Screen.Category.route) {
-                if (isSynced) onSyncClicked = { onSheetOpen(AppSheet.Sync) }
+                if (isSyncNeeded) onSyncClicked = { onSheetOpen(AppSheet.Sync) }
                 IconButton(onClick = { onSheetOpen(AppSheet.SortCategory) }) {
                     Icon(Icons.Default.List, contentDescription = null)
                 }
@@ -303,6 +306,7 @@ fun DynamicHeader(
                 }
             }
             if (currentRoute == Screen.Language.route) {
+                if (isSyncNeeded) onSyncClicked = { onSheetOpen(AppSheet.Sync) }
                 IconButton(onClick = { onSheetOpen(AppSheet.SortLanguage) }) {
                     Icon(Icons.Default.List, contentDescription = null)
                 }

@@ -24,7 +24,6 @@ class CategoryApiImpl @Inject constructor(
     }
 
     override suspend fun syncCategories(categories: List<CategoryDto>) {
-        Log.i("CategoryApiImpl", "syncCategories: $categories")
         val batch = db.batch()
         categories.forEach { dto ->
             val docRef = categoriesCol.document(dto.id)

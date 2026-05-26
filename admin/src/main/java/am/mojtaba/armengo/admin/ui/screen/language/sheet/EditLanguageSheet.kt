@@ -19,7 +19,7 @@ import am.mojtaba.armengo.core.domain.model.Language
 fun EditLanguageSheet(
     language: Language, // زبان ورودی برای ویرایش
     onSubmit: (Language) -> Unit,
-    onDelete: (Language) -> Unit
+    onDelete: (String) -> Unit
 ) {
 
     var name by remember { mutableStateOf(language.name) }
@@ -33,7 +33,7 @@ fun EditLanguageSheet(
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("Edit Category", style = MaterialTheme.typography.headlineSmall)
             Row {
-                IconButton(onClick = { onDelete(language) }) { Icon(Icons.Default.Delete, tint = Color.Red, contentDescription = null) }
+                IconButton(onClick = { onDelete(language.id) }) { Icon(Icons.Default.Delete, tint = Color.Red, contentDescription = null) }
                 Button(onClick = { onSubmit(language.copy(
                     name = name,
                     code = code,

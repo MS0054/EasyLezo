@@ -5,17 +5,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface LanguageRepository {
 
-    fun observeLanguages(): Flow<List<Language>>
-    suspend fun syncLanguages( isForce: Boolean )
-
+    fun observe(): Flow<List<Language>>
+    fun observeUnsyncedStatus(): Flow<Boolean>
+    suspend fun syncFromServer(isForce: Boolean)
     suspend fun addLanguageLocal(language: Language)
-    suspend fun addLanguageServer(language: Language)
     suspend fun updateLanguageLocal(language: Language)
-    suspend fun updateLanguageServer(language: Language)
-
-    suspend fun deleteLanguageLocal(language: Language)
-    suspend fun deleteLanguageServer(language: Language)
-
+    suspend fun deleteLanguageLocal(id: String)
     suspend fun sortLanguageLocal(languages: List<Language>)
-    suspend fun sortLanguageServer(languages: List<Language>)
 }

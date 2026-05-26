@@ -1,12 +1,13 @@
 package am.mojtaba.armengo.core.domain.usecase.category
 
 import am.mojtaba.armengo.core.domain.repository.CategoryRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class SyncCategoriesUseCase @Inject constructor(
+class ObserveUnSyncedCategoryUseCase @Inject constructor(
     private val categoryRepository: CategoryRepository
 ) {
-    suspend operator fun invoke(isForce: Boolean = false) {
-        categoryRepository.syncLocal(isForce)
+    operator fun invoke(): Flow<Boolean> {
+        return categoryRepository.observeUnsyncedStatus()
     }
 }

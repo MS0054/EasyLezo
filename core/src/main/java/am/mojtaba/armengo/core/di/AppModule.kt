@@ -43,15 +43,15 @@ import am.mojtaba.armengo.core.domain.usecase.auth.AuthUseCase
 import am.mojtaba.armengo.core.domain.usecase.category.GetCategoriesUseCase
 import am.mojtaba.armengo.core.domain.usecase.language.GetLanguagesUseCase
 import am.mojtaba.armengo.core.domain.usecase.metadata.GetMetadataUseCase
-import am.mojtaba.armengo.core.domain.usecase.category.SyncCategoriesUseCase
-import am.mojtaba.armengo.core.domain.usecase.language.SyncLanguagesUseCase
+import am.mojtaba.armengo.core.domain.usecase.category.SyncCategoryFromServerUseCase
+import am.mojtaba.armengo.core.domain.usecase.language.SyncLanguageFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.metadata.SyncMetadataUseCase
 import am.mojtaba.armengo.core.domain.usecase.user.SyncUserUseCase
 import am.mojtaba.armengo.core.domain.usecase.appLanguages.SyncAppLanguagesUseCase
 import am.mojtaba.armengo.core.domain.usecase.user.DecideUserRoleUseCase
 import am.mojtaba.armengo.core.domain.usecase.appLanguages.GetAppLanguagesUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.GetSentencesUseCase
-import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentencesUseCase
+import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -227,7 +227,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideSyncLanguagesUseCase(languageRepo: LanguageRepository) = SyncLanguagesUseCase(languageRepo)
+    fun provideSyncLanguagesUseCase(languageRepo: LanguageRepository) = SyncLanguageFromServerUseCase(languageRepo)
 
     @Singleton
     @Provides
@@ -249,7 +249,7 @@ object AppModule {
     fun provideUpdateUserAppLanguagesUseCase(userRepository: UserRepository, appLanguagesRepository: AppLanguagesRepository) = SyncAppLanguagesUseCase(userRepository, appLanguagesRepository)
     @Singleton
     @Provides
-    fun provideSyncCategoriesUseCase(categoryRepository: CategoryRepository)= SyncCategoriesUseCase(categoryRepository)
+    fun provideSyncCategoriesUseCase(categoryRepository: CategoryRepository)= SyncCategoryFromServerUseCase(categoryRepository)
     @Singleton
     @Provides
     fun provideGetCategoriesUseCase(categoryRepository: CategoryRepository, appLanguagesRepository: AppLanguagesRepository)= GetCategoriesUseCase(categoryRepository, appLanguagesRepository)
@@ -258,6 +258,6 @@ object AppModule {
     fun provideGetSentencesUseCase(sentenceRepository: SentenceRepository, appLanguagesRepository: AppLanguagesRepository) = GetSentencesUseCase(sentenceRepository, appLanguagesRepository)
     @Singleton
     @Provides
-    fun provideSyncSentencesUseCase(sentenceRepository: SentenceRepository) = SyncSentencesUseCase(sentenceRepository)
+    fun provideSyncSentencesUseCase(sentenceRepository: SentenceRepository) = SyncSentenceFromServerUseCase(sentenceRepository)
 
 }

@@ -7,13 +7,5 @@ import javax.inject.Inject
 class AddSentenceUseCase @Inject constructor(
     private val sentenceRepository: SentenceRepository
 ) {
-    suspend operator fun invoke(sentence: Sentence) {
-//        sentenceRepository.addSentenceLocal(sentence)
-        try {
-            sentenceRepository.addSentenceServer(sentence)
-        } catch (e: Exception) {
-            //  WorkManager
-        }
-    }
-
+    suspend operator fun invoke(sentence: Sentence) = sentenceRepository.addSentenceLocal(sentence)
 }

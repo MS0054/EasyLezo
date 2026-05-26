@@ -1,11 +1,11 @@
 package am.mojtaba.armengo.core.domain.usecase.category
 
-import am.mojtaba.armengo.core.domain.model.Language
 import am.mojtaba.armengo.core.domain.repository.LanguageRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class SortLanguageUseCase @Inject constructor(
+class ObserveUnSyncedLanguageUseCase @Inject constructor(
     private val languageRepository: LanguageRepository
 ) {
-    suspend operator fun invoke(languages: List<Language>) = languageRepository.sortLanguageLocal(languages)
+    operator fun invoke(): Flow<Boolean> = languageRepository.observeUnsyncedStatus()
 }

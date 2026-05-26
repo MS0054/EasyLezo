@@ -12,7 +12,7 @@ class GetSentencesUseCase @Inject constructor(
     private val appLanguagesRepository: AppLanguagesRepository
 ) {
     operator fun invoke(categoryId: String): Flow<List<Sentence>> {
-        val sentencesFlow = sentenceRepository.observeSentences(categoryId)
+        val sentencesFlow = sentenceRepository.observe(categoryId)
         val appLanguagesFlow = appLanguagesRepository.observeAppLanguages()
 
 

@@ -27,9 +27,9 @@ abstract class BaseViewModel : ViewModel() {
         }
     }
 
-    protected fun activeSyncButton(isSynced: Boolean) {
+    protected fun isSyncNeeded(isSyncNeeded: Boolean) {
         viewModelScope.launch {
-            _event.emit(UiEvent.SyncStatue(isSynced))
+            _event.emit(UiEvent.SyncStatue(isSyncNeeded))
         }
     }
 

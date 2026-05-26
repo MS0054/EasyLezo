@@ -5,11 +5,12 @@ import am.mojtaba.armengo.admin.ui.UiState
 import am.mojtaba.armengo.admin.ui.screen.BaseViewModel
 import am.mojtaba.armengo.core.domain.model.Category
 import am.mojtaba.armengo.core.domain.usecase.category.AddCategoryUseCase
-import am.mojtaba.armengo.core.domain.usecase.category.ObserveUnsyncedStatusUseCase
+import am.mojtaba.armengo.core.domain.usecase.category.ObserveUnSyncedCategoryUseCase
 import am.mojtaba.armengo.core.domain.usecase.category.DeleteCategoryUseCase
 import am.mojtaba.armengo.core.domain.usecase.category.GetCategoriesUseCase
 import am.mojtaba.armengo.core.domain.usecase.category.SortCategoryUseCase
-import am.mojtaba.armengo.core.domain.usecase.category.SyncCategoryUseCase
+import am.mojtaba.armengo.core.domain.usecase.category.SyncCategoryFromServerUseCase
+import am.mojtaba.armengo.core.domain.usecase.category.SyncCategoryToServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.category.UpdateCategoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,13 +28,18 @@ class CategoryV @Inject constructor(
     private val updateCategoryUseCase: UpdateCategoryUseCase,
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
     private val sortCategoryUseCase: SortCategoryUseCase,
-    private val syncCategoryUseCase: SyncCategoryUseCase,
-    private val observeUnsyncedStatusUseCase: ObserveUnsyncedStatusUseCase
+    private val syncCategoryToServerUseCase: SyncCategoryToServerUseCase,
+    private val syncCategoryFromServerUseCase: SyncCategoryFromServerUseCase,
+    private val observeUnSyncedCategoryUseCase: ObserveUnSyncedCategoryUseCase
 ) : BaseViewModel() {
 
 
     private val _categoryUiState = MutableStateFlow(UiState<List<Category>>())
     val categoryUiState: StateFlow<UiState<List<Category>>> = _categoryUiState.asStateFlow()
+
+
+    private val _unsyncedCategoryUiState = MutableStateFlow(UiState<Boolean>())
+    val unsyncedCategoryUiState: StateFlow<UiState<Boolean>> = _unsyncedCategoryUiState.asStateFlow()
 
     init {
         getCategories()
@@ -41,6 +47,7 @@ class CategoryV @Inject constructor(
 
 
     private fun getCategories() {
+
         viewModelScope.launch {
             getCategoriesUseCase()
                 .onStart {
@@ -51,19 +58,33 @@ class CategoryV @Inject constructor(
                 }
                 .collect { categories ->
                     _categoryUiState.value = UiState(data = categories)
-                    observeSyncStatus()
+                    isExistUnSyncedCategory()
                 }
         }
     }
 
-    private fun observeSyncStatus() {
+    fun isExistUnSyncedCategory(){
         viewModelScope.launch {
-            observeUnsyncedStatusUseCase().collect { needsSync ->
-                activeSyncButton(needsSync)
+            observeUnSyncedCategoryUseCase().collect { isSyncNeeded ->
+                isSyncNeeded(isSyncNeeded)
+                _unsyncedCategoryUiState.value = UiState(data = isSyncNeeded)
             }
         }
     }
+    fun syncCategoryToServer(workerTag: String = "sync_category") {
+        launchSyncWithEvent(
+            action = { syncCategoryToServerUseCase(workerTag) },
+            workerTag = workerTag,
+            successMessage = "Category Synced To Server"
+        )
+    }
 
+    fun rejectCategoryChanges() {
+        launchWithEvent(
+            action = { syncCategoryFromServerUseCase(true) },
+            successMessage = "Rejected"
+        )
+    }
     fun addCategory(category: Category) {
         launchWithEvent(
             action = { addCategoryUseCase(category) },
@@ -92,11 +113,5 @@ class CategoryV @Inject constructor(
         )
     }
 
-    fun syncCategory(workerTag: String = "sync_category") {
-        launchSyncWithEvent(
-            action = { syncCategoryUseCase(workerTag) },
-            workerTag = workerTag,
-            successMessage = "Category Synced"
-        )
-    }
+
 }
