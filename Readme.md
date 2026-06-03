@@ -6,7 +6,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen.svg?style=flat&logo=android)](https://developer.android.com)
 [![Google Play](https://img.shields.io/badge/Google%20Play-Published-green.svg?style=flat&logo=googleplay)](https://play.google.com/store/apps/details?id=am.mojtaba.armengo)
 
-A production-ready, highly scalable, and enterprise-grade multi-module Android application designed specifically for tourists visiting Armenia. The project is engineered with strict adherence to **Clean Architecture** principles, **MVVM (Model-View-ViewModel)** pattern, and reactive programming.
+A production-ready, highly scalable, and enterprise-grade multi-module Android application designed specifically for tourists visiting Armenia. The project is engineered with strict adherence to **Clean Architecture** principles, **MVVM (Model-View-ViewModel)** pattern, and reactive programming, offering a resilient **Offline-First** experience.
 
 ---
 
@@ -26,7 +26,7 @@ This repository showcases a decoupled, maintainable, and test-driven architectur
 The project enforces a strict unidirectional data flow and separation of concerns across three core structural pillars:
 1. **Presentation Layer:** Powering the UI completely via **Jetpack Compose** (declarative UI framework) and managing UI state deterministically using **MVVM** patterns backed by `StateFlow` and `SharedFlow`.
 2. **Domain Layer:** The pure, framework-agnostic core containing business logic, entity definitions, and highly atomic **Use Cases (Interactors)**.
-3. **Data Layer:** The single source of truth managing data operations. It abstracts data sourcing using the **Repository Pattern**, seamlessly interacting with **Cloud Firestore** and local persistence.
+3. **Data Layer:** Designed around an **Offline-First architecture**. It abstracts data sourcing using the **Repository Pattern**, seamlessly combining local persistence engines and **Cloud Firestore** cache-first query strategies to maintain absolute operational fluidity under poor network conditions.
 
 ```
 [Presentation (Compose / ViewModel)] ──> [Domain (Use Cases / Entities)] <── [Data (Repositories / Firestore)]
@@ -37,7 +37,7 @@ To guarantee fast compilation times (via Gradle remote build caching) and strict
 
 - `:app:user` - The primary application entry point tailored with user-centric modules (Itinerary planner, tour booking, interactive maps, dynamic currency converter).
 - `:app:admin` - The administrative control plane allowing content moderation, tour creation, analytics dashboard, and real-time support management.
-- `:core:database` - Unified reactive data client abstraction over **Firebase Firestore** and local storage wrappers.
+- `:core:database` - Unified reactive data client abstraction over **Firebase Firestore** cache and local storage wrappers.
 - `:core:network` - Global networking configurations, real-time sync listeners, and offline resilience strategies.
 - `:core:designsystem` - Shared Atom-based design tokens, custom Material 3 UI primitives, and unified themes ensuring absolute design consistency.
 - `:core:domain` - Shared enterprise models and base interactors.
@@ -50,7 +50,10 @@ To guarantee fast compilation times (via Gradle remote build caching) and strict
 - **UI Framework:** [Jetpack Compose](https://developer.android.com/jetpack/compose) with Semantic Material 3 design tokens.
 - **Asynchronous Flow:** Kotlin Coroutines (`Structured Concurrency`) and reactive `Cold/Hot Flows` (`StateFlow`, `SharedFlow`).
 - **Dependency Injection:** [Hilt](https://developer.android.com/training/dependency-injection/hilt-android) (Dagger-based compile-time safe DI engine).
-- **Backend Infrastructure:** [Firebase Cloud Firestore](https://firebase.google.com/docs/firestore) utilizing offline persistence, multi-indexed queries, and real-time reactive snapshots.
+- **Backend & Cloud Infrastructure:** 
+  - **Firebase Cloud Firestore:** Configured with aggressive offline caching, multi-indexed queries, and real-time reactive snapshots.
+  - **Firebase Cloud Messaging (FCM):** Fully integrated downstream infrastructure delivering targeted, low-latency contextual push notifications to clients.
+- **Background Processing:** [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager) execution engine implementing constrained-based periodic background sync tasks to guarantee data consistency between local storage and Firestore while preserving battery efficiency.
 - **Navigation:** Compose Navigation with strict type-safe arguments encapsulation.
 - **Image Loading:** Coil (Coroutines-backed performance-optimized asynchronous image decoding pipeline).
 
@@ -104,7 +107,7 @@ The repository is under continuous integration, with the following advanced engi
 
 ```bash
 # Clone the enterprise repository
-git clone https://github.com/your-username/armenia-travel-hub.git
+git clone https://github.com/MS0054/EasyLezo.git
 
 # Initialize environment configurations and run baseline checks
 ./gradlew clean testDebugUnitTest
