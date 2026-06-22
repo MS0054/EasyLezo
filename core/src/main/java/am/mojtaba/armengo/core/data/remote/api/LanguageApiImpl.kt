@@ -13,34 +13,30 @@ class LanguageApiImpl @Inject constructor (
     private val db: FirebaseFirestore
 ): LanguageApi {
 
-    private val languagesCol = db.collection("Languages")
+    companion object {
+        private const val COLLECTION = "Languages"
+        private const val ORDER_FIELD = "order"
+    }
+
+    private val languagesCol = db.collection(COLLECTION)
 
     override suspend fun getLanguages(): List<LanguageDto> {
-        val snap = languagesCol.orderBy("order").get().await()
+        val snap = languagesCol.orderBy(ORDER_FIELD).get().await()
         return snap.documents.mapNotNull { doc ->
             doc.toObject(LanguageDto::class.java)?.copy(id = doc.id)
         }
     }
 
     override suspend fun syncLanguages(languages: List<LanguageDto>) {
+        if (languages.isEmpty()) return
+
         val batch = db.batch()
         languages.forEach { dto ->
             val docRef = languagesCol.document(dto.id)
             if (dto.isDeleted) {
                 batch.delete(docRef)
             } else {
-                val dataMap = mutableMapOf<String, Any?>(
-                    "id" to dto.id,
-                    "name" to dto.name,
-                    "code" to dto.code,
-                    "flag" to dto.flag,
-                    "isFromLanguage" to dto.isFromLanguage,
-                    "isToLanguage" to dto.isToLanguage,
-                    "order" to dto.order,
-                    "createdAt" to dto.createdAt,
-                    "updatedAt" to dto.updatedAt
-                )
-                batch.set(docRef, dataMap, SetOptions.merge())
+                batch.set(docRef, dto, SetOptions.merge())
             }
         }
         batch.commit().await()

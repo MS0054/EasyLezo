@@ -9,24 +9,57 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import am.mojtaba.armengo.core.domain.manager.SyncManager
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SyncManagerImpl (
+@Singleton
+class SyncManagerImpl @Inject constructor(
     private val context: Context
 ) : SyncManager {
-    val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+
+    private val constraints = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .build()
 
     override fun syncCategoryToServer(workerTag: String) {
-        val syncRequest = OneTimeWorkRequestBuilder<CategoryWorker>().setConstraints(constraints).addTag(workerTag).setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 1, TimeUnit.MINUTES).build()
-        WorkManager.getInstance(context).enqueueUniqueWork("category_sync_work", ExistingWorkPolicy.REPLACE, syncRequest)
+        val syncRequest = OneTimeWorkRequestBuilder<CategoryWorker>()
+            .setConstraints(constraints)
+            .addTag(workerTag)
+            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 1, TimeUnit.MINUTES)
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            "category_sync_work",
+            ExistingWorkPolicy.REPLACE,
+            syncRequest
+        )
     }
 
     override fun syncLanguageToServer(workerTag: String) {
-        val syncRequest = OneTimeWorkRequestBuilder< LanguageWorker>().setConstraints(constraints).addTag(workerTag).setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 1, TimeUnit.MINUTES).build()
-        WorkManager.getInstance(context).enqueueUniqueWork("language_sync_work", ExistingWorkPolicy.REPLACE, syncRequest)
+        val syncRequest = OneTimeWorkRequestBuilder<LanguageWorker>()
+            .setConstraints(constraints)
+            .addTag(workerTag)
+            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 1, TimeUnit.MINUTES)
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            "language_sync_work",
+            ExistingWorkPolicy.REPLACE,
+            syncRequest
+        )
     }
 
     override fun syncSentenceToServer(workerTag: String) {
-        val syncRequest = OneTimeWorkRequestBuilder<SentenceWorker>().setConstraints(constraints).addTag(workerTag).setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 1, TimeUnit.MINUTES).build()
-        WorkManager.getInstance(context).enqueueUniqueWork("sentence_sync_work", ExistingWorkPolicy.REPLACE, syncRequest)
+        val syncRequest = OneTimeWorkRequestBuilder<SentenceWorker>()
+            .setConstraints(constraints)
+            .addTag(workerTag)
+            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 1, TimeUnit.MINUTES)
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            "sentence_sync_work",
+            ExistingWorkPolicy.REPLACE,
+            syncRequest
+        )
     }
 }

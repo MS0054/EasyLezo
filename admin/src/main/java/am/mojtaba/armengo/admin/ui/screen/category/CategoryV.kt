@@ -33,44 +33,38 @@ class CategoryV @Inject constructor(
     private val observeUnSyncedCategoryUseCase: ObserveUnSyncedCategoryUseCase
 ) : BaseViewModel() {
 
-
     private val _categoryUiState = MutableStateFlow(UiState<List<Category>>())
     val categoryUiState: StateFlow<UiState<List<Category>>> = _categoryUiState.asStateFlow()
 
-
-    private val _unsyncedCategoryUiState = MutableStateFlow(UiState<Boolean>())
-    val unsyncedCategoryUiState: StateFlow<UiState<Boolean>> = _unsyncedCategoryUiState.asStateFlow()
+    private val _unsyncedCategoryState = MutableStateFlow(false)
+    val unsyncedCategoryState: StateFlow<Boolean> = _unsyncedCategoryState.asStateFlow()
 
     init {
-        getCategories()
+        observeCategories()
+        observeSyncStatus()
     }
 
-
-    private fun getCategories() {
-
+    // مشاهده لیست دسته‌بندی‌ها به صورت واکنشی از دیتابیس
+    private fun observeCategories() {
         viewModelScope.launch {
             getCategoriesUseCase()
-                .onStart {
-                    _categoryUiState.value = UiState(isLoading = true)
-                }
-                .catch { e ->
-                    _categoryUiState.value = UiState(error = e.message ?: "Unknown error")
-                }
+                .onStart { _categoryUiState.value = UiState(isLoading = true) }
+                .catch { e -> _categoryUiState.value = UiState(error = e.message ?: "Unknown error") }
                 .collect { categories ->
                     _categoryUiState.value = UiState(data = categories)
-                    isExistUnSyncedCategory()
                 }
         }
     }
 
-    fun isExistUnSyncedCategory(){
+    private fun observeSyncStatus() {
         viewModelScope.launch {
             observeUnSyncedCategoryUseCase().collect { isSyncNeeded ->
                 isSyncNeeded(isSyncNeeded)
-                _unsyncedCategoryUiState.value = UiState(data = isSyncNeeded)
+                _unsyncedCategoryState.value = isSyncNeeded
             }
         }
     }
+
     fun syncCategoryToServer(workerTag: String = "sync_category") {
         launchSyncWithEvent(
             action = { syncCategoryToServerUseCase(workerTag) },
@@ -81,10 +75,11 @@ class CategoryV @Inject constructor(
 
     fun rejectCategoryChanges() {
         launchWithEvent(
-            action = { syncCategoryFromServerUseCase(true) },
+            action = { syncCategoryFromServerUseCase( true) },
             successMessage = "Rejected"
         )
     }
+
     fun addCategory(category: Category) {
         launchWithEvent(
             action = { addCategoryUseCase(category) },
@@ -112,6 +107,4 @@ class CategoryV @Inject constructor(
             successMessage = "Deleted"
         )
     }
-
-
 }

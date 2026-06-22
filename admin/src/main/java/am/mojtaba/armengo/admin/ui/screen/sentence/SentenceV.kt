@@ -15,6 +15,7 @@ import am.mojtaba.armengo.core.domain.usecase.category.UpdateSentenceUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.GetSentencesUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceToServerUseCase
+import android.util.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -45,36 +46,33 @@ class SentenceV @Inject constructor(
     private val _selectedCategoryId = MutableStateFlow<String?>(null)
     val selectedCategoryId: StateFlow<String?> = _selectedCategoryId.asStateFlow()
 
-    private val _unsyncedSentenceUiState = MutableStateFlow(UiState<Boolean>())
-    val unsyncedSentenceUiState: StateFlow<UiState<Boolean>> = _unsyncedSentenceUiState.asStateFlow()
+    private val _unsyncedSentenceState = MutableStateFlow(false)
+    val unsyncedSentenceState: StateFlow<Boolean> = _unsyncedSentenceState.asStateFlow()
 
 
+    init {
+        observeSyncStatus()
+    }
 
-
-    fun getSentences(categoryId: String) {
-        // save category id for bottom sheets
-        _selectedCategoryId.value = categoryId
+     fun observeSentences(categoryId: String) {
+         _selectedCategoryId.value = categoryId
         viewModelScope.launch {
             getSentencesUseCase(categoryId)
-                .onStart {
-                    _sentenceUiState.value = UiState(isLoading = true)
-                }
-                .catch { e ->
-                    _sentenceUiState.value = UiState(error = e.message ?: "Unknown error")
-                }
+                .onStart { _sentenceUiState.value = UiState(isLoading = true) }
+                .catch { e -> _sentenceUiState.value = UiState(error = e.message ?: "Unknown error") }
                 .collect { sentences ->
-//                    downloadVoices(sentences)
                     _sentenceUiState.value = UiState(data = sentences)
-                    isExistUnSyncedSentence()
+                    observeSyncStatus()
                 }
         }
     }
 
-    fun isExistUnSyncedSentence(){
+
+    fun observeSyncStatus() {
         viewModelScope.launch {
             observeUnSyncedSentenceUseCase().collect { isSyncNeeded ->
                 isSyncNeeded(isSyncNeeded)
-                _unsyncedSentenceUiState.value = UiState(data = isSyncNeeded)
+                _unsyncedSentenceState.value = isSyncNeeded
             }
         }
     }
@@ -95,6 +93,7 @@ class SentenceV @Inject constructor(
     }
 
     fun addSentence(sentence: Sentence) {
+        Log.i("MMOOJJII", "sentence: $sentence")
         launchWithEvent(
             action = { addSentenceUseCase(sentence) },
             successMessage = "Added"

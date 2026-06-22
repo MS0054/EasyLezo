@@ -1,5 +1,6 @@
 package am.mojtaba.armengo.core.data.remote.model
 
+import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
 
 data class LanguageDto(
@@ -15,6 +16,8 @@ data class LanguageDto(
     val order: Int = 0,
     val createdAt: Long = 0,
     val updatedAt: Long = 0,
+    @Exclude
     val isSynced: Boolean = true,
+    @Exclude
     val isDeleted: Boolean = false,
 )

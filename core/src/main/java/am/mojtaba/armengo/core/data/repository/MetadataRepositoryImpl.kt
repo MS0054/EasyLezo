@@ -39,23 +39,28 @@ class MetadataRepositoryImpl @Inject constructor(
         return metadataApi.getMetadata().toDomain()
     }
 
-    override suspend fun syncMetadata(isForce: Boolean) {
+    override suspend fun syncMetadata(isForce: Boolean): Result<Unit> {
+        return try {
 
-        val newMetadata = metadataApi.getMetadata()
-        val currentMetadata = metadataDao.observeMetadata().first() ?: MetadataEntity()
+            val newMetadata = metadataApi.getMetadata()
+            val currentMetadata = metadataDao.observeMetadata().first() ?: MetadataEntity()
 
-        newMetadata.lastUpdate.apply {
-            existNewLanguageData = language > currentMetadata.lastUpdate.language
-            existNewCategoryData = category > currentMetadata.lastUpdate.category
-            existNewSentenceData = sentence > currentMetadata.lastUpdate.sentence
-            existNewUserData = user > currentMetadata.lastUpdate.user
+            newMetadata.lastUpdate.apply {
+                existNewLanguageData = language > currentMetadata.lastUpdate.language
+                existNewCategoryData = category > currentMetadata.lastUpdate.category
+                existNewSentenceData = sentence > currentMetadata.lastUpdate.sentence
+                existNewUserData = user > currentMetadata.lastUpdate.user
+            }
+
+            val appLanguages = appLanguagesRepository.observeAppLanguages().firstOrNull()
+            if (appLanguages == null || appLanguages.isDefault || isForce) {
+                appLanguagesRepository.updateLocalAppLanguages(newMetadata.appLanguages.toDomain())
+            }
+            clearAndInsert(newMetadata.toDomain())
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
         }
-
-        val appLanguages = appLanguagesRepository.observeAppLanguages().firstOrNull()
-        if (appLanguages == null || appLanguages.isDefault || isForce) {
-            appLanguagesRepository.updateLocalAppLanguages(newMetadata.appLanguages.toDomain())
-        }
-        clearAndInsert(newMetadata.toDomain())
     }
 
 

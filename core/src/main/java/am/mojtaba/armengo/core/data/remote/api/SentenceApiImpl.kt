@@ -1,6 +1,5 @@
 package am.mojtaba.armengo.core.data.remote.api
 
-import am.mojtaba.armengo.core.data.remote.model.LanguageDto
 import android.os.Environment
 import am.mojtaba.armengo.core.data.remote.model.SentenceDto
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,33 +19,30 @@ class SentenceApiImpl @Inject constructor(
     private val db: FirebaseFirestore
 ) : SentenceApi {
 
-    private val sentencesCol = db.collection("Sentences")
+    companion object {
+        private const val COLLECTION = "Sentences"
+        private const val ORDER_FIELD = "order"
+    }
+
+    private val sentencesCol = db.collection(COLLECTION)
 
     override suspend fun getSentences(): List<SentenceDto> {
-        val snap = sentencesCol.get().await()
+        val snap = sentencesCol.orderBy(ORDER_FIELD).get().await()
         return snap.documents.mapNotNull { doc ->
             doc.toObject(SentenceDto::class.java)?.copy(id = doc.id)
         }
     }
 
     override suspend fun syncSentences(sentences: List<SentenceDto>) {
+        if (sentences.isEmpty()) return
+
         val batch = db.batch()
         sentences.forEach { dto ->
             val docRef = sentencesCol.document(dto.id)
             if (dto.isDeleted) {
                 batch.delete(docRef)
             } else {
-                val dataMap = mutableMapOf<String, Any?>(
-                    "id" to dto.id,
-                    "categoryId" to dto.categoryId,
-                    "level" to dto.level,
-                    "image" to dto.image,
-                    "order" to dto.order,
-                    "createdAt" to dto.createdAt,
-                    "updatedAt" to dto.updatedAt,
-                    "translations" to dto.translations
-                )
-                batch.set(docRef, dataMap, SetOptions.merge())
+                batch.set(docRef, dto, SetOptions.merge())
             }
         }
         batch.commit().await()

@@ -6,7 +6,6 @@ import javax.inject.Inject
 class SyncCategoryFromServerUseCase @Inject constructor(
     private val categoryRepository: CategoryRepository
 ) {
-    suspend operator fun invoke(isForce: Boolean = false) {
-        categoryRepository.syncLocal(isForce)
-    }
+    suspend operator fun invoke(isForce: Boolean = false) : Result<Unit> = categoryRepository.syncFromServer(isForce)
+
 }

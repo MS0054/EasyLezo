@@ -30,6 +30,7 @@ import coil3.compose.AsyncImage
 import am.mojtaba.armengo.core.domain.model.Language
 import am.mojtaba.armengo.core.domain.model.Sentence
 import am.mojtaba.armengo.core.domain.model.Translate
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,7 +53,8 @@ fun AddSentenceSheet(
             Text("Add Sentence", style = MaterialTheme.typography.headlineSmall)
             Button(onClick = {
                 val translations = translationMap.map { (code, text) -> Translate(language = code, text = text) }
-                onSubmit(Sentence(
+                onSubmit( Sentence(
+                    id = UUID.randomUUID().toString(),
                     categoryId = categoryId,
                     level = level,
                     image = imageUrl,

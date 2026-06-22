@@ -14,13 +14,19 @@ abstract class BaseViewModel : ViewModel() {
 
     protected fun launchWithEvent(
         successMessage: String,
-        action: suspend () -> Unit
+        action: suspend () -> Any? // تغییر به Any برای پذیرش Result یا هر خروجی دیگر
     ) {
         viewModelScope.launch {
             try {
                 _event.emit(UiEvent.Started)
-                action()
-                _event.emit(UiEvent.Success(successMessage))
+                val result = action()
+
+                // اگر خروجی از نوع Result بود، وضعیت failure را چک کن
+                if (result is Result<*> && result.isFailure) {
+                    _event.emit(UiEvent.Error(result.exceptionOrNull()?.message ?: "خطایی رخ داد"))
+                } else {
+                    _event.emit(UiEvent.Success(successMessage))
+                }
             } catch (e: Exception) {
                 _event.emit(UiEvent.Error(e.message ?: "خطایی رخ داد"))
             }
@@ -36,13 +42,18 @@ abstract class BaseViewModel : ViewModel() {
     protected fun launchSyncWithEvent(
         successMessage: String,
         workerTag: String,
-        action: suspend () -> Unit
+        action: suspend () -> Any?
     ) {
         viewModelScope.launch {
             try {
                 _event.emit(UiEvent.StartSync(workerTag))
-                action()
-                _event.emit(UiEvent.Success(successMessage))
+                val result = action()
+
+                if (result is Result<*> && result.isFailure) {
+                    _event.emit(UiEvent.Error(result.exceptionOrNull()?.message ?: "خطایی رخ داد"))
+                } else {
+                    _event.emit(UiEvent.Success(successMessage))
+                }
             } catch (e: Exception) {
                 _event.emit(UiEvent.Error(e.message ?: "خطایی رخ داد"))
             }

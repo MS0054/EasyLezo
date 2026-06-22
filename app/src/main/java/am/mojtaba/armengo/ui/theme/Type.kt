@@ -17,8 +17,6 @@ val quickSandFontFamily = FontFamily(
     Font(R.font.quicksand_bold, FontWeight.Bold)
 )
 
-
-
 val iranSansFontFamily  = FontFamily(
     Font(R.font.iranyekan_bold, FontWeight.Bold),
     Font(R.font.iranyekan_extrabold, FontWeight.ExtraBold),
@@ -26,8 +24,6 @@ val iranSansFontFamily  = FontFamily(
     Font(R.font.iranyekan_normal, FontWeight.Normal)
 )
 
-
-// Set of Material typography styles to start with
 val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,

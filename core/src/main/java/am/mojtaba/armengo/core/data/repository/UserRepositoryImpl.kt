@@ -63,10 +63,15 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun syncUsers(limit: Long) {
-        val users = userApi.getUsers(limit)
-        userDao.clearAll()
-        userDao.insertAll(users.map { it.toEntity() })
+    override suspend fun syncUsers(limit: Long): Result<Unit> {
+        return try {
+            val users = userApi.getUsers(limit)
+            userDao.clearAll()
+            userDao.insertAll(users.map { it.toEntity() })
+            Result.success(Unit)
+        }catch (e: Exception){
+            Result.failure(e)
+        }
     }
 
     override suspend fun updateUser(user: User) {

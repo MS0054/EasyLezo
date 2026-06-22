@@ -6,7 +6,5 @@ import javax.inject.Inject
 class SyncLanguageFromServerUseCase @Inject constructor(
     private val languageRepository: LanguageRepository
 ) {
-    suspend operator fun invoke( isForce: Boolean = false ) {
-        languageRepository.syncFromServer( isForce )
-    }
+    suspend operator fun invoke( isForce: Boolean = false ) : Result<Unit> = languageRepository.syncFromServer(isForce)
 }

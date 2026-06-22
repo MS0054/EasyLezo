@@ -7,5 +7,5 @@ import javax.inject.Inject
 class UpdateSentenceUseCase @Inject constructor(
     private val sentenceRepository: SentenceRepository
 ) {
-    suspend operator fun invoke(sentence: Sentence) =sentenceRepository.updateSentenceLocal(sentence)
+    suspend operator fun invoke(sentence: Sentence) = sentenceRepository.updateSentenceLocal(sentence)
 }

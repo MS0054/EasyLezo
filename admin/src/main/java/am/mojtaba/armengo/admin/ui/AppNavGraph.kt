@@ -294,8 +294,9 @@ fun DynamicHeader(
             }
         },
         actions = {
+            if (isSyncNeeded) onSyncClicked = { onSheetOpen(AppSheet.Sync) }
+
             if (currentRoute == Screen.Category.route) {
-                if (isSyncNeeded) onSyncClicked = { onSheetOpen(AppSheet.Sync) }
                 IconButton(onClick = { onSheetOpen(AppSheet.SortCategory) }) {
                     Icon(Icons.Default.List, contentDescription = null)
                 }
@@ -306,7 +307,6 @@ fun DynamicHeader(
                 }
             }
             if (currentRoute == Screen.Language.route) {
-                if (isSyncNeeded) onSyncClicked = { onSheetOpen(AppSheet.Sync) }
                 IconButton(onClick = { onSheetOpen(AppSheet.SortLanguage) }) {
                     Icon(Icons.Default.List, contentDescription = null)
                 }

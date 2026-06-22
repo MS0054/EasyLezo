@@ -7,7 +7,7 @@ interface LanguageRepository {
 
     fun observe(): Flow<List<Language>>
     fun observeUnsyncedStatus(): Flow<Boolean>
-    suspend fun syncFromServer(isForce: Boolean)
+    suspend fun syncFromServer(isForce: Boolean): Result<Unit>
     suspend fun addLanguageLocal(language: Language)
     suspend fun updateLanguageLocal(language: Language)
     suspend fun deleteLanguageLocal(id: String)

@@ -81,23 +81,29 @@ fun SheetManager(
         ).collect { event ->
             when (event) {
                 is UiEvent.Started -> {
+                    Log.i("MOJI","1")
                     sheetV.closeSheet()
                     refreshStatus = RefreshData.PROGRESS
                 }
                 is UiEvent.SyncStatue -> {
+                    Log.i("MOJI","2")
                     isSyncNeeded(event.isSyncNeeded)
                     if (event.isSyncNeeded) {
+                        Log.i("MOJI","22")
                         refreshStatus = RefreshData.SYNC
                     }
                 }
                 is UiEvent.StartSync -> {
+                    Log.i("MOJI","3")
                     workerTag = event.workerTag
                 }
                 is UiEvent.Success -> {
+                    Log.i("MOJI","4")
                     refreshStatus = RefreshData.DONE
                     Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                 }
                 is UiEvent.Error -> {
+                    Log.i("MOJI","5")
                     refreshStatus = RefreshData.ERROR
                     Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                 }
@@ -131,9 +137,9 @@ fun SheetManager(
 
                     is AppSheet.Sync -> {
                         val isExistUnSyncedUser = false
-                        val isExistUnSyncedCategory = categoryV.unsyncedCategoryUiState.value.data ?: false
-                        val isExistUnSyncedSentence = false
-                        val isExistUnSyncedLanguage = languageV.unsyncedLanguageUiState.value.data ?: false
+                        val isExistUnSyncedCategory = categoryV.unsyncedCategoryState.value ?: false
+                        val isExistUnSyncedSentence = sentenceV.unsyncedSentenceState.value ?: false
+                        val isExistUnSyncedLanguage = languageV.unsyncedLanguageState.value ?: false
 
                         SyncSheet(
                             isExistUnSyncedUser,
@@ -311,6 +317,7 @@ fun SheetManager(
                     is AppSheet.AddSentence -> {
                         val languages = languageV.languageUiState.value.data ?: emptyList()
                         val categoryId = sentenceV.selectedCategoryId.value ?: ""
+
                         AddSentenceSheet(
                             languages,
                             categoryId,

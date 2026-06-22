@@ -40,31 +40,31 @@ class LanguageV @Inject constructor(
     private val _languageUiState = MutableStateFlow(UiState<List<Language>>(isLoading = true))
     val languageUiState: StateFlow<UiState<List<Language>>> = _languageUiState.asStateFlow()
 
-    private val _unsyncedLanguageUiState = MutableStateFlow(UiState<Boolean>())
-    val unsyncedLanguageUiState: StateFlow<UiState<Boolean>> = _unsyncedLanguageUiState.asStateFlow()
+    private val _unsyncedLanguageState = MutableStateFlow(false)
+    val unsyncedLanguageState: StateFlow<Boolean> = _unsyncedLanguageState.asStateFlow()
 
 
     init {
-        getLanguages()
+        observeLanguages()
+        observeSyncStatus()
     }
 
 
-    fun getLanguages() {
+    fun observeLanguages() {
         viewModelScope.launch {
             getLanguagesUseCase()
                 .onStart { _languageUiState.update { it.toLoading() } }
                 .catch { e -> _languageUiState.update { it.toError(e.message ?: "Unknown") } }
                 .collect { languages ->
                     _languageUiState.update { it.toSuccess(languages) }
-                    isExistUnSyncedCategory()
                 }
         }
     }
-    fun isExistUnSyncedCategory(){
+    fun observeSyncStatus(){
         viewModelScope.launch {
             observeUnSyncedLanguageUseCase().collect { isSyncNeeded ->
                 isSyncNeeded(isSyncNeeded)
-                _unsyncedLanguageUiState.value = UiState(data = isSyncNeeded)
+                _unsyncedLanguageState.value = isSyncNeeded
             }
         }
     }
@@ -79,7 +79,7 @@ class LanguageV @Inject constructor(
     fun rejectLanguageChanges() {
         launchWithEvent(
             action = { syncLanguageFromServerUseCase(true) },
-            successMessage = "Rejected Changes"
+            successMessage = "Rejected"
         )
     }
 

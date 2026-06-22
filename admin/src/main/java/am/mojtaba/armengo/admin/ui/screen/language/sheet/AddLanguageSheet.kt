@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import am.mojtaba.armengo.core.domain.model.Language
+import java.util.UUID
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,6 +36,7 @@ fun AddLanguageSheet(
             IconButton(onClick = onDismiss) { Icon(Icons.Default.Close, contentDescription = null) }
             Text("Add Language", style = MaterialTheme.typography.headlineSmall)
             Button(onClick = {onSubmit(Language(
+                id = UUID.randomUUID().toString(),
                     name = name,
                     code = code,
                     flag = flag,

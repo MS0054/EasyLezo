@@ -7,7 +7,7 @@ interface CategoryRepository {
 
     fun observe(): Flow<List<Category>>
     fun observeUnsyncedStatus(): Flow<Boolean>
-    suspend fun syncLocal(isForce: Boolean)
+    suspend fun syncFromServer(isForce: Boolean): Result<Unit>
     suspend fun addCategoryLocal(category: Category)
     suspend fun updateCategoryLocal(category: Category)
     suspend fun deleteCategoryLocal(id: String)

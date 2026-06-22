@@ -7,7 +7,6 @@ import javax.inject.Inject
 class ObserveUnSyncedCategoryUseCase @Inject constructor(
     private val categoryRepository: CategoryRepository
 ) {
-    operator fun invoke(): Flow<Boolean> {
-        return categoryRepository.observeUnsyncedStatus()
-    }
+    operator fun invoke(): Flow<Boolean> = categoryRepository.observeUnsyncedStatus()
+
 }
