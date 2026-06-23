@@ -14,6 +14,8 @@ data class SentenceEntity(
     val order: Int = 0,
     val createdAt: Long = 0,
     val updatedAt: Long = 0,
+    val voiceUrl: String = "",
+    val hasVoice: Boolean = false,
     val isSynced: Boolean = true,
     val isDeleted: Boolean = false,
     val translations: List<Translate> = emptyList()

@@ -27,10 +27,11 @@ import am.mojtaba.armengo.ui.component.LanguageAwareText
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShowSentenceSheet(
-    sentence: Sentence?,
+    sentence: Sentence,
     onDismiss: () -> Unit,
-    onPlay: () -> Unit
+    onPlay: (String) -> Unit
 ) {
+
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(
             modifier = Modifier
@@ -38,7 +39,7 @@ fun ShowSentenceSheet(
                 .padding(20.dp)
         ) {
             LanguageAwareText(
-                text = sentence?.toText ?: "",
+                text = sentence.toText ,
                 fontSize = 32.sp,
                 style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier.fillMaxWidth(),
@@ -48,7 +49,7 @@ fun ShowSentenceSheet(
             Spacer(Modifier.height(32.dp))
 
             LanguageAwareText(
-                text = sentence?.fromText ?: "",
+                text = sentence.fromText ,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
@@ -57,20 +58,24 @@ fun ShowSentenceSheet(
             Spacer(Modifier.height(52.dp))
 
             // this is for voice
-//            IconButton (
-//                modifier = Modifier
-//                    .size(64.dp,70.dp)
-//                    .align(Alignment.CenterHorizontally)
-//                    .background(MaterialTheme.colorScheme.onTertiary, RoundedCornerShape(20.dp)),
-//                onClick = {
-////                    currentSentence = sentence
-////                    showSentenceSheet = true
-//                }) {
-//                Icon(
-//                    imageVector = Icons.Rounded.PlayArrow,
-//                    contentDescription = "Play"
-//                )
-//            }
+            if (sentence.hasVoice) {
+                IconButton(
+                    modifier = Modifier
+                        .size(64.dp, 70.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .background(
+                            MaterialTheme.colorScheme.onTertiary,
+                            RoundedCornerShape(20.dp)
+                        ),
+                    onClick = {
+                        onPlay(sentence.voiceUrl)
+                    }) {
+                    Icon(
+                        imageVector = Icons.Rounded.PlayArrow,
+                        contentDescription = "Play"
+                    )
+                }
+            }
 
             Spacer(Modifier.height(96.dp))
 

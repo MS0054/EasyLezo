@@ -5,19 +5,19 @@ import am.mojtaba.armengo.core.data.remote.model.SentenceDto
 import am.mojtaba.armengo.core.domain.model.Sentence
 
 fun SentenceDto.toEntity() =
-    SentenceEntity(id, categoryId, level, image, order, createdAt, updatedAt, isSynced, isDeleted, translations)
+    SentenceEntity(id, categoryId, level, image, order, createdAt, updatedAt,voiceUrl, hasVoice, isSynced, isDeleted, translations)
 
 fun Sentence.toEntity() =
-    SentenceEntity(id, categoryId, level, image, order, createdAt, updatedAt, isSynced, isDeleted, translations)
+    SentenceEntity(id, categoryId, level, image, order, createdAt, updatedAt,voiceUrl, hasVoice, isSynced, isDeleted, translations)
 
 fun Sentence.toDto() =
-    SentenceDto(id, categoryId, level, image, order, createdAt, updatedAt, isSynced, isDeleted, translations)
+    SentenceDto(id, categoryId, level, image, order, createdAt, updatedAt, voiceUrl, hasVoice, isSynced, isDeleted, translations)
 
 fun SentenceEntity.toDto() =
-    SentenceDto(id, categoryId, level, image, order, createdAt, updatedAt, isSynced, isDeleted, translations)
+    SentenceDto(id, categoryId, level, image, order, createdAt, updatedAt, voiceUrl, hasVoice, isSynced, isDeleted, translations)
 
 fun SentenceEntity.toDomain() =
-    Sentence(id, categoryId, level, image, "","",order, createdAt, updatedAt, isSynced, isDeleted, translations)
+    Sentence(id, categoryId, level, image, "","",order, createdAt, updatedAt, voiceUrl, hasVoice, isSynced, isDeleted, translations)
 
 
 

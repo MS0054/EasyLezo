@@ -21,11 +21,8 @@ import am.mojtaba.armengo.core.domain.model.Sentence
 import am.mojtaba.armengo.ui.component.LanguageAwareText
 import am.mojtaba.armengo.ui.screen.sentence.sheet.ShowSentenceSheet
 import androidx.compose.material.icons.rounded.ArrowForward
+import androidx.compose.material.icons.rounded.PlayArrow
 
-
-/**
- * ساختار ساده‌تر برای UiState
- */
 
 @Composable
 fun SentenceScreen(
@@ -35,9 +32,8 @@ fun SentenceScreen(
     onBack: () -> Unit
 ) {
     val sentenceUiState by sentenceViewModel.sentenceUiState.collectAsState()
-
     var showSentenceSheet by remember { mutableStateOf(false) }
-    var currentSentence by remember { mutableStateOf<Sentence?>(null) }
+    var currentSentence by remember { mutableStateOf(Sentence()) }
 
     LaunchedEffect(categoryId) {
         sentenceViewModel.getSentences(categoryId)
@@ -48,7 +44,7 @@ fun SentenceScreen(
         ShowSentenceSheet(
             sentence = currentSentence,
             onDismiss = { showSentenceSheet = false },
-            onPlay = { /* منطق صوت */ }
+            onPlay = { sentenceViewModel.playVoice(it) }
         )
     }
 
@@ -59,12 +55,15 @@ fun SentenceScreen(
         Box(modifier = Modifier.fillMaxWidth()) {
             IconButton(
                 modifier = Modifier.padding(end = 16.dp),
-                onClick = {onBack()}) {
+                onClick = {
+                    sentenceViewModel.stopVoice()
+                    onBack()
+                }) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
             }
             LanguageAwareText(modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, text = categoryName, style = MaterialTheme.typography.headlineMedium)
-
         }
+
         Spacer(Modifier.height(36.dp))
 
         when {
@@ -75,17 +74,19 @@ fun SentenceScreen(
                 Text("Error: ${sentenceUiState.error}", color = MaterialTheme.colorScheme.error)
             }
 
-//            sentenceUiState.data  -> {
-//                Text("No sentences found", modifier = Modifier.padding(top = 50.dp))
-//            }
             else -> {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    items(sentenceUiState.data ?: emptyList()) { sentence ->
+                    items(
+                        items = sentenceUiState.data ?: emptyList(),
+                        key = { it.id }) { sentence ->
                         SentenceItem(
                             sentence = sentence,
-                            onClick = {
+                            openSheet = {
                                 currentSentence = sentence
                                 showSentenceSheet = true
+                            },
+                            playVoice = {
+                                sentenceViewModel.playVoice(sentence.voiceUrl)
                             }
                         )
                     }
@@ -96,12 +97,15 @@ fun SentenceScreen(
 }
 
 @Composable
-fun SentenceItem(sentence: Sentence, onClick: () -> Unit) {
+fun SentenceItem(sentence: Sentence, openSheet: () -> Unit, playVoice: () -> Unit) {
+
+    val actionIcon = if (sentence.hasVoice) Icons.Rounded.PlayArrow else Icons.Rounded.ArrowForward // (ترجیحاً ArrowForward برای جلو رفتن به جای Back)
+    val actionClick = if (sentence.hasVoice) playVoice else openSheet
     Card(
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-        onClick = onClick
+        onClick = openSheet
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -142,9 +146,9 @@ fun SentenceItem(sentence: Sentence, onClick: () -> Unit) {
                     modifier = Modifier
                         .size(64.dp),
 //                        .background(MaterialTheme.colorScheme.onTertiary, RoundedCornerShape(20.dp)),
-                    onClick = onClick
+                    onClick = actionClick
                 ) {
-                    Icon(Icons.Rounded.ArrowForward, contentDescription = "Play", Modifier.size(28.dp))
+                    Icon(actionIcon, contentDescription = "Play", Modifier.size(28.dp))
                 }
             }
         }
