@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import am.mojtaba.armengo.core.domain.model.Sentence
 import am.mojtaba.armengo.ui.component.LanguageAwareText
 import am.mojtaba.armengo.ui.screen.sentence.sheet.ShowSentenceSheet
+import android.util.Log
 import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.PlayArrow
 
@@ -98,7 +99,6 @@ fun SentenceScreen(
 
 @Composable
 fun SentenceItem(sentence: Sentence, openSheet: () -> Unit, playVoice: () -> Unit) {
-
     val actionIcon = if (sentence.hasVoice) Icons.Rounded.PlayArrow else Icons.Rounded.ArrowForward // (ترجیحاً ArrowForward برای جلو رفتن به جای Back)
     val actionClick = if (sentence.hasVoice) playVoice else openSheet
     Card(
@@ -138,7 +138,7 @@ fun SentenceItem(sentence: Sentence, openSheet: () -> Unit, playVoice: () -> Uni
                     .size(64.dp)
                     .background(
                         MaterialTheme.colorScheme.background,
-                        RoundedCornerShape(topStart = 30.dp, bottomStart = 25.dp)
+                        RoundedCornerShape(topStart = 25.dp, bottomStart = 25.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
