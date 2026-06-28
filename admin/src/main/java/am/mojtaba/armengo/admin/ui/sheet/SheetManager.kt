@@ -38,9 +38,13 @@ import am.mojtaba.armengo.admin.ui.screen.resource.sheet.AddResourceSheet
 import am.mojtaba.armengo.admin.ui.screen.resource.sheet.EditResourceSheet
 import am.mojtaba.armengo.admin.ui.screen.sentence.SentenceV
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.AddSentenceSheet
+import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.AddWordSheet
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.EditSentenceSheet
+import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.EditWordSheet
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.SortSentenceSheet
+import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.SortWordSheet
 import am.mojtaba.armengo.admin.ui.screen.user.UserV
+import am.mojtaba.armengo.admin.ui.screen.word.WordV
 import am.mojtaba.armengo.core.domain.model.AppLanguages
 import am.mojtaba.armengo.core.domain.model.Settings
 import am.mojtaba.armengo.core.domain.model.UpdateInfo
@@ -56,6 +60,7 @@ fun SheetManager(
     userV: UserV,
     categoryV: CategoryV,
     sentenceV: SentenceV,
+    wordV: WordV,
     languageV: LanguageV,
     metadataV: MetadataV,
     resourceV: ResourceV,
@@ -75,35 +80,30 @@ fun SheetManager(
             languageV.event,
             categoryV.event,
             sentenceV.event,
+            wordV.event,
             userV.event,
             resourceV.event,
             metadataV.event
         ).collect { event ->
             when (event) {
                 is UiEvent.Started -> {
-                    Log.i("MOJI","1")
                     sheetV.closeSheet()
                     refreshStatus = RefreshData.PROGRESS
                 }
                 is UiEvent.SyncStatue -> {
-                    Log.i("MOJI","2")
                     isSyncNeeded(event.isSyncNeeded)
                     if (event.isSyncNeeded) {
-                        Log.i("MOJI","22")
                         refreshStatus = RefreshData.SYNC
                     }
                 }
                 is UiEvent.StartSync -> {
-                    Log.i("MOJI","3")
                     workerTag = event.workerTag
                 }
                 is UiEvent.Success -> {
-                    Log.i("MOJI","4")
                     refreshStatus = RefreshData.DONE
                     Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                 }
                 is UiEvent.Error -> {
-                    Log.i("MOJI","5")
                     refreshStatus = RefreshData.ERROR
                     Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                 }
@@ -139,12 +139,14 @@ fun SheetManager(
                         val isExistUnSyncedUser = false
                         val isExistUnSyncedCategory = categoryV.unsyncedCategoryState.value ?: false
                         val isExistUnSyncedSentence = sentenceV.unsyncedSentenceState.value ?: false
+                        val isExistUnSyncedWord = wordV.unsyncedWordState.value ?: false
                         val isExistUnSyncedLanguage = languageV.unsyncedLanguageState.value ?: false
 
                         SyncSheet(
                             isExistUnSyncedUser,
                             isExistUnSyncedCategory,
                             isExistUnSyncedSentence,
+                            isExistUnSyncedWord,
                             isExistUnSyncedLanguage,
                             onConfirm = {
                                 ConfirmSheet(
@@ -155,6 +157,7 @@ fun SheetManager(
                                             "User" -> ""
                                             "Category" -> categoryV.syncCategoryToServer()
                                             "Sentence" -> sentenceV.syncSentenceToServer()
+                                            "Word" -> wordV.syncWordToServer()
                                             "Language" -> languageV.syncLanguageToServer()
                                         }
                                         sheetV.closeSheet()
@@ -171,6 +174,7 @@ fun SheetManager(
                                             "User" -> ""
                                             "Category" -> categoryV.rejectCategoryChanges()
                                             "Sentence" -> sentenceV.rejectSentenceChanges()
+                                            "Word" -> wordV.rejectWordChanges()
                                             "Language" -> languageV.rejectLanguageChanges()
                                         }
                                         sheetV.closeSheet()
@@ -350,6 +354,46 @@ fun SheetManager(
                             onDismiss = { sheetV.closeSheet() },
                             onSubmit = {
                                 sentenceV.sortSentences(it)
+                            }
+                        )
+                    }
+
+                    is AppSheet.AddWord -> {
+                        val languages = languageV.languageUiState.value.data ?: emptyList()
+                        val categoryId = sentenceV.selectedCategoryId.value ?: ""
+
+                        AddWordSheet(
+                            languages,
+                            categoryId,
+                            maxOrder = currentSheet.maxOrder,
+                            onDismiss = { sheetV.closeSheet() },
+                            onSubmit = {
+                                wordV.addWord(it)
+                            }
+                        )
+                    }
+
+                    is AppSheet.EditWord -> {
+                        val languages = languageV.languageUiState.value.data ?: emptyList()
+                        EditWordSheet(
+                            languages = languages,
+                            word = currentSheet.word,
+                            onDelete = {
+                                wordV.deleteWord(it)
+                            },
+                            onSubmit = {
+                                wordV.updateWord(it)
+                            }
+                        )
+                    }
+
+                    is AppSheet.SortWord -> {
+                        val words = wordV.wordUiState.value.data ?: emptyList()
+                        SortWordSheet(
+                            words = words,
+                            onDismiss = { sheetV.closeSheet() },
+                            onSubmit = {
+                                wordV.sortWords(it)
                             }
                         )
                     }

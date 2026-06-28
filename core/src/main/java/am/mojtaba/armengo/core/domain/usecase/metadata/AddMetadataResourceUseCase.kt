@@ -1,4 +1,4 @@
-package am.mojtaba.armengo.core.domain.usecase.category
+package am.mojtaba.armengo.core.domain.usecase.metadata
 
 import android.content.Context
 import android.widget.Toast

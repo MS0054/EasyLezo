@@ -1,4 +1,4 @@
-package am.mojtaba.armengo.core.domain.usecase.sentence
+package am.mojtaba.armengo.core.domain.usecase.metadata
 
 import am.mojtaba.armengo.core.domain.repository.AppInfoProvider
 import javax.inject.Inject

@@ -8,20 +8,18 @@ import am.mojtaba.armengo.core.data.mapper.toEntity
 import am.mojtaba.armengo.core.data.remote.api.MetadataApi
 import am.mojtaba.armengo.core.domain.model.AppLanguages
 import am.mojtaba.armengo.core.domain.model.LastUpdate
+import am.mojtaba.armengo.core.domain.model.Metadata
 import am.mojtaba.armengo.core.domain.model.Resource
 import am.mojtaba.armengo.core.domain.model.Settings
 import am.mojtaba.armengo.core.domain.model.UpdateInfo
-import am.mojtaba.armengo.core.domain.model.Metadata
 import am.mojtaba.armengo.core.domain.repository.AppLanguagesRepository
 import am.mojtaba.armengo.core.domain.repository.MetadataRepository
-import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.collections.map
 
 @Singleton
 class MetadataRepositoryImpl @Inject constructor(
@@ -49,6 +47,7 @@ class MetadataRepositoryImpl @Inject constructor(
                 existNewLanguageData = language > currentMetadata.lastUpdate.language
                 existNewCategoryData = category > currentMetadata.lastUpdate.category
                 existNewSentenceData = sentence > currentMetadata.lastUpdate.sentence
+                existNewWordData = word > currentMetadata.lastUpdate.word
                 existNewUserData = user > currentMetadata.lastUpdate.user
             }
 

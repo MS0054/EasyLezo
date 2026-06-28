@@ -16,11 +16,12 @@ import am.mojtaba.armengo.core.data.local.entity.LanguageEntity
 import am.mojtaba.armengo.core.data.local.entity.MetadataEntity
 import am.mojtaba.armengo.core.data.local.entity.SentenceEntity
 import am.mojtaba.armengo.core.data.local.entity.UserEntity
+import am.mojtaba.armengo.core.data.local.entity.WordEntity
 import am.mojtaba.armengo.core.data.local.entity.converter.ResourceConverter
 import am.mojtaba.armengo.core.data.local.entity.converter.TranslateConverter
 
 @Database(
-    entities = [LanguageEntity::class, MetadataEntity::class, UserEntity::class, AppLanguagesEntity::class, CategoryEntity::class, SentenceEntity::class, WordDao::class],
+    entities = [LanguageEntity::class, MetadataEntity::class, UserEntity::class, AppLanguagesEntity::class, CategoryEntity::class, SentenceEntity::class, WordEntity::class],
     version = 1
 )
 @TypeConverters(TranslateConverter::class, ResourceConverter::class)

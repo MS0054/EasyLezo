@@ -1,6 +1,5 @@
-package am.mojtaba.armengo.core.domain.usecase.category
+package am.mojtaba.armengo.core.domain.usecase.language
 
-import am.mojtaba.armengo.core.domain.model.Language
 import am.mojtaba.armengo.core.domain.repository.LanguageRepository
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package am.mojtaba.armengo.core.domain.usecase.category
+package am.mojtaba.armengo.core.domain.usecase.metadata
 
 import am.mojtaba.armengo.core.domain.model.Resource
 import am.mojtaba.armengo.core.domain.repository.MetadataRepository

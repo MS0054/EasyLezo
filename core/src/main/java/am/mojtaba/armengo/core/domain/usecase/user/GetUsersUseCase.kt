@@ -1,4 +1,4 @@
-package am.mojtaba.armengo.core.domain.usecase.category
+package am.mojtaba.armengo.core.domain.usecase.user
 
 import am.mojtaba.armengo.core.domain.model.User
 import am.mojtaba.armengo.core.domain.repository.UserRepository

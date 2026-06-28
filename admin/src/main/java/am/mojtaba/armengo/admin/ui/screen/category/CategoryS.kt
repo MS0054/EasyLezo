@@ -21,13 +21,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import am.mojtaba.armengo.admin.ui.component.LanguageAwareText
 import am.mojtaba.armengo.core.domain.model.Category
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.ui.Alignment
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -36,7 +40,8 @@ fun CategoryS(
     categoryV: CategoryV,
     onEdit: (Category) -> Unit,
     onAdd: (Int) -> Unit,
-    openSentences: (String) -> Unit
+    openSentences: (String) -> Unit,
+    openWords: (String) -> Unit
 ) {
     val categoriesUiState by categoryV.categoryUiState.collectAsStateWithLifecycle()
 
@@ -96,22 +101,42 @@ fun CategoryS(
                                 .padding(16.dp)
                         ) {
                             // ۳. معرفی key ثابت (id) برای افزایش فوق‌العاده سرعت رندر و اسکرول لیست
-                            items(items = categories,) { cat ->
+                            items(items = categories) { cat ->
                                 Card(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 4.dp)
                                         .combinedClickable(
-                                            onClick = { openSentences(cat.id) },
+                                            onClick = { },
                                             onLongClick = { onEdit(cat) }
                                         )
                                 ) {
-                                    Column(modifier = Modifier.padding(12.dp)) {
+                                    Row(
+                                        modifier = Modifier.padding(12.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
                                         LanguageAwareText(
+                                            modifier = Modifier.fillMaxWidth().weight(1f),
                                             text = cat.fromText,
                                             fontSize = 16.sp,
                                             style = MaterialTheme.typography.titleLarge
                                         )
+                                        Spacer(Modifier.size(16.dp))
+                                        Button(
+                                            modifier = Modifier.size(60.dp),
+                                            onClick = {
+                                                openSentences(cat.id)
+                                            }) {
+                                            Text("S")
+                                        }
+                                        Spacer(Modifier.size(16.dp))
+                                        Button(
+                                            modifier = Modifier.size(60.dp),
+                                            onClick = {
+                                            openWords(cat.id)
+                                        }) {
+                                            Text("W")
+                                        }
                                     }
                                 }
                             }

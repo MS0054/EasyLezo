@@ -1,4 +1,4 @@
-package am.mojtaba.armengo.core.domain.usecase.category
+package am.mojtaba.armengo.core.domain.usecase.language
 
 import am.mojtaba.armengo.core.domain.manager.SyncManager
 import javax.inject.Inject

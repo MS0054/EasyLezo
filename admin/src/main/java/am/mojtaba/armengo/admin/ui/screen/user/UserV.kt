@@ -4,9 +4,9 @@ import androidx.lifecycle.viewModelScope
 import am.mojtaba.armengo.admin.ui.UiState
 import am.mojtaba.armengo.admin.ui.screen.BaseViewModel
 import am.mojtaba.armengo.core.domain.model.User
-import am.mojtaba.armengo.core.domain.usecase.category.GetUsersUseCase
-import am.mojtaba.armengo.core.domain.usecase.category.SearchUserUseCase
-import am.mojtaba.armengo.core.domain.usecase.category.UpdateUserUseCase
+import am.mojtaba.armengo.core.domain.usecase.user.GetUsersUseCase
+import am.mojtaba.armengo.core.domain.usecase.user.SearchUserUseCase
+import am.mojtaba.armengo.core.domain.usecase.user.UpdateUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

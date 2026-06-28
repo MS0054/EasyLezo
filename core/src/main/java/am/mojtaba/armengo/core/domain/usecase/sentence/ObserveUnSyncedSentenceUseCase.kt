@@ -1,4 +1,4 @@
-package am.mojtaba.armengo.core.domain.usecase.category
+package am.mojtaba.armengo.core.domain.usecase.sentence
 
 import am.mojtaba.armengo.core.domain.repository.SentenceRepository
 import kotlinx.coroutines.flow.Flow

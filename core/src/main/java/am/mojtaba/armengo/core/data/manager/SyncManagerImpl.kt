@@ -62,4 +62,18 @@ class SyncManagerImpl @Inject constructor(
             syncRequest
         )
     }
+
+    override fun syncWordToServer(workerTag: String) {
+        val syncRequest = OneTimeWorkRequestBuilder<WordWorker>()
+            .setConstraints(constraints)
+            .addTag(workerTag)
+            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 1, TimeUnit.MINUTES)
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            "word_sync_work",
+            ExistingWorkPolicy.REPLACE,
+            syncRequest
+        )
+    }
 }

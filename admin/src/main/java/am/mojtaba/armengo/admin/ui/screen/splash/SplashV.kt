@@ -3,7 +3,7 @@ package am.mojtaba.armengo.admin.ui.screen.splash
 import am.mojtaba.armengo.admin.ui.Screen
 import am.mojtaba.armengo.core.data.datastore.enums.UserRole
 import am.mojtaba.armengo.core.domain.usecase.category.SyncCategoryFromServerUseCase
-import am.mojtaba.armengo.core.domain.usecase.category.SyncUsersUseCase
+import am.mojtaba.armengo.core.domain.usecase.user.SyncUsersUseCase
 import am.mojtaba.armengo.core.domain.usecase.language.SyncLanguageFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.metadata.SyncMetadataUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
