@@ -42,7 +42,7 @@ class UserRepositoryImpl @Inject constructor(
         return userApi.searchUsers(name, email).map { it.toDomain() }
     }
 
-    override suspend fun syncUser(uid: String) {
+    override suspend fun syncUser(uid: String?) {
 
         val metadata = metadataRepository.observeMetadata().first()
         if (metadata.lastUpdate.existNewUserData) {

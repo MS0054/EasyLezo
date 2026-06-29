@@ -1,5 +1,6 @@
-package am.mojtaba.armengo.ui.screen.splash.sheet
+package am.mojtaba.armengo.ui.sheet
 
+import am.mojtaba.armengo.core.data.datastore.enums.UpdateType
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,7 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import am.mojtaba.armengo.core.domain.model.UpdateResult
-import am.mojtaba.armengo.core.domain.model.UpdateType
 import am.mojtaba.armengo.ui.component.LanguageAwareText
 
 

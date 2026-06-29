@@ -8,7 +8,7 @@ import am.mojtaba.armengo.core.domain.usecase.language.SyncLanguageFromServerUse
 import am.mojtaba.armengo.core.domain.usecase.metadata.CheckUpdateUseCase
 import am.mojtaba.armengo.core.domain.usecase.metadata.SyncMetadataUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
-import am.mojtaba.armengo.core.domain.usecase.user.DecideUserRoleUseCase
+import am.mojtaba.armengo.core.domain.usecase.auth.GetUserRoleUseCase
 import am.mojtaba.armengo.ui.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -23,7 +23,7 @@ class SplashViewModel @Inject constructor(
     private val syncMetadataUseCase: SyncMetadataUseCase,
     private val syncLanguageFromServerUseCase: SyncLanguageFromServerUseCase,
     private val syncCategoryFromServerUseCase: SyncCategoryFromServerUseCase,
-    private val decideUserRoleUseCase: DecideUserRoleUseCase,
+    private val getUserRoleUseCase: GetUserRoleUseCase,
     private val syncSentenceFromServerUseCase: SyncSentenceFromServerUseCase,
     private val checkUpdateUseCase: CheckUpdateUseCase
 ) : ViewModel() {

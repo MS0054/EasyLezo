@@ -10,6 +10,3 @@ data class UpdateInfo(
     val releaseNotes: String = ""
 )
 
-enum class UpdateType {
-    FORCE, OPTIONAL, NONE
-}

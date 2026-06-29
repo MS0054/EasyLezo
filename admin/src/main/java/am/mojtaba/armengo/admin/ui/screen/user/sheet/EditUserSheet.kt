@@ -1,4 +1,4 @@
-package am.mojtaba.armengo.admin.ui.screen.language.sheet
+package am.mojtaba.armengo.admin.ui.screen.user.sheet
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -16,7 +16,7 @@ import am.mojtaba.armengo.core.domain.model.User
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditLanguageSheet(
+fun EditUserSheet(
     user: User,
     onSubmit: (User) -> Unit,
     onDelete: (User) -> Unit

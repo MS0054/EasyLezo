@@ -17,9 +17,9 @@ class UserApiImpl @Inject constructor(
     private val usersCol = db.collection("users")
 
 
-    override suspend fun getUser(uid: String): UserDto {
-        val user = usersCol.document(uid).get().await()
-        return user.toObject(UserDto::class.java) ?: UserDto()
+    override suspend fun getUser(uid: String?): UserDto {
+        val user = uid?.let { usersCol.document(it) }?.get()?.await()
+        return user?.toObject(UserDto::class.java) ?: UserDto()
     }
 
     override suspend fun getUsers(limit: Long): List<UserDto> {

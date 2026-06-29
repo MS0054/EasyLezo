@@ -26,7 +26,6 @@ import am.mojtaba.armengo.core.data.remote.api.WordApi
 import am.mojtaba.armengo.core.data.remote.api.WordApiImpl
 import am.mojtaba.armengo.core.data.repository.AppInfoProviderImpl
 import am.mojtaba.armengo.core.data.repository.AppLanguagesRepositoryImpl
-import am.mojtaba.armengo.core.data.repository.AuthRepository2
 import am.mojtaba.armengo.core.data.repository.AuthRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.CategoryRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.LanguageRepositoryImpl
@@ -44,7 +43,6 @@ import am.mojtaba.armengo.core.domain.repository.MetadataRepository
 import am.mojtaba.armengo.core.domain.repository.SentenceRepository
 import am.mojtaba.armengo.core.domain.repository.UserRepository
 import am.mojtaba.armengo.core.domain.repository.WordRepository
-import am.mojtaba.armengo.core.domain.usecase.auth.AuthUseCase
 import am.mojtaba.armengo.core.domain.usecase.category.GetCategoriesUseCase
 import am.mojtaba.armengo.core.domain.usecase.language.GetLanguagesUseCase
 import am.mojtaba.armengo.core.domain.usecase.metadata.GetMetadataUseCase
@@ -53,7 +51,7 @@ import am.mojtaba.armengo.core.domain.usecase.language.SyncLanguageFromServerUse
 import am.mojtaba.armengo.core.domain.usecase.metadata.SyncMetadataUseCase
 import am.mojtaba.armengo.core.domain.usecase.user.SyncUserUseCase
 import am.mojtaba.armengo.core.domain.usecase.appLanguages.SyncAppLanguagesUseCase
-import am.mojtaba.armengo.core.domain.usecase.user.DecideUserRoleUseCase
+import am.mojtaba.armengo.core.domain.usecase.auth.GetUserRoleUseCase
 import am.mojtaba.armengo.core.domain.usecase.appLanguages.GetAppLanguagesUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.GetSentencesUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
@@ -90,10 +88,6 @@ object AppModule {
 
     //--- Repository ---
 
-
-    @Singleton
-    @Provides
-    fun provideAuthRepository2(auth: FirebaseAuth, db: FirebaseFirestore) = AuthRepository2(auth, db)
 
     @Provides
     @Singleton
@@ -242,10 +236,6 @@ object AppModule {
     // --- UseCases ---
     @Singleton
     @Provides
-    fun provideAuthUseCase(authRepo: AuthRepository2) = AuthUseCase(authRepo)
-
-    @Singleton
-    @Provides
     fun provideGetLanguagesUseCase(languageRepo: LanguageRepository) = GetLanguagesUseCase(languageRepo)
 
     @Singleton
@@ -260,7 +250,7 @@ object AppModule {
     fun provideGetMetadataUseCase(metadataRepo: MetadataRepository) = GetMetadataUseCase(metadataRepo)
     @Singleton
     @Provides
-    fun provideDecideUserRoleUseCase(authRepo: AuthRepository) = DecideUserRoleUseCase(authRepo)
+    fun provideDecideUserRoleUseCase(authRepo: AuthRepository) = GetUserRoleUseCase(authRepo)
     @Singleton
     @Provides
     fun provideGetAppLanguagesUseCase(getLanguagesUseCase: GetLanguagesUseCase, appLanguagesRepository: AppLanguagesRepository) = GetAppLanguagesUseCase(getLanguagesUseCase,  appLanguagesRepository)
