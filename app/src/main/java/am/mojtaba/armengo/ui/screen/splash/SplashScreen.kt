@@ -38,12 +38,12 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import am.mojtaba.armengo.core.domain.model.UpdateType
 import am.mojtaba.armengo.ui.Screen
-import am.mojtaba.armengo.ui.screen.splash.sheet.UpdateBottomSheet
+import am.mojtaba.armengo.ui.sheet.UpdateBottomSheet
 import androidx.core.net.toUri
 import coil3.compose.AsyncImage
 import am.mojtaba.armengo.app.R
+import am.mojtaba.armengo.core.data.datastore.enums.UpdateType
 import am.mojtaba.armengo.core.domain.model.UpdateResult
 import kotlinx.coroutines.delay
 

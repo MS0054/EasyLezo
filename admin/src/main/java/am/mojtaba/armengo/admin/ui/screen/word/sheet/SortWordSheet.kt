@@ -1,4 +1,4 @@
-package am.mojtaba.armengo.admin.ui.screen.sentence.sheet
+package am.mojtaba.armengo.admin.ui.screen.word.sheet
 
 import am.mojtaba.armengo.admin.ui.screen.category.sheet.move
 import am.mojtaba.armengo.core.domain.model.Word

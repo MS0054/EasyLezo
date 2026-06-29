@@ -1,0 +1,33 @@
+name: Android CI/CD
+
+# مشخص می‌کنیم که این پروسه با هر Push یا Pull Request روی برنچ main اجرا بشه
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ۱. دانلود کدهای پروژه روی سرور گیت‌هاب
+      - name: Checkout the code
+        uses: actions/checkout@v4
+
+      # ۲. نصب و تنظیم جاوا (نسخه ۱۷ معمولاً برای پروژه‌های مدرن اندروید مناسبه)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: gradle
+
+      # ۳. دادن دسترسی اجرایی به فایل gradle
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # ۴. اجرای سورس‌کد و بیلد کردن پروژه (نسخه پکیج Debug)
+      - name: Build with Gradle
+        run: ./gradlew assembleDebug

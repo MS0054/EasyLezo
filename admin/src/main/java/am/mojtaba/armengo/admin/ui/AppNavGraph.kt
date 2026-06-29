@@ -31,7 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -58,6 +58,7 @@ import am.mojtaba.armengo.admin.ui.sheet.AppSheet
 import am.mojtaba.armengo.admin.ui.sheet.SheetManager
 import am.mojtaba.armengo.admin.ui.sheet.SheetV
 import android.util.Log
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 sealed class Screen(val route: String) {
     data object Splash : Screen("splash")
@@ -110,11 +111,15 @@ fun AppNavGraph() {
         metadataV,
         resourceV,
         onLogoutSuccess = {
-            navController.navigate(Screen.Splash.route) {
-                popUpTo(Screen.Auth.route) {
+
+            navController.navigate(Screen.Auth.route) {
+                popUpTo(navController.graph.id) {
                     inclusive = true
                 }
+                // ۲. جلوی ساخته شدن چند نسخه موازی از صفحه لاگین را می‌گیرد
+                launchSingleTop = true
             }
+
         },
         onRefresh = { refreshStatus = it },
         isSyncNeeded = {
@@ -185,10 +190,11 @@ fun MyNavHost(
         }
         composable(Screen.Auth.route) {
             AuthScreen(authV) {
-                navController.navigate(Screen.Splash.route) {
+                navController.navigate(Screen.Category.route) {
                     popUpTo(Screen.Auth.route) {
                         inclusive = true
                     }
+                    launchSingleTop = true
                 }
             }
         }

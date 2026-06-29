@@ -1,8 +1,12 @@
 package am.mojtaba.armengo.ui.screen.auth
 
+import am.mojtaba.armengo.core.data.datastore.enums.UserRole
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import am.mojtaba.armengo.core.domain.usecase.auth.AuthUseCase
+import am.mojtaba.armengo.core.domain.usecase.auth.GetUserRoleUseCase
+import am.mojtaba.armengo.core.domain.usecase.auth.SignInUseCase
+import am.mojtaba.armengo.core.domain.usecase.auth.SignOutUseCase
+import am.mojtaba.armengo.core.domain.usecase.auth.SignUpUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,49 +16,45 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authUseCase: AuthUseCase
+    private val signInUseCase: SignInUseCase,
+    private val signUpUseCase: SignUpUseCase,
+    private val signOutUseCase: SignOutUseCase
 ): ViewModel() {
 
 
-    private val _isAdmin = MutableStateFlow<Boolean?>(null)
-    val isAdmin: StateFlow<Boolean?> = _isAdmin.asStateFlow()
-    private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
-    val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
+
+    private val _authUiState = MutableStateFlow<AuthUiState>(
+        AuthUiState.Idle)
+    val authUiState: StateFlow<AuthUiState> = _authUiState.asStateFlow()
+
+    private val _isAdmin = MutableStateFlow<UserRole?>(null)
+    val isAdmin: StateFlow<UserRole?> = _isAdmin.asStateFlow()
 
     fun signUp(email: String, password: String, displayName: String) {
         viewModelScope.launch {
-            _uiState.value = AuthUiState.Loading
-            val res = authUseCase.signUp(email, password, displayName)
-            if (res.isSuccess) _uiState.value = AuthUiState.Success(res.getOrNull()!!)
-            else _uiState.value = AuthUiState.Error(res.exceptionOrNull()?.message ?: "Error")
+            _authUiState.value = AuthUiState.Loading
+            signUpUseCase(email, password, displayName)
+                .onSuccess { uid -> _authUiState.value = AuthUiState.Success(uid) }
+                .onFailure { t -> _authUiState.value = AuthUiState.Error(t.message ?: "Unknown Error") }
         }
     }
-
     fun signIn(email: String, password: String) {
         viewModelScope.launch {
-            _uiState.value = AuthUiState.Loading
-            val res = authUseCase.signIn(email, password)
-            if (res.isSuccess) _uiState.value = AuthUiState.Success(res.getOrNull()!!)
-            else _uiState.value = AuthUiState.Error(res.exceptionOrNull()?.message ?: "Error")
+            _authUiState.value = AuthUiState.Loading
+            signInUseCase(email, password)
+                .onSuccess { uid -> _authUiState.value = AuthUiState.Success(uid) }
+                .onFailure { t -> _authUiState.value = AuthUiState.Error(t.message ?: "Unknown Error") }
         }
     }
 
     fun signOut() {
-        authUseCase.signOut()
-        _uiState.value = AuthUiState.Idle
-    }
-
-
-    fun checkAdmin() {
         viewModelScope.launch {
-            _isAdmin.value = authUseCase.isCurrentUserAdmin()
+            signOutUseCase()
+            _authUiState.value = AuthUiState.Idle
         }
     }
+
+
 }
 
-sealed class AuthUiState {
-    object Idle: AuthUiState()
-    object Loading: AuthUiState()
-    data class Success(val uid: String): AuthUiState()
-    data class Error(val message: String): AuthUiState()
-}
+

@@ -38,18 +38,17 @@ import am.mojtaba.armengo.admin.ui.screen.resource.sheet.AddResourceSheet
 import am.mojtaba.armengo.admin.ui.screen.resource.sheet.EditResourceSheet
 import am.mojtaba.armengo.admin.ui.screen.sentence.SentenceV
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.AddSentenceSheet
-import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.AddWordSheet
+import am.mojtaba.armengo.admin.ui.screen.word.sheet.AddWordSheet
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.EditSentenceSheet
-import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.EditWordSheet
+import am.mojtaba.armengo.admin.ui.screen.word.sheet.EditWordSheet
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.SortSentenceSheet
-import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.SortWordSheet
+import am.mojtaba.armengo.admin.ui.screen.word.sheet.SortWordSheet
 import am.mojtaba.armengo.admin.ui.screen.user.UserV
+import am.mojtaba.armengo.admin.ui.screen.user.sheet.EditUserSheet
 import am.mojtaba.armengo.admin.ui.screen.word.WordV
 import am.mojtaba.armengo.core.domain.model.AppLanguages
 import am.mojtaba.armengo.core.domain.model.Settings
 import am.mojtaba.armengo.core.domain.model.UpdateInfo
-import android.util.Log
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.merge
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -420,7 +419,7 @@ fun SheetManager(
                     }
 
                     is AppSheet.EditLanguage -> {
-                        EditLanguageSheet(
+                        EditLanguageSheet (
                             language = currentSheet.language,
                             onSubmit = {
                                 languageV.updateLanguage(it)
@@ -432,7 +431,7 @@ fun SheetManager(
                     }
 
                     is AppSheet.EditUser -> {
-                        EditLanguageSheet(
+                        EditUserSheet(
                             user = currentSheet.user,
                             onSubmit = {
                                 userV.updateUser(it)

@@ -1,7 +1,7 @@
 package am.mojtaba.armengo.core.domain.usecase.metadata
 
+import am.mojtaba.armengo.core.data.datastore.enums.UpdateType
 import am.mojtaba.armengo.core.domain.model.UpdateResult
-import am.mojtaba.armengo.core.domain.model.UpdateType
 import am.mojtaba.armengo.core.domain.repository.AppInfoProvider
 import am.mojtaba.armengo.core.domain.repository.MetadataRepository
 import kotlinx.coroutines.flow.first

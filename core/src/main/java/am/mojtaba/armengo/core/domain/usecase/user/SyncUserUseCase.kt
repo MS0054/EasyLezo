@@ -9,6 +9,6 @@ class SyncUserUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
     suspend operator fun invoke() {
-        repository.syncUser(authRepository.getUid())
+        repository.syncUser(authRepository.getCurrentUserUid())
     }
 }

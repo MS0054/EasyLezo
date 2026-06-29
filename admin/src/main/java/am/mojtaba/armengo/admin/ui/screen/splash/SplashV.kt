@@ -7,7 +7,7 @@ import am.mojtaba.armengo.core.domain.usecase.user.SyncUsersUseCase
 import am.mojtaba.armengo.core.domain.usecase.language.SyncLanguageFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.metadata.SyncMetadataUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
-import am.mojtaba.armengo.core.domain.usecase.user.DecideUserRoleUseCase
+import am.mojtaba.armengo.core.domain.usecase.auth.GetUserRoleUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashV @Inject constructor(
-    private val decideUserRoleUseCase: DecideUserRoleUseCase,
+    private val getUserRoleUseCase: GetUserRoleUseCase,
     private val syncLanguageFromServerUseCase: SyncLanguageFromServerUseCase,
     private val syncCategoryFromServerUseCase: SyncCategoryFromServerUseCase,
     private val syncMetadataUseCase: SyncMetadataUseCase,
@@ -47,7 +47,7 @@ class SplashV @Inject constructor(
             _errorMessage.value = null
 
             // ۱. بررسی نقش کاربر (فرض می‌کنیم این یوزکیس مقدار خام UserRole برمی‌گرداند یا Result. اگر Result است، مثل پایین هندل شود)
-            val role = decideUserRoleUseCase()
+            val role = getUserRoleUseCase()
 
             if (role == UserRole.USER) {
                 _screen.value = Screen.Auth
