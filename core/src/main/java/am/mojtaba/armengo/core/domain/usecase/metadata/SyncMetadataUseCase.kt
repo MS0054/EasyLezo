@@ -6,7 +6,7 @@ import javax.inject.Inject
 class SyncMetadataUseCase @Inject constructor(
     private val metadataRepository: MetadataRepository
 ) {
-    suspend operator fun invoke() {
-        metadataRepository.syncMetadata()
+    suspend operator fun invoke(): Result<Unit> {
+        return metadataRepository.syncMetadata()
     }
 }

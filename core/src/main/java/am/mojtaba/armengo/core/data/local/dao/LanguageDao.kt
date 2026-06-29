@@ -1,42 +1,28 @@
 package am.mojtaba.armengo.core.data.local.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Update
-import androidx.room.Upsert
 import am.mojtaba.armengo.core.data.local.entity.LanguageEntity
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LanguageDao {
 
-    @Query("SELECT * FROM languages ORDER BY `order` ASC")
-    fun observeLanguages(): Flow<List<LanguageEntity?>?>
-
+    @Query("SELECT * FROM languages WHERE isDeleted = 0 ORDER BY `order` ASC")
+    fun observe(): Flow<List<LanguageEntity?>?>
+    @Query("SELECT * FROM languages WHERE isSynced = 0")
+    suspend fun observeUnsynced(): List<LanguageEntity>
+    @Query("SELECT EXISTS(SELECT 1 FROM languages WHERE isSynced = 0)")
+    fun observeUnsyncedStatus(): Flow<Boolean>
+    @Query("UPDATE languages SET isSynced = 1 WHERE id IN (:ids)")
+    suspend fun markAsSynced(ids: List<String>)
+    @Query("UPDATE languages SET isDeleted = 1, isSynced = 0 WHERE id = :id")
+    suspend fun softDelete(id: String)
     @Upsert
     suspend fun upsertAll(languages: List<LanguageEntity>)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(languages: List<LanguageEntity>)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(language: LanguageEntity)
-
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun update(language: LanguageEntity)
-
-    @Delete
-    suspend fun delete(language: LanguageEntity)
-
-    @Query("DELETE FROM languages")
-    suspend fun clearAll()
-
-    @Query("SELECT MAX(`order`) FROM languages")
-    suspend fun getMaxOrder(): Int?
-
+    @Upsert
+    suspend fun upsert(language: LanguageEntity)
     @Query("DELETE FROM languages WHERE id NOT IN (:remainingIds)")
     suspend fun deleteOldIds(remainingIds: List<String>)
 }

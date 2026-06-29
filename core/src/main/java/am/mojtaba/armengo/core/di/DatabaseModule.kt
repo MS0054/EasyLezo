@@ -8,6 +8,7 @@ import am.mojtaba.armengo.core.data.local.dao.LanguageDao
 import am.mojtaba.armengo.core.data.local.dao.MetadataDao
 import am.mojtaba.armengo.core.data.local.dao.SentenceDao
 import am.mojtaba.armengo.core.data.local.dao.UserDao
+import am.mojtaba.armengo.core.data.local.dao.WordDao
 import am.mojtaba.armengo.core.data.local.database.AppDatabase
 import dagger.Module
 import dagger.Provides
@@ -40,4 +41,7 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun provideSentenceDao(db: AppDatabase): SentenceDao = db.sentenceDao()
+    @Singleton
+    @Provides
+    fun provideWordDao(db: AppDatabase): WordDao = db.wordDao()
 }

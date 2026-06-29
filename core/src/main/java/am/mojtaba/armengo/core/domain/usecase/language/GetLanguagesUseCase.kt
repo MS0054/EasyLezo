@@ -8,5 +8,5 @@ import javax.inject.Inject
 class GetLanguagesUseCase @Inject constructor(
     private val languageRepository: LanguageRepository
 ) {
-    operator fun invoke(): Flow<List<Language>> = languageRepository.observeLanguages()
+    operator fun invoke(): Flow<List<Language>> = languageRepository.observe()
 }

@@ -1,17 +1,18 @@
 package am.mojtaba.armengo.admin.ui.screen.splash
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import am.mojtaba.armengo.admin.ui.Screen
 import am.mojtaba.armengo.core.data.datastore.enums.UserRole
-import am.mojtaba.armengo.core.domain.usecase.category.SyncCategoriesUseCase
-import am.mojtaba.armengo.core.domain.usecase.category.SyncUsersUseCase
-import am.mojtaba.armengo.core.domain.usecase.language.SyncLanguagesUseCase
+import am.mojtaba.armengo.core.domain.usecase.category.SyncCategoryFromServerUseCase
+import am.mojtaba.armengo.core.domain.usecase.user.SyncUsersUseCase
+import am.mojtaba.armengo.core.domain.usecase.language.SyncLanguageFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.metadata.SyncMetadataUseCase
-import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentencesUseCase
+import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.user.DecideUserRoleUseCase
-import android.util.Log
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -20,10 +21,10 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashV @Inject constructor(
     private val decideUserRoleUseCase: DecideUserRoleUseCase,
-    private val syncLanguagesUseCase: SyncLanguagesUseCase,
-    private val syncCategoriesUseCase: SyncCategoriesUseCase,
+    private val syncLanguageFromServerUseCase: SyncLanguageFromServerUseCase,
+    private val syncCategoryFromServerUseCase: SyncCategoryFromServerUseCase,
     private val syncMetadataUseCase: SyncMetadataUseCase,
-    private val syncSentencesUseCase: SyncSentencesUseCase,
+    private val syncSentenceFromServerUseCase: SyncSentenceFromServerUseCase,
     private val syncUsersUseCase: SyncUsersUseCase
 ) : ViewModel() {
 
@@ -33,31 +34,60 @@ class SplashV @Inject constructor(
     private val _screen = MutableStateFlow<Screen?>(null)
     val screen = _screen.asStateFlow()
 
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage = _errorMessage.asStateFlow()
+
+    init {
+        start()
+    }
+
     fun start(isForce: Boolean = false) {
         viewModelScope.launch {
-            _isLoading.value = true // شروع لودینگ
+            _isLoading.value = true
+            _errorMessage.value = null
 
-            try {
+            // ۱. بررسی نقش کاربر (فرض می‌کنیم این یوزکیس مقدار خام UserRole برمی‌گرداند یا Result. اگر Result است، مثل پایین هندل شود)
+            val role = decideUserRoleUseCase()
 
-                val role = decideUserRoleUseCase()
-                _screen.value = when (role) {
-                    UserRole.ADMIN -> {
-                        syncMetadataUseCase()
-                        syncCategoriesUseCase(isForce)
-                        syncSentencesUseCase(isForce)
-                        syncLanguagesUseCase(isForce)
-                        syncUsersUseCase(100)
-                        Screen.Category
-                    }
-                    UserRole.USER -> Screen.Auth
-                }
-            } catch (e: Exception) {
-                Log.i("MOJI6",e.toString())
-                // اینجا می‌توانید خطای شبکه یا دیتابیس را مدیریت کنید
-                // مثلا نمایش یک پیام خطا یا تلاش مجدد
-            } finally {
-                _isLoading.value = false // پایان لودینگ در هر شرایطی
+            if (role == UserRole.USER) {
+                _screen.value = Screen.Auth
+                _isLoading.value = false
+                return@launch
             }
+
+            // ۲. اگر کاربر ADMIN بود، فرآیند سینک آغاز می‌شود:
+            // ابتدا متادیتا را سینک می‌کنیم و خروجی Result آن را می‌گیریم
+            val metadataResult = syncMetadataUseCase()
+
+            if (metadataResult.isFailure) {
+                _errorMessage.value = metadataResult.exceptionOrNull()?.message ?: "خطا در دریافت متادیتا"
+                _isLoading.value = false
+                return@launch
+            }
+
+            // ۳. اجرای موازی سایر سینک‌ها به صورت async
+            val syncTasks = listOf(
+                async { syncCategoryFromServerUseCase(isForce) },
+                async { syncSentenceFromServerUseCase(isForce) },
+                async { syncLanguageFromServerUseCase(isForce) },
+                async { syncUsersUseCase(100) }
+            )
+
+            // منتظر می‌مانیم تا همه تسک‌ها تمام شوند و لیستی از Result<Unit> دریافت می‌کنیم
+            val results: List<Result<Unit>> = syncTasks.awaitAll()
+
+            // ۴. بررسی اینکه آیا همه سینک‌ها موفق بوده‌اند یا خیر
+            val firstFailure = results.firstOrNull { it.isFailure }
+
+            if (firstFailure != null) {
+                // اگر حتی یکی از سینک‌ها با خطا مواجه شده باشد
+                _errorMessage.value = firstFailure.exceptionOrNull()?.message ?: "خطا در همگام‌سازی داده‌ها"
+            } else {
+                // اگر همه با موفقیت سبز شدند
+                _screen.value = Screen.Category
+            }
+
+            _isLoading.value = false
         }
     }
 }

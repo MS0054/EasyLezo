@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.collections.map
 
 @Singleton
 class SentenceRepositoryImpl @Inject constructor(
@@ -23,64 +22,32 @@ class SentenceRepositoryImpl @Inject constructor(
 
 ): SentenceRepository {
 
-    override fun observeSentences(categoryId: String): Flow<List<Sentence>> {
-        return sentenceDao.observeSentences(categoryId)
-            .map { list -> list?.map { it?.toDomain() ?: Sentence()  } ?: emptyList()  }
-    }
+    override fun observe(categoryId: String): Flow<List<Sentence>> = sentenceDao.observe(categoryId).map { list -> list?.map { it?.toDomain() ?: Sentence()  } ?: emptyList()  }
+    override fun observeUnsynced(): Flow<Boolean> = sentenceDao.observeUnsyncedStatus()
 
+    override suspend fun syncFromServer(isForce: Boolean): Result<Unit> {
+        return try {
+            val metadata = metadataRepository.observeMetadata().first()
+            if (metadata.lastUpdate.existNewSentenceData || isForce) {
+                val newSentences = sentenceApi.getSentences()
 
-    override suspend fun syncSentences(isForce: Boolean) {
-        val metadata = metadataRepository.observeMetadata().first()
-        if (metadata.lastUpdate.existNewSentenceData || isForce) {
-            val newSentences = sentenceApi.getSentences()
-            sentenceDao.clearAll()
-            sentenceDao.insertAll(newSentences.map { it.toEntity() })
+                sentenceDao.upsertAll(newSentences.map { it.toEntity() })
+                sentenceDao.deleteOldIds(newSentences.map { it.id })
 
-            metadata.lastUpdate.existNewCategoryData = false
-
-            metadataRepository.clearAndInsert(metadata)
+                metadata.lastUpdate.existNewCategoryData = false
+                metadataRepository.clearAndInsert(metadata)
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 
-    override suspend fun addSentenceLocal(sentence: Sentence) {
-        return sentenceDao.insert(sentence.toEntity())
-    }
-
-    override suspend fun addSentenceServer(sentence: Sentence) {
-        sentenceApi.addSentence(sentence.toDto())
-        syncSentences(true)
-    }
-
-    override suspend fun updateSentenceLocal(sentence: Sentence) {
-        return sentenceDao.update(sentence.toEntity())
-    }
-
-    override suspend fun updateSentenceServer(sentence: Sentence) {
-        sentenceApi.updateSentence(sentence.toDto())
-        syncSentences(true)
-    }
-
-    override suspend fun downloadVoice(sentences: List<Sentence>) {
-        sentenceApi.downloadVoices(sentences.map { it.toDto() })
-    }
-
-    override suspend fun deleteSentenceLocal(sentence: Sentence) {
-        return sentenceDao.delete(sentence.toEntity())
-    }
-
-    override suspend fun deleteSentenceServer(sentence: Sentence) {
-        sentenceApi.deleteSentence(sentence.toDto())
-        syncSentences(true)
-    }
-
-    override suspend fun sortSentenceLocal(sentences: List<Sentence>) {
-        return sentenceDao.insertAll(sentences.map { it.toEntity() })
-    }
-
-    override suspend fun sortSentenceServer(sentences: List<Sentence>) {
-        sentenceApi.sortSentences(sentences.map { it.toDto() })
-        syncSentences(true)
-    }
+    override suspend fun addSentenceLocal(sentence: Sentence) = sentenceDao.upsert(sentence.toEntity().copy(isSynced = false))
+    override suspend fun updateSentenceLocal(sentence: Sentence) = sentenceDao.upsert(sentence.toEntity().copy(isSynced = false))
+    override suspend fun deleteSentenceLocal(id: String) = sentenceDao.softDelete(id)
+    override suspend fun sortSentenceLocal(sentences: List<Sentence>) = sentenceDao.upsertAll(sentences.map { it.toEntity().copy(isSynced = false) })
+    override suspend fun downloadVoice(sentences: List<Sentence>) = sentenceApi.downloadVoices(sentences.map { it.toDto() })
 
 
 }

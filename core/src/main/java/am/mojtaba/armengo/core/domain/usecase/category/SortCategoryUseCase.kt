@@ -7,7 +7,5 @@ import javax.inject.Inject
 class SortCategoryUseCase @Inject constructor(
     private val categoryRepository: CategoryRepository
 ) {
-    suspend operator fun invoke(categories: List<Category>) {
-        categoryRepository.sortCategoryLocal(categories)
-    }
+    suspend operator fun invoke(categories: List<Category>) = categoryRepository.sortCategoryLocal(categories)
 }

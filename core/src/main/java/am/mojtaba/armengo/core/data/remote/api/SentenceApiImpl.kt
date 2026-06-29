@@ -3,6 +3,7 @@ package am.mojtaba.armengo.core.data.remote.api
 import android.os.Environment
 import am.mojtaba.armengo.core.data.remote.model.SentenceDto
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import io.github.whitemagic2014.tts.TTS
 import io.github.whitemagic2014.tts.TTSVoice
 import io.github.whitemagic2014.tts.bean.Voice
@@ -11,58 +12,40 @@ import java.io.File
 import java.util.stream.Collectors
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.collections.forEach
 
 @Singleton
 class SentenceApiImpl @Inject constructor(
     private val db: FirebaseFirestore
 ) : SentenceApi {
 
-    private val sentencesCol = db.collection("Sentences")
+    companion object {
+        private const val COLLECTION = "Sentences"
+        private const val ORDER_FIELD = "order"
+    }
+
+    private val sentencesCol = db.collection(COLLECTION)
 
     override suspend fun getSentences(): List<SentenceDto> {
-        val snap = sentencesCol.get().await()
+        val snap = sentencesCol.orderBy(ORDER_FIELD).get().await()
         return snap.documents.mapNotNull { doc ->
             doc.toObject(SentenceDto::class.java)?.copy(id = doc.id)
         }
     }
 
-    override suspend fun addSentence(sentence: SentenceDto) {
-        try {
-            sentencesCol.add(sentence).await()
-        } catch (e: Exception) {
-            // manage network error
-            throw e
-        }
-    }
+    override suspend fun syncSentences(sentences: List<SentenceDto>) {
+        if (sentences.isEmpty()) return
 
-    override suspend fun updateSentence(sentence: SentenceDto) {
-        try {
-            sentencesCol.document(sentence.id).set(sentence).await()
-        } catch (e: Exception) {
-            // manage network error
-            throw e
-        }
-    }
-
-    override suspend fun deleteSentence(sentence: SentenceDto) {
-        try {
-            sentencesCol.document(sentence.id).delete().await()
-        } catch (e: Exception) {
-            // manage network error
-            throw e
-        }
-    }
-
-    override suspend fun sortSentences(sentences: List<SentenceDto>) {
         val batch = db.batch()
-
-        sentences.forEach { sentence ->
-            batch.update(
-                sentencesCol.document(sentence.id),
-                "order",
-                sentence.order
-            )
+        sentences.forEach { dto ->
+            val docRef = sentencesCol.document(dto.id)
+            if (dto.isDeleted) {
+                batch.delete(docRef)
+            } else {
+                batch.set(docRef, dto, SetOptions.merge())
+            }
         }
+        batch.commit().await()
     }
 
     override suspend fun downloadVoices(sentences: List<SentenceDto>) {

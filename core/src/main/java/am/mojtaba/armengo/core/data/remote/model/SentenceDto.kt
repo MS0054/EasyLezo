@@ -1,6 +1,7 @@
 package am.mojtaba.armengo.core.data.remote.model
 
 import am.mojtaba.armengo.core.domain.model.Translate
+import com.google.firebase.firestore.Exclude
 
 data class SentenceDto(
     val id: String = "",
@@ -10,5 +11,11 @@ data class SentenceDto(
     val order: Int = 0,
     val createdAt: Long = 0,
     val updatedAt: Long = 0,
+    val voiceUrl: String = "",
+    val hasVoice: Boolean = false,
+    @Exclude
+    val isSynced: Boolean = true,
+    @Exclude
+    val isDeleted: Boolean = false,
     val translations: List<Translate> = emptyList()
 )

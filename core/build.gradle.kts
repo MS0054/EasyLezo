@@ -115,16 +115,18 @@ dependencies {
     api(libs.androidx.media3.ui)
 
     // Testing
-    testImplementation(libs.junit)
+//    testImplementation(libs.junit)
 
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+//    api(libs.androidx.junit)
+//    api(libs.androidx.espresso.core)
+//
+//    api(platform(libs.androidx.compose.bom))
+//    api(libs.androidx.ui.test.junit4)
 
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
 
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("io.mockk:mockk:1.13.5")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-    testImplementation("app.cash.turbine:turbine:1.0.0")
+    testApi("junit:junit:4.13.2")
+    testApi("io.mockk:mockk:1.13.10")
+    // کتابخانه کمکی برای تست راحت‌تر کوروتین‌ها و توابع suspend
+    testApi("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
+    testApi("app.cash.turbine:turbine:1.0.0")
 }

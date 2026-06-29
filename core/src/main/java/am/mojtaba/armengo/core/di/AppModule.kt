@@ -8,6 +8,7 @@ import am.mojtaba.armengo.core.data.local.dao.LanguageDao
 import am.mojtaba.armengo.core.data.local.dao.MetadataDao
 import am.mojtaba.armengo.core.data.local.dao.SentenceDao
 import am.mojtaba.armengo.core.data.local.dao.UserDao
+import am.mojtaba.armengo.core.data.local.dao.WordDao
 import am.mojtaba.armengo.core.data.manager.SyncManagerImpl
 import am.mojtaba.armengo.core.data.remote.api.AuthApi
 import am.mojtaba.armengo.core.data.remote.api.AuthApiImpl
@@ -21,6 +22,8 @@ import am.mojtaba.armengo.core.data.remote.api.SentenceApi
 import am.mojtaba.armengo.core.data.remote.api.SentenceApiImpl
 import am.mojtaba.armengo.core.data.remote.api.UserApi
 import am.mojtaba.armengo.core.data.remote.api.UserApiImpl
+import am.mojtaba.armengo.core.data.remote.api.WordApi
+import am.mojtaba.armengo.core.data.remote.api.WordApiImpl
 import am.mojtaba.armengo.core.data.repository.AppInfoProviderImpl
 import am.mojtaba.armengo.core.data.repository.AppLanguagesRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.AuthRepository2
@@ -30,6 +33,7 @@ import am.mojtaba.armengo.core.data.repository.LanguageRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.MetadataRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.SentenceRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.UserRepositoryImpl
+import am.mojtaba.armengo.core.data.repository.WordRepositoryImpl
 import am.mojtaba.armengo.core.domain.manager.SyncManager
 import am.mojtaba.armengo.core.domain.repository.AppInfoProvider
 import am.mojtaba.armengo.core.domain.repository.AppLanguagesRepository
@@ -39,19 +43,22 @@ import am.mojtaba.armengo.core.domain.repository.LanguageRepository
 import am.mojtaba.armengo.core.domain.repository.MetadataRepository
 import am.mojtaba.armengo.core.domain.repository.SentenceRepository
 import am.mojtaba.armengo.core.domain.repository.UserRepository
+import am.mojtaba.armengo.core.domain.repository.WordRepository
 import am.mojtaba.armengo.core.domain.usecase.auth.AuthUseCase
 import am.mojtaba.armengo.core.domain.usecase.category.GetCategoriesUseCase
 import am.mojtaba.armengo.core.domain.usecase.language.GetLanguagesUseCase
 import am.mojtaba.armengo.core.domain.usecase.metadata.GetMetadataUseCase
-import am.mojtaba.armengo.core.domain.usecase.category.SyncCategoriesUseCase
-import am.mojtaba.armengo.core.domain.usecase.language.SyncLanguagesUseCase
+import am.mojtaba.armengo.core.domain.usecase.category.SyncCategoryFromServerUseCase
+import am.mojtaba.armengo.core.domain.usecase.language.SyncLanguageFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.metadata.SyncMetadataUseCase
 import am.mojtaba.armengo.core.domain.usecase.user.SyncUserUseCase
 import am.mojtaba.armengo.core.domain.usecase.appLanguages.SyncAppLanguagesUseCase
 import am.mojtaba.armengo.core.domain.usecase.user.DecideUserRoleUseCase
 import am.mojtaba.armengo.core.domain.usecase.appLanguages.GetAppLanguagesUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.GetSentencesUseCase
-import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentencesUseCase
+import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
+import am.mojtaba.armengo.core.domain.usecase.word.GetWordUseCase
+import am.mojtaba.armengo.core.domain.usecase.word.SyncWordFromServerUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -173,6 +180,19 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideWordRepository(
+        metadataRepository: MetadataRepository,
+        wordDao: WordDao,
+        wordApi: WordApi,
+    ): WordRepository = WordRepositoryImpl(
+        metadataRepository,
+        wordDao,
+        wordApi
+    )
+
+
+    @Singleton
+    @Provides
     fun provideAppInfoProvider(@ApplicationContext context: Context): AppInfoProvider = AppInfoProviderImpl(context)
 
 
@@ -204,6 +224,9 @@ object AppModule {
     @Provides
     fun provideSentenceApi(db: FirebaseFirestore): SentenceApi = SentenceApiImpl(db)
 
+    @Singleton
+    @Provides
+    fun provideWordApi(db: FirebaseFirestore): WordApi = WordApiImpl(db)
 
 
 //    --- WordManager ---
@@ -227,7 +250,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideSyncLanguagesUseCase(languageRepo: LanguageRepository) = SyncLanguagesUseCase(languageRepo)
+    fun provideSyncLanguagesUseCase(languageRepo: LanguageRepository) = SyncLanguageFromServerUseCase(languageRepo)
 
     @Singleton
     @Provides
@@ -249,7 +272,7 @@ object AppModule {
     fun provideUpdateUserAppLanguagesUseCase(userRepository: UserRepository, appLanguagesRepository: AppLanguagesRepository) = SyncAppLanguagesUseCase(userRepository, appLanguagesRepository)
     @Singleton
     @Provides
-    fun provideSyncCategoriesUseCase(categoryRepository: CategoryRepository)= SyncCategoriesUseCase(categoryRepository)
+    fun provideSyncCategoriesUseCase(categoryRepository: CategoryRepository)= SyncCategoryFromServerUseCase(categoryRepository)
     @Singleton
     @Provides
     fun provideGetCategoriesUseCase(categoryRepository: CategoryRepository, appLanguagesRepository: AppLanguagesRepository)= GetCategoriesUseCase(categoryRepository, appLanguagesRepository)
@@ -258,6 +281,11 @@ object AppModule {
     fun provideGetSentencesUseCase(sentenceRepository: SentenceRepository, appLanguagesRepository: AppLanguagesRepository) = GetSentencesUseCase(sentenceRepository, appLanguagesRepository)
     @Singleton
     @Provides
-    fun provideSyncSentencesUseCase(sentenceRepository: SentenceRepository) = SyncSentencesUseCase(sentenceRepository)
-
+    fun provideSyncSentencesUseCase(sentenceRepository: SentenceRepository) = SyncSentenceFromServerUseCase(sentenceRepository)
+    @Singleton
+    @Provides
+    fun provideGetWordsUseCase(wordRepository: WordRepository, appLanguagesRepository: AppLanguagesRepository) = GetWordUseCase(wordRepository, appLanguagesRepository)
+    @Singleton
+    @Provides
+    fun provideSyncWordsUseCase(wordRepository: WordRepository) = SyncWordFromServerUseCase(wordRepository)
 }

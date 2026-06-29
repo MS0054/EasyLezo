@@ -6,9 +6,9 @@ import am.mojtaba.armengo.admin.ui.UiState
 import am.mojtaba.armengo.admin.ui.screen.BaseViewModel
 import am.mojtaba.armengo.core.domain.model.Resource
 import am.mojtaba.armengo.core.domain.usecase.appLanguages.GetMetadataResourcesUseCase
-import am.mojtaba.armengo.core.domain.usecase.category.AddMetadataResourceUseCase
-import am.mojtaba.armengo.core.domain.usecase.category.DeleteMetadataResourceUseCase
-import am.mojtaba.armengo.core.domain.usecase.category.UpdateMetadataResourceUseCase
+import am.mojtaba.armengo.core.domain.usecase.metadata.AddMetadataResourceUseCase
+import am.mojtaba.armengo.core.domain.usecase.metadata.DeleteMetadataResourceUseCase
+import am.mojtaba.armengo.core.domain.usecase.metadata.UpdateMetadataResourceUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

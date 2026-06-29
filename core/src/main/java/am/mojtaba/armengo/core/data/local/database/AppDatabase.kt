@@ -9,17 +9,19 @@ import am.mojtaba.armengo.core.data.local.dao.LanguageDao
 import am.mojtaba.armengo.core.data.local.dao.MetadataDao
 import am.mojtaba.armengo.core.data.local.dao.SentenceDao
 import am.mojtaba.armengo.core.data.local.dao.UserDao
+import am.mojtaba.armengo.core.data.local.dao.WordDao
 import am.mojtaba.armengo.core.data.local.entity.AppLanguagesEntity
 import am.mojtaba.armengo.core.data.local.entity.CategoryEntity
 import am.mojtaba.armengo.core.data.local.entity.LanguageEntity
 import am.mojtaba.armengo.core.data.local.entity.MetadataEntity
 import am.mojtaba.armengo.core.data.local.entity.SentenceEntity
 import am.mojtaba.armengo.core.data.local.entity.UserEntity
+import am.mojtaba.armengo.core.data.local.entity.WordEntity
 import am.mojtaba.armengo.core.data.local.entity.converter.ResourceConverter
 import am.mojtaba.armengo.core.data.local.entity.converter.TranslateConverter
 
 @Database(
-    entities = [LanguageEntity::class, MetadataEntity::class, UserEntity::class, AppLanguagesEntity::class, CategoryEntity::class, SentenceEntity::class],
+    entities = [LanguageEntity::class, MetadataEntity::class, UserEntity::class, AppLanguagesEntity::class, CategoryEntity::class, SentenceEntity::class, WordEntity::class],
     version = 1
 )
 @TypeConverters(TranslateConverter::class, ResourceConverter::class)
@@ -30,4 +32,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun appLanguagesDao(): AppLanguagesDao
     abstract fun categoryDao(): CategoryDao
     abstract fun sentenceDao(): SentenceDao
+    abstract fun wordDao(): WordDao
 }

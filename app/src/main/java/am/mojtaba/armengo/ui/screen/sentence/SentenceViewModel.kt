@@ -1,5 +1,6 @@
 package am.mojtaba.armengo.ui.screen.sentence
 
+import am.mojtaba.armengo.AudioHelper
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import am.mojtaba.armengo.core.domain.model.Sentence
@@ -16,8 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SentenceViewModel @Inject constructor(
+    private val audioManager: AudioHelper,
     private val getSentencesUseCase: GetSentencesUseCase
-
 ) : ViewModel() {
 
     private val _sentenceUiState = MutableStateFlow(UiState<List<Sentence>>())
@@ -38,6 +39,16 @@ class SentenceViewModel @Inject constructor(
                     _sentenceUiState.value = UiState(data = sentences)
                 }
         }
+    }
+
+    fun playVoice(voiceUrl: String) {
+        audioManager.playAudio(voiceUrl)
+    }
+    fun stopVoice() {
+        audioManager.stopAudio()
+    }
+    fun releaseVoice() {
+        audioManager.release()
     }
 
 

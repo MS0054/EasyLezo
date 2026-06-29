@@ -7,13 +7,11 @@ import am.mojtaba.armengo.core.data.remote.api.CategoryApi
 import am.mojtaba.armengo.core.domain.model.Category
 import am.mojtaba.armengo.core.domain.repository.CategoryRepository
 import am.mojtaba.armengo.core.domain.repository.MetadataRepository
-import am.mojtaba.armengo.core.domain.model.Metadata
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.collections.map
 
 @Singleton
 class CategoryRepositoryImpl @Inject constructor(
@@ -23,35 +21,29 @@ class CategoryRepositoryImpl @Inject constructor(
 
 ) : CategoryRepository {
 
-    override fun observe(): Flow<List<Category>> {
-        return categoryDao.observe()
-            .map { list -> list?.map { it?.toDomain() ?: Category() } ?: emptyList() }
-    }
-    override fun observeUnsyncedStatus(): Flow<Boolean> {
-        return categoryDao.observeUnsyncedStatus()
-    }
-    override suspend fun syncLocal(isForce: Boolean) {
-        val metadata = metadataRepository.observeMetadata().first()
-        if (metadata.lastUpdate.existNewCategoryData || isForce) {
-            val newCategories = categoryApi.getCategories()
-//
-            categoryDao.upsertAll(newCategories.map { it.toEntity() })
-            categoryDao.deleteOldIds(newCategories.map { it.id })
+    override fun observe(): Flow<List<Category>> = categoryDao.observe().map { list -> list?.map { it?.toDomain() ?: Category() } ?: emptyList() }
+    override fun observeUnsyncedStatus(): Flow<Boolean> = categoryDao.observeUnsyncedStatus()
 
-            metadata.lastUpdate.existNewCategoryData = false
-            metadataRepository.clearAndInsert(metadata)
+    override suspend fun syncFromServer(isForce: Boolean): Result<Unit> {
+        return try {
+            val metadata = metadataRepository.observeMetadata().first()
+            if (metadata.lastUpdate.existNewCategoryData || isForce) {
+                val newCategories = categoryApi.getCategories()
+//
+                categoryDao.upsertAll(newCategories.map { it.toEntity() })
+                categoryDao.deleteOldIds(newCategories.map { it.id })
+
+                val updatedMetadata = metadata.copy(lastUpdate = metadata.lastUpdate.copy(existNewCategoryData = false))
+                metadataRepository.clearAndInsert(updatedMetadata)
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+                Result.failure(e)
         }
     }
-    override suspend fun addCategoryLocal(category: Category) {
-        return categoryDao.upsert(category.toEntity().copy(isSynced = false))
-    }
-    override suspend fun updateCategoryLocal(category: Category) {
-        return categoryDao.upsert(category.toEntity().copy(isSynced = false))
-    }
-    override suspend fun deleteCategoryLocal(id: String) {
-        return categoryDao.softDelete(id)
-    }
-    override suspend fun sortCategoryLocal(categories: List<Category>) {
-        return categoryDao.upsertAll(categories.map { it.toEntity().copy(isSynced = false) })
-    }
+    override suspend fun addCategoryLocal(category: Category) = categoryDao.upsert(category.toEntity().copy(isSynced = false))
+    override suspend fun updateCategoryLocal(category: Category) = categoryDao.upsert(category.toEntity().copy(isSynced = false))
+    override suspend fun deleteCategoryLocal(id: String) = categoryDao.softDelete(id)
+    override suspend fun sortCategoryLocal(categories: List<Category>) =  categoryDao.upsertAll(categories.map { it.toEntity().copy(isSynced = false) })
+
 }

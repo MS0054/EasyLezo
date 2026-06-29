@@ -52,9 +52,12 @@ import am.mojtaba.armengo.admin.ui.screen.splash.SplashScreen
 import am.mojtaba.armengo.admin.ui.screen.splash.SplashV
 import am.mojtaba.armengo.admin.ui.screen.user.UserS
 import am.mojtaba.armengo.admin.ui.screen.user.UserV
+import am.mojtaba.armengo.admin.ui.screen.word.WordS
+import am.mojtaba.armengo.admin.ui.screen.word.WordV
 import am.mojtaba.armengo.admin.ui.sheet.AppSheet
 import am.mojtaba.armengo.admin.ui.sheet.SheetManager
 import am.mojtaba.armengo.admin.ui.sheet.SheetV
+import android.util.Log
 
 sealed class Screen(val route: String) {
     data object Splash : Screen("splash")
@@ -64,9 +67,10 @@ sealed class Screen(val route: String) {
     data object Resource : Screen("resource")
     data object User : Screen("user")
     object Sentence : Screen("sentence/{categoryId}") {
-        fun createRoute(
-            categoryId: String
-        ) = "sentence/$categoryId"
+        fun createRoute(categoryId: String) = "sentence/$categoryId"
+    }
+    object Word : Screen("word/{categoryId}") {
+        fun createRoute(categoryId: String) = "word/$categoryId"
     }
 }
 
@@ -80,13 +84,14 @@ fun AppNavGraph() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     var refreshStatus by remember { mutableStateOf(RefreshData.DONE) }
-    var isSynced by remember { mutableStateOf(false) }
+    var isSyncNeeded by remember { mutableStateOf(false) }
     var refreshIconColor by remember { mutableStateOf(Color.Gray) }
     val currentRoute = navBackStackEntry?.destination?.route
     val splashV: SplashV = hiltViewModel()
     val authV: AuthV = hiltViewModel()
     val categoryV: CategoryV = hiltViewModel()
     val sentenceV: SentenceV = hiltViewModel()
+    val wordV: WordV = hiltViewModel()
     val languageV: LanguageV = hiltViewModel()
     val metadataV: MetadataV = hiltViewModel()
     val resourceV: ResourceV = hiltViewModel()
@@ -100,6 +105,7 @@ fun AppNavGraph() {
         userV,
         categoryV,
         sentenceV,
+        wordV,
         languageV,
         metadataV,
         resourceV,
@@ -111,7 +117,9 @@ fun AppNavGraph() {
             }
         },
         onRefresh = { refreshStatus = it },
-        isSynced = { isSynced = it }
+        isSyncNeeded = {
+            Log.i("YAYA", "isSyncNeeded: $it")
+            isSyncNeeded = isSyncNeeded || it } // if was true don't change it
     )
     refreshIconColor = when (refreshStatus) {
         RefreshData.PROGRESS -> Color.Yellow
@@ -126,7 +134,7 @@ fun AppNavGraph() {
                 currentRoute = currentRoute,
                 onScreenOpen = { navController.navigate(it.route) },
                 onSheetOpen = { sheetV.openSheet(it) },
-                isSynced = isSynced,
+                isSyncNeeded = isSyncNeeded,
                 onRefresh = { splashV.start(true)}
             )
         }
@@ -137,6 +145,7 @@ fun AppNavGraph() {
             splashV,
             categoryV,
             sentenceV,
+            wordV,
             authV,
             userV,
             metadataV,
@@ -155,6 +164,7 @@ fun MyNavHost(
     splashV: SplashV,
     categoryV: CategoryV,
     sentenceV: SentenceV,
+    wordV: WordV,
     authV: AuthV,
     userV: UserV,
     metadataV: MetadataV,
@@ -188,6 +198,7 @@ fun MyNavHost(
                 onEdit = { sheetV.openSheet(AppSheet.EditCategory(it)) },
                 onAdd = { sheetV.openSheet(AppSheet.AddCategory(it)) },
                 openSentences = { navController.navigate(Screen.Sentence.createRoute(it)) },
+                openWords = { navController.navigate(Screen.Word.createRoute(it)) },
             )
         }
         composable(Screen.Language.route) {
@@ -221,6 +232,15 @@ fun MyNavHost(
                 onEdit = { sheetV.openSheet(AppSheet.EditSentence(it))
             })
         }
+        composable(Screen.Word.route) { backStackEntry->
+            val categoryId = backStackEntry.arguments?.getString("categoryId") ?: ""
+            WordS(
+                categoryId,
+                wordV,
+                onAdd = { sheetV.openSheet(AppSheet.AddWord(it)) },
+                onEdit = { sheetV.openSheet(AppSheet.EditWord(it))
+                })
+        }
     }
 }
 
@@ -232,7 +252,7 @@ fun DynamicHeader(
     currentRoute: String?,
     onScreenOpen: (Screen) -> Unit,
     onSheetOpen: (AppSheet) -> Unit,
-    isSynced: Boolean,
+    isSyncNeeded: Boolean,
     onRefresh: () -> Unit
 ) {
     var showMenu by remember { mutableStateOf(false) }
@@ -275,7 +295,7 @@ fun DynamicHeader(
                     onClick = { showMenu = false; onScreenOpen(Screen.Resource) })
                 DropdownMenuItem(
                     text = { Text("Logout", color = Color.Red) },
-                    onClick = { showMenu = false; onSheetOpen(AppSheet.LogoutConfirm) })
+                    onClick = { showMenu = false; onSheetOpen(AppSheet.Logout) })
                 DropdownMenuItem(
                     text = { Text("AppLanguages", color = Color.Gray) },
                     onClick = { showMenu = false; onSheetOpen(AppSheet.AppLanguage) })
@@ -291,14 +311,20 @@ fun DynamicHeader(
             }
         },
         actions = {
+            if (isSyncNeeded) onSyncClicked = { onSheetOpen(AppSheet.Sync) }
+
             if (currentRoute == Screen.Category.route) {
-                if (isSynced) onSyncClicked = { onSheetOpen(AppSheet.Sync) }
                 IconButton(onClick = { onSheetOpen(AppSheet.SortCategory) }) {
                     Icon(Icons.Default.List, contentDescription = null)
                 }
             }
             if (currentRoute == Screen.Sentence.route) {
                 IconButton(onClick = { onSheetOpen(AppSheet.SortSentence) }) {
+                    Icon(Icons.Default.List, contentDescription = null)
+                }
+            }
+            if (currentRoute == Screen.Word.route) {
+                IconButton(onClick = { onSheetOpen(AppSheet.SortWord) }) {
                     Icon(Icons.Default.List, contentDescription = null)
                 }
             }

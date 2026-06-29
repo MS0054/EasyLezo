@@ -61,7 +61,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun CategoryListScreen(
+fun CategoryScreen(
     categoryViewModel: CategoryViewModel,
     onCategorySelected: (Category) -> Unit,
     onProfileSelected: () -> Unit
@@ -85,7 +85,6 @@ fun CategoryListScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // --- Header ---
         HeaderSection(
             onSettingsClick = { showSelectLanguageSheet = true },
             onProfileClick = onProfileSelected
@@ -93,15 +92,12 @@ fun CategoryListScreen(
 
         Spacer(Modifier.height(24.dp))
 
-        // --- Content Area ---
         Box(modifier = Modifier.fillMaxSize()) {
             when {
-                // نمایش اسکلتون در حالت لودینگ
                 categoriesUiState.isLoading -> {
 //                    SkeletonGrid()
                 }
 
-                // نمایش خطا
                 categoriesUiState.error != null -> {
                     Text(
                         text = "Error: ${categoriesUiState.error}",
@@ -110,7 +106,6 @@ fun CategoryListScreen(
                     )
                 }
 
-                // نمایش لیست داده‌ها
                 else -> {
                     val categories = categoriesUiState.data ?: emptyList()
                     LazyVerticalGrid(
@@ -131,8 +126,6 @@ fun CategoryListScreen(
         }
     }
 }
-
-// --- اجزای کمکی برای تمیزی کد ---
 
 @Composable
 fun HeaderSection(onSettingsClick: () -> Unit, onProfileClick: () -> Unit) {
@@ -161,7 +154,6 @@ fun SmoothStaggeredTextVertical(text: String, initialDelay: Long) {
 
     Row {
         characters.forEachIndexed { index, char ->
-            // شروع از ۱۰۰ پیکسل پایین‌تر (مقدار مثبت در Y یعنی پایین)
             val animatableY = remember { Animatable(100f) }
             val opacity = remember { Animatable(0f) }
 
@@ -173,7 +165,7 @@ fun SmoothStaggeredTextVertical(text: String, initialDelay: Long) {
                         targetValue = 0f,
                         animationSpec = tween(
                             durationMillis = 800,
-                            // استفاده از همان Ease حرفه‌ای برای حالت کشسانی در زمان رسیدن به بالا
+                            // Using the same professional Ease for the stretch mode when reaching the top
                             easing = CubicBezierEasing(0.2f, 1.4f, 0.3f, 1f)
                         )
                     )
@@ -190,7 +182,7 @@ fun SmoothStaggeredTextVertical(text: String, initialDelay: Long) {
                 text = char,
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.graphicsLayer {
-                    translationY = animatableY.value // تغییر به محور Y
+                    translationY = animatableY.value // Change to Y axis
                     alpha = opacity.value
                 }
             )
@@ -238,7 +230,6 @@ fun SmoothStaggeredText(text: String, initialDelay: Long) {
         }
     }
 }
-
 @Composable
 fun SkeletonGrid() {
     LazyVerticalGrid(
@@ -251,7 +242,6 @@ fun SkeletonGrid() {
         }
     }
 }
-
 @Composable
 fun SkeletonCategoryCard() {
     // ایجاد انیمیشن Shimmer

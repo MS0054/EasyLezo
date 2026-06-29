@@ -30,6 +30,9 @@ import coil3.compose.AsyncImage
 import am.mojtaba.armengo.core.domain.model.Language
 import am.mojtaba.armengo.core.domain.model.Sentence
 import am.mojtaba.armengo.core.domain.model.Translate
+import androidx.compose.material3.Switch
+import androidx.compose.ui.Alignment
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,6 +47,8 @@ fun AddSentenceSheet(
     val translationMap = remember { mutableStateMapOf<String, String>() }
     var level by remember { mutableStateOf("") }
     var imageUrl by remember { mutableStateOf("") }
+    var voiceUrl by remember { mutableStateOf("") }
+    var hasVoice by remember { mutableStateOf(false) }
 
 
     Column(Modifier.fillMaxWidth().padding(20.dp)) {
@@ -52,13 +57,16 @@ fun AddSentenceSheet(
             Text("Add Sentence", style = MaterialTheme.typography.headlineSmall)
             Button(onClick = {
                 val translations = translationMap.map { (code, text) -> Translate(language = code, text = text) }
-                onSubmit(Sentence(
+                onSubmit( Sentence(
+                    id = UUID.randomUUID().toString(),
                     categoryId = categoryId,
                     level = level,
                     image = imageUrl,
                     order = maxOrder + 1,
                     createdAt = System.currentTimeMillis(),
                     updatedAt = System.currentTimeMillis(),
+                    voiceUrl = voiceUrl,
+                    hasVoice = hasVoice,
                     translations = translations
                 ))
             }) { Text("Add") }
@@ -77,6 +85,14 @@ fun AddSentenceSheet(
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
+                item {
+                    OutlinedTextField(
+                        value = voiceUrl,
+                        onValueChange = { voiceUrl = it },
+                        label = { Text("VoiceUrl") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
 
                 items(languages) { language ->
                     OutlinedTextField(
@@ -87,6 +103,20 @@ fun AddSentenceSheet(
                         modifier = Modifier.fillMaxWidth(),
                         leadingIcon = { AsyncImage( model = language.flag, contentDescription = null, modifier = Modifier.size(24.dp) ) }
                     )
+                }
+
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("HasVoice")
+                        Switch(
+                            checked = hasVoice,
+                            onCheckedChange = { hasVoice = it }
+                        )
+                    }
                 }
             }
         }

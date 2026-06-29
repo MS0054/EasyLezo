@@ -1,7 +1,7 @@
 package am.mojtaba.armengo.ui
 
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -10,9 +10,9 @@ import am.mojtaba.armengo.ui.screen.auth.AuthScreen
 import am.mojtaba.armengo.ui.screen.auth.AuthViewModel
 import am.mojtaba.armengo.ui.screen.splash.SplashScreen
 import am.mojtaba.armengo.ui.screen.splash.SplashViewModel
-import am.mojtaba.armengo.ui.screen.category.CategoryListScreen
+import am.mojtaba.armengo.ui.screen.category.CategoryScreen
 import am.mojtaba.armengo.ui.screen.category.CategoryViewModel
-import am.mojtaba.armengo.ui.screen.sentence.SentenceListScreen
+import am.mojtaba.armengo.ui.screen.sentence.SentenceScreen
 import am.mojtaba.armengo.ui.screen.sentence.SentenceViewModel
 import am.mojtaba.armengo.ui.screen.settings.SettingsScreen
 import am.mojtaba.armengo.ui.screen.settings.SettingsViewModel
@@ -22,11 +22,11 @@ sealed class Screen(val route: String) {
     object Auth : Screen("auth")
     object Category : Screen("category")
     object Settings : Screen("settings")
-    object Sentences : Screen("sentences/{categoryId}/{categoryName}") {
+    object Sentence : Screen("sentence/{categoryId}/{categoryName}") {
         fun createRoute(
             categoryId: String,
             categoryName: String
-        ) = "sentences/$categoryId/$categoryName"
+        ) = "sentence/$categoryId/$categoryName"
     }
 }
 
@@ -58,18 +58,18 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
             }
         }
         composable(Screen.Category.route) {
-            CategoryListScreen(
+            CategoryScreen(
                 categoryViewModel,
-                { category ->
-                    navController.navigate(Screen.Sentences.createRoute(category.id, category.fromText))
+                {
+                    navController.navigate(Screen.Sentence.createRoute(it.id, it.fromText))
                 }, {
                     navController.navigate(Screen.Settings.route)
                 })
         }
-        composable(Screen.Sentences.route,) { backStackEntry ->
+        composable(Screen.Sentence.route,) { backStackEntry ->
             val categoryId = backStackEntry.arguments?.getString("categoryId") ?: ""
             val categoryName = backStackEntry.arguments?.getString("categoryName") ?: ""
-            SentenceListScreen(categoryId, categoryName, sentenceViewModel){
+            SentenceScreen(categoryId, categoryName, sentenceViewModel){
                 navController.popBackStack()
             }
         }

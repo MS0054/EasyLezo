@@ -12,7 +12,6 @@ class G : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-//        Hawk.init(this).build()
 
         FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
             Log.d("FCM_TOKEN", token)
@@ -31,7 +30,5 @@ class G : Application() {
     companion object {
         lateinit var instance: G
             private set
-
-
     }
 }

@@ -5,20 +5,19 @@ import am.mojtaba.armengo.core.domain.model.Language
 import am.mojtaba.armengo.core.domain.model.Resource
 import am.mojtaba.armengo.core.domain.model.Sentence
 import am.mojtaba.armengo.core.domain.model.User
+import am.mojtaba.armengo.core.domain.model.Word
 
 sealed class AppSheet {
     object None : AppSheet()
-
-    object LogoutConfirm : AppSheet()
-
+    object Logout : AppSheet()
     object LastUpdate : AppSheet()
     object AppLanguage : AppSheet()
     object Settings: AppSheet()
     object UpdateInfo: AppSheet()
     object Sync: AppSheet()
+
     object AddResource: AppSheet()
     class EditResource(val resource: Resource): AppSheet()
-
 
     class AddCategory(val maxOrder: Int) : AppSheet()
     object SortCategory : AppSheet()
@@ -27,6 +26,10 @@ sealed class AppSheet {
     class AddSentence(val maxOrder: Int) : AppSheet()
     object SortSentence : AppSheet()
     class EditSentence(val sentence: Sentence) : AppSheet()
+
+    class AddWord(val maxOrder: Int) : AppSheet()
+    object SortWord : AppSheet()
+    class EditWord(val word: Word) : AppSheet()
 
     class AddLanguage(val maxOrder: Int) : AppSheet()
     object SortLanguage : AppSheet()

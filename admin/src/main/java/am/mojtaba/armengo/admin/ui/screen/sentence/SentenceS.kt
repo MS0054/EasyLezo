@@ -59,7 +59,7 @@ fun SentenceS(
 
 
     LaunchedEffect(categoryId) {
-        sentenceV.getSentences(categoryId)
+        sentenceV.observeSentences(categoryId)
     }
 
     Scaffold(

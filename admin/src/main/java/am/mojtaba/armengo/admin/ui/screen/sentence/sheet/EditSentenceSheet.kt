@@ -31,13 +31,15 @@ import coil3.compose.AsyncImage
 import am.mojtaba.armengo.core.domain.model.Language
 import am.mojtaba.armengo.core.domain.model.Sentence
 import am.mojtaba.armengo.core.domain.model.Translate
+import androidx.compose.material3.Switch
+import androidx.compose.ui.Alignment
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditSentenceSheet(
     languages: List<Language>,
     sentence: Sentence,
-    onDelete: (Sentence) -> Unit,
+    onDelete: (String) -> Unit,
     onSubmit: (Sentence) -> Unit
 ) {
 
@@ -46,12 +48,15 @@ fun EditSentenceSheet(
     } }
     var level by remember { mutableStateOf(sentence.level) }
     var imageUrl by remember { mutableStateOf( sentence.image) }
+    var voiceUrl by remember { mutableStateOf(sentence.voiceUrl) }
+    var hasVoice by remember { mutableStateOf(sentence.hasVoice) }
+
 
     Column(Modifier.fillMaxWidth().padding(20.dp)) {
         Row (Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("Edit Sentence", style = MaterialTheme.typography.headlineSmall)
             Row {
-                IconButton(onClick = { onDelete(sentence) }) { Icon(Icons.Default.Delete, tint = Color.Red, contentDescription = null) }
+                IconButton(onClick = { onDelete(sentence.id) }) { Icon(Icons.Default.Delete, tint = Color.Red, contentDescription = null) }
                 Button(onClick = {
                     val updatedTranslations = translationMap.map { (code, text) -> Translate(language = code, text = text) }
                     onSubmit(sentence.copy(
@@ -59,6 +64,8 @@ fun EditSentenceSheet(
                         level = level,
                         image = imageUrl,
                         updatedAt = System.currentTimeMillis(),
+                        voiceUrl = voiceUrl,
+                        hasVoice = hasVoice,
                         translations = updatedTranslations
                     )) }) { Text("Save") }
             }
@@ -78,6 +85,15 @@ fun EditSentenceSheet(
                     )
                 }
 
+                item {
+                    OutlinedTextField(
+                        value = voiceUrl,
+                        onValueChange = { voiceUrl = it },
+                        label = { Text("VoiceUrl") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
                 items(languages) { language ->
                     OutlinedTextField(
                         value = translationMap[language.name] ?: "",
@@ -87,6 +103,20 @@ fun EditSentenceSheet(
                         modifier = Modifier.fillMaxWidth(),
                         leadingIcon = { AsyncImage( model = language.flag, contentDescription = null, modifier = Modifier.size(24.dp) ) }
                     )
+                }
+
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("HasVoice")
+                        Switch(
+                            checked = hasVoice,
+                            onCheckedChange = { hasVoice = it }
+                        )
+                    }
                 }
             }
         }

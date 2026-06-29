@@ -9,7 +9,7 @@ interface UserRepository {
     fun observeUsers(): Flow<List<User>>
     suspend fun syncUser(uid: String)
     suspend fun searchUser(name: String?, email: String?): List<User>
-    suspend fun syncUsers(limit: Long)
+    suspend fun syncUsers(limit: Long): Result<Unit>
     suspend fun updateUser(user: User)
     suspend fun updateUserAppLanguagesServer(appLanguages: AppLanguages)
 
