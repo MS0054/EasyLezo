@@ -28,6 +28,17 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # ۴. اجرای سورس‌کد و بیلد کردن پروژه (نسخه پکیج Debug)
+#       ۴. اضافه کردن مرحله اجرای یونیت تست‌ها
+#      - name: Run Unit Tests
+#        run: ./gradlew testDebugUnitTest
+
+      # ۵. اجرای سورس‌کد و بیلد کردن پروژه (نسخه پکیج Debug)
       - name: Build with Gradle
         run: ./gradlew assembleDebug
+
+          # مرحله جدید: آپلود و ذخیره فایل APK در گیت‌هاب
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: easy-lezo-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
