@@ -15,7 +15,7 @@ fun AuthScreen(
     viewModel: AuthViewModel,
     onSuccess: () -> Unit
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.authUiState.collectAsState()
     var email by remember { mutableStateOf("ssa@gmail.com") }
     var pass by remember { mutableStateOf("123456") }
     var display by remember { mutableStateOf("") }
