@@ -42,3 +42,16 @@ jobs:
         with:
           name: easy-lezo-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+
+      # مرحله جدید: ارسال خودکار فایل APK به تلگرام
+      - name: Send APK to Telegram
+        uses: appleboy/telegram-action@v1.0.1
+        with:
+          to: ${{ secrets.TELEGRAM_TO_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          document: app/build/outputs/apk/debug/app-debug.apk
+          message: |
+              🚀 نسخه جدید اپلیکیشن EasyLezo با موفقیت بیلد شد!
+              
+              توسط: ${{ github.actor }}
+              کامیت: ${{ github.event.head_commit.message }}
