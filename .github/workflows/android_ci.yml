@@ -55,3 +55,13 @@ jobs:
               
               توسط: ${{ github.actor }}
               کامیت: ${{ github.event.head_commit.message }}
+            
+      # آپلود خودکار نسخه AAB به کانال تست داخلی گوگل پلی
+      - name: Upload to Google Play Internal Track
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonRaw: ${{ secrets.PLAY_SERVICE_ACCOUNT_KEY }}
+          packageName: am.mojtaba.armengo # پکیج‌نیم دقیق پروژه‌ات رو اینجا بنویس
+          releaseFiles: app/build/outputs/bundle/release/app-release.aab
+          track: internal # ارسال به کانال تست داخلی
+          status: completed
