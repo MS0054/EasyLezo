@@ -28,13 +28,17 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      # بیلد کردن نسخه AAB برای گوگل پلی (علاوه بر APK)
+      - name: Build App Bundle (AAB) & APK
+        run: ./gradlew assembleDebug bundleRelease
+
 #       ۴. اضافه کردن مرحله اجرای یونیت تست‌ها
 #      - name: Run Unit Tests
 #        run: ./gradlew testDebugUnitTest
 
       # ۵. اجرای سورس‌کد و بیلد کردن پروژه (نسخه پکیج Debug)
-      - name: Build with Gradle
-        run: ./gradlew assembleDebug
+#      - name: Build with Gradle
+#        run: ./gradlew assembleDebug
 
           # مرحله جدید: آپلود و ذخیره فایل APK در گیت‌هاب
       - name: Upload APK Artifact
