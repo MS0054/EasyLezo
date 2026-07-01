@@ -25,6 +25,16 @@ android {
 //        consumerProguardFiles("consumer-rules.pro")
     }
 
+    signingConfigs {
+        create("release") {
+            val keystorePath = System.getenv("KEYSTORE_FILE") ?: "release.jks"
+            storeFile = file(keystorePath)
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "رمز_لوکال_شما"
+            keyAlias = System.getenv("KEY_ALIAS") ?: "آلیاس_لوکال_شما"
+            keyPassword = System.getenv("KEY_PASSWORD") ?: "رمز_کلید_لوکال_شما"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -33,6 +43,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // این خط بسیار مهم است تا بیلد ریلیز از کانفیگ بالا استفاده کند
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 

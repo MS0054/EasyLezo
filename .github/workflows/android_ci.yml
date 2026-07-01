@@ -28,8 +28,20 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      # مرحله جدید: بازسازی فایل Keystore از روی متن امنیتی
+      - name: Decode Keystore
+        env:
+          ENCODED_STRING: ${{ secrets.SIGNING_KEY }}
+        run: |
+          echo "$ENCODED_STRING" | base64 --decode > release.jks  
+
       # بیلد کردن نسخه AAB برای گوگل پلی (علاوه بر APK)
       - name: Build App Bundle (AAB) & APK
+        env:
+          KEYSTORE_FILE: ../../release.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew assembleDebug bundleRelease
 
 #       ۴. اضافه کردن مرحله اجرای یونیت تست‌ها
@@ -62,7 +74,7 @@ jobs:
             
       # آپلود خودکار نسخه AAB به کانال تست داخلی گوگل پلی
       - name: Upload to Google Play Internal Track
-        uses: r0adkll/upload-google-play@v1.1.3
+        uses: sourcetoad/upload-google-play@v1
         with:
           serviceAccountJsonRaw: ${{ secrets.PLAY_SERVICE_ACCOUNT_KEY }}
           packageName: am.mojtaba.armengo # پکیج‌نیم دقیق پروژه‌ات رو اینجا بنویس
