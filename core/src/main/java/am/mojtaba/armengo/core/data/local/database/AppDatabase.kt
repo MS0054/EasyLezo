@@ -22,7 +22,7 @@ import am.mojtaba.armengo.core.data.local.entity.converter.TranslateConverter
 
 @Database(
     entities = [LanguageEntity::class, MetadataEntity::class, UserEntity::class, AppLanguagesEntity::class, CategoryEntity::class, SentenceEntity::class, WordEntity::class],
-    version = 1
+    version = 2
 )
 @TypeConverters(TranslateConverter::class, ResourceConverter::class)
 abstract class AppDatabase : RoomDatabase() {
