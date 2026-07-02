@@ -1,6 +1,5 @@
 name: Android CI/CD
 
-# مشخص می‌کنیم که این پروسه با هر Push یا Pull Request روی برنچ main اجرا بشه
 on:
   push:
     branches: [ "main" ]
@@ -16,7 +15,7 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v5
 
-      # ۲. نصب و تنظیم جاوا (نسخه ۱۷ معمولاً برای پروژه‌های مدرن اندروید مناسبه)
+      # ۲. نصب و تنظیم جاوا
       - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
@@ -28,38 +27,30 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # مرحله جدید: بازسازی فایل Keystore از روی متن امنیتی
+      # ۴. بازسازی فایل Keystore از روی متن امنیتی در ریشه پروژه
       - name: Decode Keystore
         env:
           ENCODED_STRING: ${{ secrets.SIGNING_KEY }}
         run: |
           echo "$ENCODED_STRING" | base64 --decode > release.jks  
 
-      # بیلد کردن نسخه AAB برای گوگل پلی (علاوه بر APK)
+      # ۵. بیلد کردن نسخه AAB برای گوگل پلی و APK برای تلگرام
       - name: Build App Bundle (AAB) & APK
         env:
-          KEYSTORE_FILE: ../../release.jks
+          KEYSTORE_FILE: release.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew assembleDebug bundleRelease
 
-#       ۴. اضافه کردن مرحله اجرای یونیت تست‌ها
-#      - name: Run Unit Tests
-#        run: ./gradlew testDebugUnitTest
-
-      # ۵. اجرای سورس‌کد و بیلد کردن پروژه (نسخه پکیج Debug)
-#      - name: Build with Gradle
-#        run: ./gradlew assembleDebug
-
-          # مرحله جدید: آپلود و ذخیره فایل APK در گیت‌هاب
+      # ۶. آپلود و ذخیره فایل APK در گیت‌هاب (Artifacts)
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: easy-lezo-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
 
-      # مرحله جدید: ارسال خودکار فایل APK به تلگرام
+      # ۷. ارسال خودکار فایل APK به تلگرام
       - name: Send APK to Telegram
         uses: appleboy/telegram-action@v1.0.1
         with:
@@ -67,17 +58,17 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           document: app/build/outputs/apk/debug/app-debug.apk
           message: |
-              🚀 نسخه جدید اپلیکیشن EasyLezo با موفقیت بیلد شد!
-              
-              توسط: ${{ github.actor }}
-              کامیت: ${{ github.event.head_commit.message }}
+            🚀 نسخه جدید اپلیکیشن EasyLezo با موفقیت بیلد شد!
             
-      # آپلود خودکار نسخه AAB به کانال تست داخلی گوگل پلی
+            توسط: ${{ github.actor }}
+            کامیت: ${{ github.event.head_commit.message }}
+
+      # ۸. آپلود خودکار نسخه AAB به کانال تست داخلی گوگل پلی
       - name: Upload to Google Play Internal Track
         uses: sourcetoad/upload-google-play@v1
         with:
-          serviceAccountJsonRaw: ${{ secrets.PLAY_SERVICE_ACCOUNT_KEY }}
-          packageName: am.mojtaba.armengo # پکیج‌نیم دقیق پروژه‌ات رو اینجا بنویس
-          releaseFiles: app/build/outputs/bundle/release/app-release.aab
-          track: internal # ارسال به کانال تست داخلی
+          serviceAccountJson: ${{ secrets.PLAY_SERVICE_ACCOUNT_KEY }}
+          packageName: am.mojtaba.armengo
+          releaseFile: app/build/outputs/bundle/release/app-release.aab
+          track: internal
           status: completed
