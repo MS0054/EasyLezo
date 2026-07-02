@@ -32,7 +32,7 @@ jobs:
         env:
           ENCODED_STRING: ${{ secrets.SIGNING_KEY }}
         run: |
-          echo "$ENCODED_STRING" | base64 --decode > release.jks  
+          echo "$ENCODED_STRING" | base64 --decode > app/release.jks  
 
       # ۵. بیلد کردن نسخه AAB برای گوگل پلی و APK برای تلگرام
       - name: Build App Bundle (AAB) & APK
