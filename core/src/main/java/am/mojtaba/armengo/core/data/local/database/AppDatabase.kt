@@ -19,10 +19,11 @@ import am.mojtaba.armengo.core.data.local.entity.UserEntity
 import am.mojtaba.armengo.core.data.local.entity.WordEntity
 import am.mojtaba.armengo.core.data.local.entity.converter.ResourceConverter
 import am.mojtaba.armengo.core.data.local.entity.converter.TranslateConverter
+import androidx.room.AutoMigration
 
 @Database(
     entities = [LanguageEntity::class, MetadataEntity::class, UserEntity::class, AppLanguagesEntity::class, CategoryEntity::class, SentenceEntity::class, WordEntity::class],
-    version = 2
+    version = 4
 )
 @TypeConverters(TranslateConverter::class, ResourceConverter::class)
 abstract class AppDatabase : RoomDatabase() {

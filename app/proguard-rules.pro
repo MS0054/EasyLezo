@@ -1,21 +1,44 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# ==================================================
+# Crash Reporting
+# ==================================================
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# ==================================================
+# Application Classes
+# ==================================================
+# Keep app module classes.
+
+-keep class am.mojtaba.armengo.app.** { *; }
+
+
+# ==================================================
+# Hilt
+# ==================================================
+
+-dontwarn dagger.hilt.internal.**
+-dontwarn androidx.hilt.navigation.compose.**
+
+
+# ==================================================
+# Splash Screen
+# ==================================================
+
+-dontwarn androidx.core.splashscreen.**
+
+
+# ==================================================
+# Coil
+# ==================================================
+
+-dontwarn coil.**
+-dontwarn okhttp3.**
+
+# ==================================================
+# Missing Rules
+# ==================================================
+
+-dontwarn javax.ws.rs.**
+-dontwarn org.glassfish.jersey.**

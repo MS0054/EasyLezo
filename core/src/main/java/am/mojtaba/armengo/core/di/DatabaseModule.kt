@@ -22,7 +22,13 @@ import javax.inject.Singleton
 object DatabaseModule {
     @Singleton
     @Provides
-    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase = Room.databaseBuilder(context, AppDatabase::class.java, "lezo_language_app").build()
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
+        Room.databaseBuilder(
+            context,
+            AppDatabase::class.java,
+            "lezo_language_app"
+        )
+            .build()
     @Singleton
     @Provides
     fun provideLanguageDao(db: AppDatabase): LanguageDao = db.languageDao()
