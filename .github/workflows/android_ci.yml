@@ -41,14 +41,19 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew assembleDebug bundleRelease
+#       build apk debug & aab release
+#       run: ./gradlew assembleDebug bundleRelease
+#       build apk release & aab release
+        run: ./gradlew assembleRelease bundleRelease
 
       # ۶. آپلود و ذخیره فایل APK در گیت‌هاب (Artifacts)
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: easy-lezo-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+#          name: ArmenGo-debug-apk
+#          path: app/build/outputs/apk/debug/app-debug.apk
+          name: ArmenGo-release-apk
+          path: app/build/outputs/apk/release/app-release.apk
 
       # ۷. ارسال خودکار فایل APK به تلگرام
       - name: Send APK to Telegram
@@ -56,7 +61,8 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_TO_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          document: app/build/outputs/apk/debug/app-debug.apk
+          document: app/build/outputs/apk/release/app-release.apk
+#          document: app/build/outputs/apk/debug/app-debug.apk
           message: |
             🚀 نسخه جدید اپلیکیشن EasyLezo با موفقیت بیلد شد!
             
