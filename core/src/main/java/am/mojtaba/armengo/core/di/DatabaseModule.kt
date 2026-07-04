@@ -28,6 +28,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "lezo_language_app"
         )
+            .fallbackToDestructiveMigration(true)
             .build()
     @Singleton
     @Provides
