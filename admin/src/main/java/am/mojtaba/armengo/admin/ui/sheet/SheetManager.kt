@@ -23,6 +23,7 @@ import am.mojtaba.armengo.admin.ui.screen.category.CategoryV
 import am.mojtaba.armengo.admin.ui.screen.category.sheet.AddCategorySheet
 import am.mojtaba.armengo.admin.ui.screen.category.sheet.EditCategorySheet
 import am.mojtaba.armengo.admin.ui.screen.category.sheet.SortCategorySheet
+import am.mojtaba.armengo.admin.ui.screen.error.ErrorV
 import am.mojtaba.armengo.admin.ui.screen.language.LanguageV
 import am.mojtaba.armengo.admin.ui.screen.language.sheet.AddLanguageSheet
 import am.mojtaba.armengo.admin.ui.screen.language.sheet.EditLanguageSheet
@@ -46,6 +47,8 @@ import am.mojtaba.armengo.admin.ui.screen.word.sheet.SortWordSheet
 import am.mojtaba.armengo.admin.ui.screen.user.UserV
 import am.mojtaba.armengo.admin.ui.screen.user.sheet.EditUserSheet
 import am.mojtaba.armengo.admin.ui.screen.word.WordV
+import am.mojtaba.armengo.admin.ui.screen.word.sheet.AddErrorSheet
+import am.mojtaba.armengo.admin.ui.screen.word.sheet.EditErrorSheet
 import am.mojtaba.armengo.core.domain.model.AppLanguages
 import am.mojtaba.armengo.core.domain.model.Settings
 import am.mojtaba.armengo.core.domain.model.UpdateInfo
@@ -63,6 +66,7 @@ fun SheetManager(
     languageV: LanguageV,
     metadataV: MetadataV,
     resourceV: ResourceV,
+    errorV: ErrorV,
     onLogoutSuccess: () -> Unit,
     onRefresh: (RefreshData) -> Unit,
     isSyncNeeded: (Boolean) -> Unit
@@ -82,6 +86,7 @@ fun SheetManager(
             wordV.event,
             userV.event,
             resourceV.event,
+            errorV.event,
             metadataV.event
         ).collect { event ->
             when (event) {
@@ -241,7 +246,7 @@ fun SheetManager(
                         AddResourceSheet(
                             onDismiss = { sheetV.closeSheet() },
                             onSubmit = {
-                                resourceV.addResource(context, it)
+                                resourceV.addResource(it)
                             }
                         )
                     }
@@ -254,6 +259,31 @@ fun SheetManager(
                             },
                             onDelete = {
                                 resourceV.deleteResource(it)
+                            }
+                        )
+                    }
+
+                    is AppSheet.AddError -> {
+                        val languages = languageV.languageUiState.value.data ?: emptyList()
+                        AddErrorSheet (
+                            languages,
+                            onDismiss = { sheetV.closeSheet() },
+                            onSubmit = {
+                                errorV.addError(it)
+                            }
+                        )
+                    }
+
+                    is AppSheet.EditError -> {
+                        val languages = languageV.languageUiState.value.data ?: emptyList()
+                        EditErrorSheet (
+                            languages = languages,
+                            error = currentSheet.error,
+                            onDelete = {
+                                errorV.deleteError(it)
+                            },
+                            onSubmit = {
+                                errorV.editError(it)
                             }
                         )
                     }

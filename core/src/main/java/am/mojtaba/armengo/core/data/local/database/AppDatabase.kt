@@ -17,6 +17,7 @@ import am.mojtaba.armengo.core.data.local.entity.MetadataEntity
 import am.mojtaba.armengo.core.data.local.entity.SentenceEntity
 import am.mojtaba.armengo.core.data.local.entity.UserEntity
 import am.mojtaba.armengo.core.data.local.entity.WordEntity
+import am.mojtaba.armengo.core.data.local.entity.converter.ErrorConverter
 import am.mojtaba.armengo.core.data.local.entity.converter.ResourceConverter
 import am.mojtaba.armengo.core.data.local.entity.converter.TranslateConverter
 import androidx.room.AutoMigration
@@ -25,7 +26,7 @@ import androidx.room.AutoMigration
     entities = [LanguageEntity::class, MetadataEntity::class, UserEntity::class, AppLanguagesEntity::class, CategoryEntity::class, SentenceEntity::class, WordEntity::class],
     version = 4
 )
-@TypeConverters(TranslateConverter::class, ResourceConverter::class)
+@TypeConverters(TranslateConverter::class, ResourceConverter::class, ErrorConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun languageDao(): LanguageDao
     abstract fun metadataDao(): MetadataDao

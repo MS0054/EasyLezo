@@ -45,6 +45,12 @@ import coil3.compose.AsyncImage
 import am.mojtaba.armengo.app.R
 import am.mojtaba.armengo.core.data.datastore.enums.UpdateType
 import am.mojtaba.armengo.core.domain.model.UpdateResult
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import kotlinx.coroutines.delay
 
 @Composable
@@ -55,6 +61,7 @@ fun SplashScreen(
     val context = LocalContext.current
     val updateState by splashViewModel.updateState.collectAsState()
     var showSheet by remember { mutableStateOf(true) }
+    var showRefreshButton by remember { mutableStateOf(false) }
     var updateResult by remember { mutableStateOf<UpdateResult?>(null) }
 
 //    LaunchedEffect(Unit) {
@@ -86,7 +93,8 @@ fun SplashScreen(
             }
         }
         is UpdateStatus.Error -> {
-            LaunchedEffect(Unit) { onNavigate(Screen.Category.route) }
+            showRefreshButton = true
+//            LaunchedEffect(Unit) { onNavigate(Screen.Category.route) }
         }
         UpdateStatus.Idle -> {
             Log.i("XoXo", "Idle")
@@ -94,7 +102,7 @@ fun SplashScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Column (modifier = Modifier.fillMaxSize()) {
 //        AnimatedSplashScreen(R.mipmap.ic_launcher)
         AdvancedSplashAnimation(R.mipmap.ic_launcher)
 
@@ -103,8 +111,23 @@ fun SplashScreen(
 //            modifier = Modifier.size(156.dp),
 //            contentDescription = null,
 //        )
-    }
 
+
+    if (showRefreshButton){
+        IconButton(
+            {
+                splashViewModel.start()
+                showRefreshButton = false
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.Refresh,
+                tint = Color.White,
+                contentDescription = null
+            )
+        }
+    }
+    }
 
     if (showSheet) {
         updateResult?.let {

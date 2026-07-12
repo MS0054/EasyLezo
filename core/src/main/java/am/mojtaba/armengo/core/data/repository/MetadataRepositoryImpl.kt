@@ -7,6 +7,7 @@ import am.mojtaba.armengo.core.data.mapper.toDto
 import am.mojtaba.armengo.core.data.mapper.toEntity
 import am.mojtaba.armengo.core.data.remote.api.MetadataApi
 import am.mojtaba.armengo.core.domain.model.AppLanguages
+import am.mojtaba.armengo.core.domain.model.Error
 import am.mojtaba.armengo.core.domain.model.LastUpdate
 import am.mojtaba.armengo.core.domain.model.Metadata
 import am.mojtaba.armengo.core.domain.model.Resource
@@ -14,6 +15,8 @@ import am.mojtaba.armengo.core.domain.model.Settings
 import am.mojtaba.armengo.core.domain.model.UpdateInfo
 import am.mojtaba.armengo.core.domain.repository.AppLanguagesRepository
 import am.mojtaba.armengo.core.domain.repository.MetadataRepository
+import android.telephony.mbms.MbmsErrors
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
@@ -88,6 +91,11 @@ class MetadataRepositoryImpl @Inject constructor(
 
     override suspend fun updateMetadataResourcesServer(resources: List<Resource>) {
         metadataApi.updateMetadataResources(resources.map { it.toDto() })
+        syncMetadata()
+    }
+
+    override suspend fun updateMetadataErrorsServer(errors: List<Error>) {
+        metadataApi.updateMetadataErrors(errors.map { it.toDto() })
         syncMetadata()
     }
 

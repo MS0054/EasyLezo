@@ -1,27 +1,28 @@
 package am.mojtaba.armengo.core.domain.usecase.metadata
 
+import am.mojtaba.armengo.core.domain.model.Error
 import android.content.Context
 import android.widget.Toast
-import am.mojtaba.armengo.core.domain.model.Resource
+
 import am.mojtaba.armengo.core.domain.repository.MetadataRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class AddMetadataResourceUseCase @Inject constructor(
+class AddMetadataErrorUseCase @Inject constructor(
     private val metadataRepository: MetadataRepository,
     @ApplicationContext private val context: Context
 ) {
-    suspend operator fun invoke(resource: Resource) {
-        val resources = metadataRepository.observeMetadata().map { it.resources }.first()
+    suspend operator fun invoke(error: Error) {
+        val errors = metadataRepository.observeMetadata().map { it.errors }.first()
 
-        if (resources.any { it.name == resource.name }) {
-            Toast.makeText(context, "This resource already exists", Toast.LENGTH_LONG).show()
+        if (errors.any { it.code == error.code }) {
+            Toast.makeText(context, "This error already exists", Toast.LENGTH_LONG).show()
         }else{
-            val newResources = resources + resource
+            val newErrors = errors + error
             try {
-                metadataRepository.updateMetadataResourcesServer(newResources)
+                metadataRepository.updateMetadataErrorsServer(newErrors)
             } catch (e: Exception) {
             }
         }

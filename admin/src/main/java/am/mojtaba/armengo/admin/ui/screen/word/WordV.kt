@@ -89,7 +89,6 @@ class WordV @Inject constructor(
     }
 
     fun addWord(word: Word) {
-        Log.i("MMOOJJII", "word: $word")
         launchWithEvent(
             action = { addWordUseCase(word) },
             successMessage = "Added"

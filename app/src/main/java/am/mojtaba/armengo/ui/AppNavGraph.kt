@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import am.mojtaba.armengo.ui.screen.auth.AuthScreen
 import am.mojtaba.armengo.ui.screen.auth.AuthViewModel
+import am.mojtaba.armengo.ui.screen.category.CategoryRoute
 import am.mojtaba.armengo.ui.screen.splash.SplashScreen
 import am.mojtaba.armengo.ui.screen.splash.SplashViewModel
 import am.mojtaba.armengo.ui.screen.category.CategoryScreen
@@ -16,6 +17,12 @@ import am.mojtaba.armengo.ui.screen.sentence.SentenceScreen
 import am.mojtaba.armengo.ui.screen.sentence.SentenceViewModel
 import am.mojtaba.armengo.ui.screen.settings.SettingsScreen
 import am.mojtaba.armengo.ui.screen.settings.SettingsViewModel
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 
 sealed class Screen(val route: String) {
     object Splash : Screen("splash")
@@ -32,45 +39,63 @@ sealed class Screen(val route: String) {
 
 @Composable
 fun AppNavGraph(navController: NavHostController = rememberNavController()) {
-    val splashVM: SplashViewModel = hiltViewModel()
-    val settingsVm: SettingsViewModel = hiltViewModel()
-    val authVm: AuthViewModel = hiltViewModel()
-    val categoryViewModel: CategoryViewModel = hiltViewModel()
-    val sentenceViewModel: SentenceViewModel = hiltViewModel()
 
-    NavHost( navController,Screen.Splash.route) {
-        composable(Screen.Splash.route) {
-            SplashScreen(splashVM) { route ->
-                navController.navigate(route) { popUpTo(Screen.Splash.route) { inclusive = true } }
-            }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
         }
-        composable(Screen.Settings.route) {
-            SettingsScreen (settingsVm){
-                navController.popBackStack()            }
-        }
-        composable(Screen.Auth.route) {
-            AuthScreen(authVm) {
-                navController.navigate(Screen.Splash.route) {
-                    popUpTo(Screen.Auth.route) {
-                        inclusive = true
+    ) { innerPadding ->
+
+        NavHost(
+            navController,
+            Screen.Splash.route,
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable(Screen.Splash.route) {
+                val splashVM: SplashViewModel = hiltViewModel()
+                SplashScreen(splashVM) { route ->
+                    navController.navigate(route) {
+                        popUpTo(Screen.Splash.route) {
+                            inclusive = true
+                        }
                     }
                 }
             }
-        }
-        composable(Screen.Category.route) {
-            CategoryScreen(
-                categoryViewModel,
-                {
-                    navController.navigate(Screen.Sentence.createRoute(it.id, it.fromText))
-                }, {
-                    navController.navigate(Screen.Settings.route)
-                })
-        }
-        composable(Screen.Sentence.route,) { backStackEntry ->
-            val categoryId = backStackEntry.arguments?.getString("categoryId") ?: ""
-            val categoryName = backStackEntry.arguments?.getString("categoryName") ?: ""
-            SentenceScreen(categoryId, categoryName, sentenceViewModel){
-                navController.popBackStack()
+            composable(Screen.Settings.route) {
+                val settingsVm: SettingsViewModel = hiltViewModel()
+                SettingsScreen(settingsVm) {
+                    navController.popBackStack()
+                }
+            }
+            composable(Screen.Auth.route) {
+                val authVm: AuthViewModel = hiltViewModel()
+                AuthScreen(authVm) {
+                    navController.navigate(Screen.Splash.route) {
+                        popUpTo(Screen.Auth.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+            }
+            composable(Screen.Category.route) {
+                CategoryRoute(
+                    snackbarHostState,
+                    {
+                        navController.navigate(Screen.Sentence.createRoute(it.id, it.fromText))
+                    }, {
+                        navController.navigate(Screen.Settings.route)
+                    })
+            }
+            composable(Screen.Sentence.route) { backStackEntry ->
+                val sentenceViewModel: SentenceViewModel = hiltViewModel()
+                val categoryId = backStackEntry.arguments?.getString("categoryId") ?: ""
+                val categoryName = backStackEntry.arguments?.getString("categoryName") ?: ""
+                SentenceScreen(categoryId, categoryName, sentenceViewModel) {
+                    navController.popBackStack()
+                }
             }
         }
     }

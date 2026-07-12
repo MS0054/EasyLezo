@@ -1,5 +1,6 @@
 package am.mojtaba.armengo.core.data.local.entity
 
+import am.mojtaba.armengo.core.domain.model.Error
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -20,6 +21,8 @@ data class MetadataEntity(
 
     @Embedded(prefix = "settings_")
     val settings: Settings = Settings(),
+
+    val errors: List<Error> = emptyList(),
 
     // this field has specific TypeConverter instead of Embedded
     val resources: List<Resource> = emptyList(),

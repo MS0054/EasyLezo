@@ -9,7 +9,7 @@ import am.mojtaba.armengo.core.data.local.dao.MetadataDao
 import am.mojtaba.armengo.core.data.local.dao.SentenceDao
 import am.mojtaba.armengo.core.data.local.dao.UserDao
 import am.mojtaba.armengo.core.data.local.dao.WordDao
-import am.mojtaba.armengo.core.data.manager.SyncManagerImpl
+import am.mojtaba.armengo.core.data.worker.SyncManagerImpl
 import am.mojtaba.armengo.core.data.remote.api.AuthApi
 import am.mojtaba.armengo.core.data.remote.api.AuthApiImpl
 import am.mojtaba.armengo.core.data.remote.api.CategoryApi

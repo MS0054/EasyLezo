@@ -1,4 +1,4 @@
-package am.mojtaba.armengo.core.data.manager
+package am.mojtaba.armengo.core.data.worker
 
 import am.mojtaba.armengo.core.data.local.dao.LanguageDao
 import am.mojtaba.armengo.core.data.mapper.toDto

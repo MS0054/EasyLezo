@@ -1,5 +1,8 @@
 package am.mojtaba.armengo.ui.screen.category
 
+import am.mojtaba.armengo.app.R
+import am.mojtaba.armengo.core.domain.model.Category
+import am.mojtaba.armengo.ui.component.LanguageAwareText
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -33,14 +36,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,70 +52,46 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import am.mojtaba.armengo.app.R
-import am.mojtaba.armengo.core.domain.model.Category
-import am.mojtaba.armengo.ui.component.LanguageAwareText
-import am.mojtaba.armengo.ui.screen.language.sheet.AppLanguageSheet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun CategoryScreen(
-    categoryViewModel: CategoryViewModel,
+    uiState: CategoryUiState,
     onCategorySelected: (Category) -> Unit,
-    onProfileSelected: () -> Unit
+    onProfileSelected: () -> Unit,
+    onLanguageClick: () -> Unit
 ) {
-    val categoriesUiState by categoryViewModel.categoryUiState.collectAsState()
-    val appLanguageUiState by categoryViewModel.appLanguagesUiState.collectAsState()
-    var showSelectLanguageSheet by remember { mutableStateOf(false) }
-
-    if (showSelectLanguageSheet) {
-        AppLanguageSheet(
-            uiState = appLanguageUiState,
-            onLanguageSelected = { newLanguage ->
-                categoryViewModel.updateUserAppLanguages(appLanguageUiState.data, newLanguage)
-            },
-            onDismiss = { showSelectLanguageSheet = false }
-        )
-    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
+
         HeaderSection(
-            onSettingsClick = { showSelectLanguageSheet = true },
+            onSettingsClick = onLanguageClick,
             onProfileClick = onProfileSelected
         )
 
         Spacer(Modifier.height(24.dp))
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            when {
-                categoriesUiState.isLoading -> {
-//                    SkeletonGrid()
-                }
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
 
-                categoriesUiState.error != null -> {
-                    Text(
-                        text = "Error: ${categoriesUiState.error}",
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
+            when {
+                uiState.isLoading -> { SkeletonGrid() }
 
                 else -> {
-                    val categories = categoriesUiState.data ?: emptyList()
                     LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        modifier = Modifier.fillMaxSize()
+                        columns = GridCells.Fixed(2)
                     ) {
-                        items(categories) { cat ->
+                        items(uiState.categories) { category ->
                             CategoryCard(
-                                category = cat,
+                                category = category,
                                 onCardClick = {
-                                    onCategorySelected(cat)
+                                    onCategorySelected(category)
                                 }
                             )
                         }

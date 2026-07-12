@@ -1,6 +1,7 @@
 package am.mojtaba.armengo.admin.ui.sheet
 
 import am.mojtaba.armengo.core.domain.model.Category
+import am.mojtaba.armengo.core.domain.model.Error
 import am.mojtaba.armengo.core.domain.model.Language
 import am.mojtaba.armengo.core.domain.model.Resource
 import am.mojtaba.armengo.core.domain.model.Sentence
@@ -18,6 +19,9 @@ sealed class AppSheet {
 
     object AddResource: AppSheet()
     class EditResource(val resource: Resource): AppSheet()
+
+    object AddError: AppSheet()
+    class EditError(val error: Error): AppSheet()
 
     class AddCategory(val maxOrder: Int) : AppSheet()
     object SortCategory : AppSheet()
