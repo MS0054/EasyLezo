@@ -8,6 +8,7 @@ import am.mojtaba.armengo.core.domain.usecase.language.SyncLanguageFromServerUse
 import am.mojtaba.armengo.core.domain.usecase.metadata.SyncMetadataUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.auth.GetUserRoleUseCase
+import am.mojtaba.armengo.core.domain.usecase.word.SyncWordFromServerUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +26,7 @@ class SplashV @Inject constructor(
     private val syncCategoryFromServerUseCase: SyncCategoryFromServerUseCase,
     private val syncMetadataUseCase: SyncMetadataUseCase,
     private val syncSentenceFromServerUseCase: SyncSentenceFromServerUseCase,
+    private val syncWordFromServerUseCase: SyncWordFromServerUseCase,
     private val syncUsersUseCase: SyncUsersUseCase
 ) : ViewModel() {
 
@@ -69,6 +71,7 @@ class SplashV @Inject constructor(
             val syncTasks = listOf(
                 async { syncCategoryFromServerUseCase(isForce) },
                 async { syncSentenceFromServerUseCase(isForce) },
+                async { syncWordFromServerUseCase(isForce) },
                 async { syncLanguageFromServerUseCase(isForce) },
                 async { syncUsersUseCase(100) }
             )

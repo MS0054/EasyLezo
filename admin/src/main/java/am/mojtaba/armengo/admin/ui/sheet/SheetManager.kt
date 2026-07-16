@@ -304,7 +304,6 @@ fun SheetManager(
                     is AppSheet.LastUpdate -> {
                         LastUpdateSheet(
                             onNewLastUpdate = {
-                                it
                                 metadataV.updateLastUpdate(it)
                             }
                         )
@@ -389,7 +388,7 @@ fun SheetManager(
 
                     is AppSheet.AddWord -> {
                         val languages = languageV.languageUiState.value.data ?: emptyList()
-                        val categoryId = sentenceV.selectedCategoryId.value ?: ""
+                        val categoryId = wordV.selectedCategoryId.value ?: ""
 
                         AddWordSheet(
                             languages,

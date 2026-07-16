@@ -102,7 +102,7 @@ fun SplashScreen(
         }
     }
 
-    Column (modifier = Modifier.fillMaxSize()) {
+    Box (modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 //        AnimatedSplashScreen(R.mipmap.ic_launcher)
         AdvancedSplashAnimation(R.mipmap.ic_launcher)
 

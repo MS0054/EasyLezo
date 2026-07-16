@@ -28,14 +28,14 @@ class WordRepositoryImpl @Inject constructor(
     override suspend fun syncFromServer(isForce: Boolean): Result<Unit> {
         return try {
             val metadata = metadataRepository.observeMetadata().first()
-            if (metadata.lastUpdate.existNewSentenceData || isForce) {
+            if (metadata.lastUpdate.existNewWordData || isForce) {
                 val newWords = wordApi.getWords()
 
                 wordDao.upsertAll(newWords.map { it.toEntity() })
                 wordDao.deleteOldIds(newWords.map { it.id })
 
-                metadata.lastUpdate.existNewCategoryData = false
-                metadataRepository.clearAndInsert(metadata)
+                val updatedMetadata = metadata.copy(lastUpdate = metadata.lastUpdate.copy(existNewWordData = false))
+                metadataRepository.clearAndInsert(updatedMetadata)
             }
             Result.success(Unit)
         } catch (e: Exception) {

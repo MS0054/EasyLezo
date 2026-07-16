@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import am.mojtaba.armengo.core.domain.model.Translate
 
-@Entity(tableName = "word")
+@Entity(tableName = "words")
 data class WordEntity(
     @PrimaryKey
     val id: String = "",

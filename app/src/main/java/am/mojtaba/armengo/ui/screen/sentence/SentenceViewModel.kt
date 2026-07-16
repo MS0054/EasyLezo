@@ -1,45 +1,65 @@
 package am.mojtaba.armengo.ui.screen.sentence
 
 import am.mojtaba.armengo.AudioHelper
+import am.mojtaba.armengo.core.domain.usecase.sentence.GetSentencesUseCase
+import am.mojtaba.armengo.core.domain.usecase.word.GetWordsUseCase
+import am.mojtaba.armengo.ui.UiEvent
+import am.mojtaba.armengo.ui.manager.ErrorMessageProvider
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import am.mojtaba.armengo.core.domain.model.Sentence
-import am.mojtaba.armengo.core.domain.usecase.sentence.GetSentencesUseCase
-import am.mojtaba.armengo.ui.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 class SentenceViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val audioManager: AudioHelper,
-    private val getSentencesUseCase: GetSentencesUseCase
+    private val getSentencesUseCase: GetSentencesUseCase,
+    private val getWordsUseCase: GetWordsUseCase,
+    private val errorMessageProvider: ErrorMessageProvider
 ) : ViewModel() {
 
-    private val _sentenceUiState = MutableStateFlow(UiState<List<Sentence>>())
-    val sentenceUiState: StateFlow<UiState<List<Sentence>>> = _sentenceUiState.asStateFlow()
+    private val categoryId: String = checkNotNull(savedStateHandle["categoryId"])
+    private val categoryName: String = checkNotNull(savedStateHandle["categoryName"])
 
-    init {
-    }
-    fun getSentences(categoryId: String) {
-        viewModelScope.launch {
-            getSentencesUseCase(categoryId)
-                .onStart {
-                    _sentenceUiState.value = UiState(isLoading = true)
-                }
-                .catch { e ->
-                    _sentenceUiState.value = UiState(error = e.message ?: "Unknown error")
-                }
-                .collect { sentences ->
-                    _sentenceUiState.value = UiState(data = sentences)
-                }
+    private val _uiEvent = MutableSharedFlow<UiEvent>()
+    val uiEvent: SharedFlow<UiEvent> = _uiEvent.asSharedFlow()
+
+
+        val wordsFlow = getWordsUseCase(categoryId).catch { throwable ->
+            _uiEvent.emit(UiEvent.ShowSnackbar(errorMessageProvider.getMessage(throwable)))
+            emit(emptyList())
         }
-    }
+
+        val sentencesFlow = getSentencesUseCase(categoryId).catch { throwable ->
+            _uiEvent.emit(UiEvent.ShowSnackbar(errorMessageProvider.getMessage(throwable)))
+            emit(emptyList())
+        }
+
+        val uiState: StateFlow<SentenceUiState> = combine(wordsFlow,sentencesFlow) { words, sentences ->
+                SentenceUiState(isLoading = false, title = categoryName, words = words, sentences = sentences)
+            }
+                .onStart {
+                    emit(SentenceUiState(isLoading = true))
+                }
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5000),
+                    initialValue = SentenceUiState(
+                        isLoading = true
+                    )
+                )
+
 
     fun playVoice(voiceUrl: String) {
         audioManager.playAudio(voiceUrl)

@@ -5,13 +5,12 @@ import am.mojtaba.armengo.admin.ui.screen.BaseViewModel
 import am.mojtaba.armengo.core.domain.model.Word
 import am.mojtaba.armengo.core.domain.usecase.word.AddWordUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.DeleteWordUseCase
-import am.mojtaba.armengo.core.domain.usecase.word.GetWordUseCase
+import am.mojtaba.armengo.core.domain.usecase.word.GetWordsUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.ObserveUnSyncedWordUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.SortWordUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.SyncWordFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.SyncWordToServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.UpdateWordUseCase
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WordV @Inject constructor(
-    private val getWordUseCase: GetWordUseCase,
+    private val getWordsUseCase: GetWordsUseCase,
     private val addWordUseCase: AddWordUseCase,
     private val updateWordUseCase: UpdateWordUseCase,
     private val sortWordUseCase: SortWordUseCase,
@@ -53,7 +52,7 @@ class WordV @Inject constructor(
      fun observeWords(categoryId: String) {
          _selectedCategoryId.value = categoryId
         viewModelScope.launch {
-            getWordUseCase(categoryId)
+            getWordsUseCase(categoryId)
                 .onStart { _wordUiState.value = UiState(isLoading = true) }
                 .catch { e -> _wordUiState.value = UiState(error = e.message ?: "Unknown error") }
                 .collect { words ->

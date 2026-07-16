@@ -20,7 +20,7 @@ class WordApiImpl @Inject constructor(
 ) : WordApi {
 
     companion object {
-        private const val COLLECTION = "Word"
+        private const val COLLECTION = "Words"
         private const val ORDER_FIELD = "order"
     }
 

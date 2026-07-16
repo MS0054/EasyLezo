@@ -16,6 +16,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -63,42 +64,37 @@ fun CategoryScreen(
     onLanguageClick: () -> Unit
 ) {
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
     ) {
 
-        HeaderSection(
-            onSettingsClick = onLanguageClick,
-            onProfileClick = onProfileSelected
-        )
+        when {
+            uiState.isLoading -> {
+                SkeletonGrid()
+            }
 
-        Spacer(Modifier.height(24.dp))
-
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-
-            when {
-                uiState.isLoading -> { SkeletonGrid() }
-
-                else -> {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2)
-                    ) {
-                        items(uiState.categories) { category ->
-                            CategoryCard(
-                                category = category,
-                                onCardClick = {
-                                    onCategorySelected(category)
-                                }
-                            )
-                        }
+            else -> {
+                LazyVerticalGrid(
+                    contentPadding = PaddingValues(top = 120.dp),
+                    columns = GridCells.Fixed(2)
+                ) {
+                    items(uiState.categories) { category ->
+                        CategoryCard(
+                            category = category,
+                            onCardClick = {
+                                onCategorySelected(category)
+                            }
+                        )
                     }
                 }
             }
         }
+        HeaderSection(
+            onSettingsClick = onLanguageClick,
+            onProfileClick = onProfileSelected
+        )
     }
 }
 
@@ -107,10 +103,26 @@ fun HeaderSection(onSettingsClick: () -> Unit, onProfileClick: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .size(140.dp)
+            .background(
+                brush = Brush.verticalGradient(
+                    startY = 0f,
+                    colors = listOf(
+                        MaterialTheme.colorScheme.background,
+                        MaterialTheme.colorScheme.surface.copy(.8f),
+                        MaterialTheme.colorScheme.surface.copy(.5f),
+                        Color.Transparent
+                    )
+                )
+            )
     ) {
         IconButton(onClick = onSettingsClick) {
-            Icon(painter = painterResource(R.drawable.outline_translate_24), contentDescription = "Settings")
+            Icon(
+                painter = painterResource(R.drawable.outline_translate_24),
+                contentDescription = "Settings"
+            )
         }
         Row {
             SmoothStaggeredTextVertical(text = "A R M E N", initialDelay = 0L)
@@ -123,6 +135,7 @@ fun HeaderSection(onSettingsClick: () -> Unit, onProfileClick: () -> Unit) {
         }
     }
 }
+
 @Composable
 fun SmoothStaggeredTextVertical(text: String, initialDelay: Long) {
     val characters = remember(text) { text.map { it.toString() } }
@@ -164,6 +177,7 @@ fun SmoothStaggeredTextVertical(text: String, initialDelay: Long) {
         }
     }
 }
+
 @Composable
 fun SmoothStaggeredText(text: String, initialDelay: Long) {
     val characters = remember(text) { text.map { it.toString() } }
@@ -205,6 +219,7 @@ fun SmoothStaggeredText(text: String, initialDelay: Long) {
         }
     }
 }
+
 @Composable
 fun SkeletonGrid() {
     LazyVerticalGrid(
@@ -217,6 +232,7 @@ fun SkeletonGrid() {
         }
     }
 }
+
 @Composable
 fun SkeletonCategoryCard() {
     // ایجاد انیمیشن Shimmer
@@ -261,7 +277,9 @@ fun SkeletonCategoryCard() {
             )
 
             Row(
-                modifier = Modifier.fillMaxWidth().height(64.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -279,7 +297,10 @@ fun SkeletonCategoryCard() {
                 Box(
                     modifier = Modifier
                         .size(56.dp, 64.dp)
-                        .background(brush, RoundedCornerShape(topStart = 25.dp, bottomStart = 25.dp))
+                        .background(
+                            brush,
+                            RoundedCornerShape(topStart = 25.dp, bottomStart = 25.dp)
+                        )
                 )
             }
         }
@@ -295,19 +316,24 @@ fun CategoryCard(category: Category, onCardClick: () -> Unit) {
             .clickable { onCardClick() }
     ) {
         Column(
-            modifier = Modifier.defaultMinSize(minHeight = 200.dp),
+            modifier = Modifier,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             if (category.image.isNotEmpty()) {
                 AsyncImage(
                     model = category.image,
                     contentDescription = null,
-                    modifier = Modifier.size(180.dp).padding(16.dp),
-                    contentScale = ContentScale.Crop
+                    alignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(140.dp)
+                        .padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 0.dp),
+
                 )
             }
             Row(
-                modifier = Modifier.fillMaxWidth().height(64.dp),
+                modifier = Modifier
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -326,10 +352,10 @@ fun CategoryCard(category: Category, onCardClick: () -> Unit) {
 
                 Box(
                     modifier = Modifier
-                        .size(56.dp, 64.dp)
+                        .size(52.dp, 56.dp)
                         .background(
                             MaterialTheme.colorScheme.background,
-                            RoundedCornerShape(topStart = 25.dp, bottomStart = 25.dp)
+                            RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp)
                         ),
                 ) {
                     Icon(

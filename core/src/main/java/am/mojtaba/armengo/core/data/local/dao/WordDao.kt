@@ -9,20 +9,20 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface WordDao {
 
-    @Query("SELECT * FROM word WHERE categoryId = :categoryId AND isDeleted = 0 ORDER BY `order` ASC")
+    @Query("SELECT * FROM words WHERE categoryId = :categoryId AND isDeleted = 0 ORDER BY `order` ASC")
     fun observe(categoryId: String): Flow<List<WordEntity?>?>
-    @Query("SELECT * FROM word WHERE isSynced = 0")
+    @Query("SELECT * FROM words WHERE isSynced = 0")
     suspend fun observeUnsynced(): List<WordEntity>
-    @Query("SELECT EXISTS(SELECT 1 FROM word WHERE isSynced = 0)")
+    @Query("SELECT EXISTS(SELECT 1 FROM words WHERE isSynced = 0)")
     fun observeUnsyncedStatus(): Flow<Boolean>
-    @Query("UPDATE word SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE words SET isSynced = 1 WHERE id IN (:ids)")
     suspend fun markAsSynced(ids: List<String>)
-    @Query("UPDATE word SET isDeleted = 1, isSynced = 0 WHERE id = :id")
+    @Query("UPDATE words SET isDeleted = 1, isSynced = 0 WHERE id = :id")
     suspend fun softDelete(id: String)
     @Upsert
     suspend fun upsertAll(words: List<WordEntity>)
     @Upsert
     suspend fun upsert(word: WordEntity)
-    @Query("DELETE FROM word WHERE id NOT IN (:remainingIds)")
+    @Query("DELETE FROM words WHERE id NOT IN (:remainingIds)")
     suspend fun deleteOldIds(remainingIds: List<String>)
 }

@@ -11,10 +11,7 @@ import am.mojtaba.armengo.ui.screen.auth.AuthViewModel
 import am.mojtaba.armengo.ui.screen.category.CategoryRoute
 import am.mojtaba.armengo.ui.screen.splash.SplashScreen
 import am.mojtaba.armengo.ui.screen.splash.SplashViewModel
-import am.mojtaba.armengo.ui.screen.category.CategoryScreen
-import am.mojtaba.armengo.ui.screen.category.CategoryViewModel
-import am.mojtaba.armengo.ui.screen.sentence.SentenceScreen
-import am.mojtaba.armengo.ui.screen.sentence.SentenceViewModel
+import am.mojtaba.armengo.ui.screen.sentence.SentenceRoute
 import am.mojtaba.armengo.ui.screen.settings.SettingsScreen
 import am.mojtaba.armengo.ui.screen.settings.SettingsViewModel
 import androidx.compose.foundation.layout.padding
@@ -47,12 +44,11 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         }
-    ) { innerPadding ->
+    ) { ـ ->
 
         NavHost(
             navController,
-            Screen.Splash.route,
-            modifier = Modifier.padding(innerPadding)
+            Screen.Splash.route
         ) {
             composable(Screen.Splash.route) {
                 val splashVM: SplashViewModel = hiltViewModel()
@@ -89,13 +85,13 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
                         navController.navigate(Screen.Settings.route)
                     })
             }
-            composable(Screen.Sentence.route) { backStackEntry ->
-                val sentenceViewModel: SentenceViewModel = hiltViewModel()
-                val categoryId = backStackEntry.arguments?.getString("categoryId") ?: ""
-                val categoryName = backStackEntry.arguments?.getString("categoryName") ?: ""
-                SentenceScreen(categoryId, categoryName, sentenceViewModel) {
-                    navController.popBackStack()
-                }
+            composable(Screen.Sentence.route) {
+                SentenceRoute(
+                    snackbarHostState,
+                    onBack = {
+                        navController.popBackStack()
+                    }
+                )
             }
         }
     }
