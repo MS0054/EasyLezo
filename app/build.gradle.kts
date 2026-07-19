@@ -22,7 +22,7 @@ android {
         versionName = "0.0.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-//        consumerProguardFiles("consumer-rules.pro")
+//       consumerProguardFiles("consumer-rules.pro")
     }
 
     signingConfigs {
