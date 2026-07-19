@@ -18,8 +18,8 @@ android {
         applicationId = "am.mojtaba.armengo"
         minSdk = 24
         targetSdk = 35
-        versionCode = 4
-        versionName = "0.0.4"
+        versionCode = 5
+        versionName = "0.0.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 //        consumerProguardFiles("consumer-rules.pro")
@@ -32,9 +32,9 @@ android {
         if (keystoreFile.exists()) {
             create("release") {
                 storeFile = keystoreFile
-                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "رمز_لوکال_شما"
-                keyAlias = System.getenv("KEY_ALIAS") ?: "آلیاس_لوکال_شما"
-                keyPassword = System.getenv("KEY_PASSWORD") ?: "رمز_کلید_لوکال_شما"
+                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "Local_Pass"
+                keyAlias = System.getenv("KEY_ALIAS") ?: "Local_Alias"
+                keyPassword = System.getenv("KEY_PASSWORD") ?: "Local_Key_Pass"
             }
         }
     }

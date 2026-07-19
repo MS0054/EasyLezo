@@ -24,7 +24,7 @@ import androidx.room.AutoMigration
 
 @Database(
     entities = [LanguageEntity::class, MetadataEntity::class, UserEntity::class, AppLanguagesEntity::class, CategoryEntity::class, SentenceEntity::class, WordEntity::class],
-    version = 4
+    version = 5
 )
 @TypeConverters(TranslateConverter::class, ResourceConverter::class, ErrorConverter::class)
 abstract class AppDatabase : RoomDatabase() {
