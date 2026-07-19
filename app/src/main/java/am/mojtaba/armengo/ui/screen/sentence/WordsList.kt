@@ -126,12 +126,14 @@ fun WordItem(word: Word, openSheet: () -> Unit, playVoice: () -> Unit) {
             )
             Spacer(modifier = Modifier.height(12.dp))
 
-            Icon(
-                painter = painterResource(id = R.drawable.ic_volume), // Replace with your actual filename
-                contentDescription = "Descriptive text",
-                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
-                modifier = Modifier.size(28.dp) // Set your desired icon size
-            )
+//            if (word.hasVoice) {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.ic_volume), // Replace with your actual filename
+//                    contentDescription = "Descriptive text",
+//                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+//                    modifier = Modifier.size(28.dp) // Set your desired icon size
+//                )
+//            }
         }
 
 
