@@ -1,5 +1,8 @@
 package am.mojtaba.armengo.ui.screen.category
 
+import am.mojtaba.armengo.app.R
+import am.mojtaba.armengo.core.domain.model.Category
+import am.mojtaba.armengo.ui.component.LanguageAwareText
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -13,6 +16,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -33,14 +37,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,77 +53,48 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import am.mojtaba.armengo.app.R
-import am.mojtaba.armengo.core.domain.model.Category
-import am.mojtaba.armengo.ui.component.LanguageAwareText
-import am.mojtaba.armengo.ui.screen.language.sheet.AppLanguageSheet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun CategoryScreen(
-    categoryViewModel: CategoryViewModel,
+    uiState: CategoryUiState,
     onCategorySelected: (Category) -> Unit,
-    onProfileSelected: () -> Unit
+    onProfileSelected: () -> Unit,
+    onLanguageClick: () -> Unit
 ) {
-    val categoriesUiState by categoryViewModel.categoryUiState.collectAsState()
-    val appLanguageUiState by categoryViewModel.appLanguagesUiState.collectAsState()
-    var showSelectLanguageSheet by remember { mutableStateOf(false) }
 
-    if (showSelectLanguageSheet) {
-        AppLanguageSheet(
-            uiState = appLanguageUiState,
-            onLanguageSelected = { newLanguage ->
-                categoryViewModel.updateUserAppLanguages(appLanguageUiState.data, newLanguage)
-            },
-            onDismiss = { showSelectLanguageSheet = false }
-        )
-    }
-
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
     ) {
-        HeaderSection(
-            onSettingsClick = { showSelectLanguageSheet = true },
-            onProfileClick = onProfileSelected
-        )
 
-        Spacer(Modifier.height(24.dp))
+        when {
+            uiState.isLoading -> {
+                SkeletonGrid()
+            }
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            when {
-                categoriesUiState.isLoading -> {
-//                    SkeletonGrid()
-                }
-
-                categoriesUiState.error != null -> {
-                    Text(
-                        text = "Error: ${categoriesUiState.error}",
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-
-                else -> {
-                    val categories = categoriesUiState.data ?: emptyList()
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        items(categories) { cat ->
-                            CategoryCard(
-                                category = cat,
-                                onCardClick = {
-                                    onCategorySelected(cat)
-                                }
-                            )
-                        }
+            else -> {
+                LazyVerticalGrid(
+                    contentPadding = PaddingValues(top = 120.dp),
+                    columns = GridCells.Fixed(2)
+                ) {
+                    items(uiState.categories) { category ->
+                        CategoryCard(
+                            category = category,
+                            onCardClick = {
+                                onCategorySelected(category)
+                            }
+                        )
                     }
                 }
             }
         }
+        HeaderSection(
+            onSettingsClick = onLanguageClick,
+            onProfileClick = onProfileSelected
+        )
     }
 }
 
@@ -132,10 +103,26 @@ fun HeaderSection(onSettingsClick: () -> Unit, onProfileClick: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .size(140.dp)
+            .background(
+                brush = Brush.verticalGradient(
+                    startY = 0f,
+                    colors = listOf(
+                        MaterialTheme.colorScheme.background,
+                        MaterialTheme.colorScheme.surface.copy(.8f),
+                        MaterialTheme.colorScheme.surface.copy(.5f),
+                        Color.Transparent
+                    )
+                )
+            )
     ) {
         IconButton(onClick = onSettingsClick) {
-            Icon(painter = painterResource(R.drawable.outline_translate_24), contentDescription = "Settings")
+            Icon(
+                painter = painterResource(R.drawable.outline_translate_24),
+                contentDescription = "Settings"
+            )
         }
         Row {
             SmoothStaggeredTextVertical(text = "A R M E N", initialDelay = 0L)
@@ -148,6 +135,7 @@ fun HeaderSection(onSettingsClick: () -> Unit, onProfileClick: () -> Unit) {
         }
     }
 }
+
 @Composable
 fun SmoothStaggeredTextVertical(text: String, initialDelay: Long) {
     val characters = remember(text) { text.map { it.toString() } }
@@ -189,6 +177,7 @@ fun SmoothStaggeredTextVertical(text: String, initialDelay: Long) {
         }
     }
 }
+
 @Composable
 fun SmoothStaggeredText(text: String, initialDelay: Long) {
     val characters = remember(text) { text.map { it.toString() } }
@@ -230,6 +219,7 @@ fun SmoothStaggeredText(text: String, initialDelay: Long) {
         }
     }
 }
+
 @Composable
 fun SkeletonGrid() {
     LazyVerticalGrid(
@@ -242,6 +232,7 @@ fun SkeletonGrid() {
         }
     }
 }
+
 @Composable
 fun SkeletonCategoryCard() {
     // ایجاد انیمیشن Shimmer
@@ -286,7 +277,9 @@ fun SkeletonCategoryCard() {
             )
 
             Row(
-                modifier = Modifier.fillMaxWidth().height(64.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -304,7 +297,10 @@ fun SkeletonCategoryCard() {
                 Box(
                     modifier = Modifier
                         .size(56.dp, 64.dp)
-                        .background(brush, RoundedCornerShape(topStart = 25.dp, bottomStart = 25.dp))
+                        .background(
+                            brush,
+                            RoundedCornerShape(topStart = 25.dp, bottomStart = 25.dp)
+                        )
                 )
             }
         }
@@ -320,19 +316,24 @@ fun CategoryCard(category: Category, onCardClick: () -> Unit) {
             .clickable { onCardClick() }
     ) {
         Column(
-            modifier = Modifier.defaultMinSize(minHeight = 200.dp),
+            modifier = Modifier,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             if (category.image.isNotEmpty()) {
                 AsyncImage(
                     model = category.image,
                     contentDescription = null,
-                    modifier = Modifier.size(180.dp).padding(16.dp),
-                    contentScale = ContentScale.Crop
+                    alignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(140.dp)
+                        .padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 0.dp),
+
                 )
             }
             Row(
-                modifier = Modifier.fillMaxWidth().height(64.dp),
+                modifier = Modifier
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -351,10 +352,10 @@ fun CategoryCard(category: Category, onCardClick: () -> Unit) {
 
                 Box(
                     modifier = Modifier
-                        .size(56.dp, 64.dp)
+                        .size(52.dp, 56.dp)
                         .background(
                             MaterialTheme.colorScheme.background,
-                            RoundedCornerShape(topStart = 25.dp, bottomStart = 25.dp)
+                            RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp)
                         ),
                 ) {
                     Icon(

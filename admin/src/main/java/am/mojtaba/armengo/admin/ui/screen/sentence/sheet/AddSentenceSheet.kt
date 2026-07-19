@@ -30,6 +30,7 @@ import coil3.compose.AsyncImage
 import am.mojtaba.armengo.core.domain.model.Language
 import am.mojtaba.armengo.core.domain.model.Sentence
 import am.mojtaba.armengo.core.domain.model.Translate
+import android.util.Log
 import androidx.compose.material3.Switch
 import androidx.compose.ui.Alignment
 import java.util.UUID
@@ -43,7 +44,7 @@ fun AddSentenceSheet(
     onDismiss: () -> Unit,
     onSubmit: (Sentence) -> Unit
 ) {
-
+    Log.i("TOTO", "categoryId: $categoryId")
     val translationMap = remember { mutableStateMapOf<String, String>() }
     var level by remember { mutableStateOf("") }
     var imageUrl by remember { mutableStateOf("") }

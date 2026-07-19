@@ -1,4 +1,5 @@
 package am.mojtaba.armengo.ui.screen.sentence
+
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,88 +19,153 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import am.mojtaba.armengo.core.domain.model.Sentence
+import am.mojtaba.armengo.core.domain.model.Word
 import am.mojtaba.armengo.ui.component.LanguageAwareText
+import am.mojtaba.armengo.ui.screen.category.CategoryUiState
 import am.mojtaba.armengo.ui.screen.sentence.sheet.ShowSentenceSheet
+import android.graphics.drawable.GradientDrawable
 import android.util.Log
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.ui.graphics.graphicsLayer
 
 
 @Composable
 fun SentenceScreen(
-    categoryId: String,
-    categoryName: String,
-    sentenceViewModel: SentenceViewModel,
+    uiState: SentenceUiState,
+    onSentenceClick: (Sentence) -> Unit,
+    onWordClick: (Word) -> Unit,
+    onPlayVoice: (String) -> Unit,
     onBack: () -> Unit
 ) {
-    val sentenceUiState by sentenceViewModel.sentenceUiState.collectAsState()
-    var showSentenceSheet by remember { mutableStateOf(false) }
-    var currentSentence by remember { mutableStateOf(Sentence()) }
 
-    LaunchedEffect(categoryId) {
-        sentenceViewModel.getSentences(categoryId)
-    }
-
-
-    if (showSentenceSheet) {
-        ShowSentenceSheet(
-            sentence = currentSentence,
-            onDismiss = { showSentenceSheet = false },
-            onPlay = { sentenceViewModel.playVoice(it) }
-        )
-    }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 42.dp) ,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+
             IconButton(
-                modifier = Modifier.padding(end = 16.dp),
-                onClick = {
-                    sentenceViewModel.stopVoice()
-                    onBack()
-                }) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
+                onClick = onBack
+            ) {
+                Icon(Icons.Default.ArrowBack, null)
             }
-            LanguageAwareText(modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, text = categoryName, style = MaterialTheme.typography.headlineMedium)
+
+            LanguageAwareText(
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                textAlign = TextAlign.Center,
+                text = uiState.title,
+                style = MaterialTheme.typography.headlineMedium
+            )
         }
 
-        Spacer(Modifier.height(36.dp))
+//        Spacer(Modifier.height(8.dp))
 
         when {
-            sentenceUiState.isLoading -> {
+            uiState.isLoading -> {
                 SentenceShimmerList()
-            }
-            sentenceUiState.error != null -> {
-                Text("Error: ${sentenceUiState.error}", color = MaterialTheme.colorScheme.error)
             }
 
             else -> {
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    items(
-                        items = sentenceUiState.data ?: emptyList(),
-                        key = { it.id }) { sentence ->
-                        SentenceItem(
-                            sentence = sentence,
-                            openSheet = {
-                                currentSentence = sentence
-                                showSentenceSheet = true
-                            },
-                            playVoice = {
-                                sentenceViewModel.playVoice(sentence.voiceUrl)
-                            }
-                        )
-                    }
-                }
+                WordsList(uiState.words, onWordClick, onPlayVoice)
+                SentencesList(uiState.sentences, onSentenceClick, onPlayVoice)
             }
         }
     }
 }
 
 @Composable
+fun SentencesList(
+    sentences: List<Sentence>,
+    onSentenceClick: (Sentence) -> Unit,
+    onPlayVoice: (String) -> Unit,
+) {
+    // ۱. تعریف وضعیت اسکرول لیست
+    val listState = rememberLazyListState()
+
+    // ۲. محاسبه پویای شفافیت (Alpha) بر اساس اسکرول اولین آیتم
+    val titleAlpha by remember {
+        derivedStateOf {
+            if (listState.firstVisibleItemIndex > 0) {
+                // اگر کاربر اسکرول کرده و آیتم‌های بعدی نمایان شده‌اند، تایتل کاملا محو شود
+                0f
+            } else {
+                // محاسبه نسبت اسکرول آیتم اول؛ هرچه بیشتر اسکرول شود، آلفا کمتر می‌شود
+                val firstItemSize = listState.layoutInfo.visibleItemsInfo.firstOrNull()?.size ?: 1
+                val scrollOffset = listState.firstVisibleItemScrollOffset
+                // عدد 0.5f در مخرج برای این است که انیمیشن محو شدن سریع‌تر و نرم‌تر اتفاق بیفتد
+                val progress = (scrollOffset.toFloat() / (firstItemSize * 0.5f))
+                (1f - progress).coerceIn(0f, 1f)
+            }
+        }
+    }
+
+    Box {
+        LazyColumn(
+            state = listState, // ۳. اختصاص دادن state به لیست
+            contentPadding = PaddingValues(top = 52.dp, start = 16.dp, end = 16.dp, bottom = 360.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(
+                items = sentences,
+                key = { it.id }
+            ) { sentence ->
+                SentenceItem(
+                    sentence = sentence,
+                    openSheet = {
+                        onSentenceClick(sentence)
+                    },
+                    playVoice = {
+                        onPlayVoice(sentence.voiceUrl)
+                    }
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.surface,
+                            Color.Transparent
+                        )
+                    )
+                )
+        ) {
+            Spacer(Modifier.height(16.dp))
+            LanguageAwareText(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .graphicsLayer {
+                        alpha = titleAlpha // اعمال آلفا برای محو شدن نرم
+                        // اختیاری: می‌توانید کمی جابجایی در محور Y (ترجمه حرکتی) هم اضافه کنید تا افکت زیباتر شود
+                        translationY = -1f * (1f - titleAlpha) * 25.dp.toPx()
+                    },
+                textAlign = TextAlign.Start,
+                text = "S e n t e n c e s",
+                color = Color.DarkGray,
+                fontSize = 20.sp,
+                style = MaterialTheme.typography.headlineLarge
+            )
+//            Spacer(Modifier.height(4.dp))
+        }
+    }
+}
+
+@Composable
 fun SentenceItem(sentence: Sentence, openSheet: () -> Unit, playVoice: () -> Unit) {
-    val actionIcon = if (sentence.hasVoice) Icons.Rounded.PlayArrow else Icons.Rounded.ArrowForward // (ترجیحاً ArrowForward برای جلو رفتن به جای Back)
+    val actionIcon =
+        if (sentence.hasVoice) Icons.Rounded.PlayArrow else Icons.Rounded.ArrowForward // (ترجیحاً ArrowForward برای جلو رفتن به جای Back)
     val actionClick = if (sentence.hasVoice) playVoice else openSheet
     Card(
         shape = RoundedCornerShape(20.dp),

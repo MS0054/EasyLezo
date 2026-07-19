@@ -5,6 +5,7 @@ data class Metadata(
     val lastUpdate: LastUpdate = LastUpdate(),
     val updateInfo: UpdateInfo = UpdateInfo(),
     val settings: Settings = Settings(),
+    val errors: List<Error> = emptyList(),
     val resources: List<Resource> = emptyList(),
     val appLanguages: AppLanguages = AppLanguages()
 )

@@ -34,8 +34,8 @@ class SentenceRepositoryImpl @Inject constructor(
                 sentenceDao.upsertAll(newSentences.map { it.toEntity() })
                 sentenceDao.deleteOldIds(newSentences.map { it.id })
 
-                metadata.lastUpdate.existNewCategoryData = false
-                metadataRepository.clearAndInsert(metadata)
+                val updatedMetadata = metadata.copy(lastUpdate = metadata.lastUpdate.copy(existNewSentenceData = false))
+                metadataRepository.clearAndInsert(updatedMetadata)
             }
             Result.success(Unit)
         } catch (e: Exception) {

@@ -1,4 +1,4 @@
-package am.mojtaba.armengo.core.data.manager
+package am.mojtaba.armengo.core.data.worker
 
 import android.content.Context
 import androidx.work.BackoffPolicy

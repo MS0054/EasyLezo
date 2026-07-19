@@ -24,7 +24,6 @@ class GetAppLanguagesUseCase @Inject constructor(
 
         return combine(languagesFlow, appLanguagesFlow) { languageList, appLang ->
             val fromLanguages = languageList.filter { it.isFromLanguage }
-            Log.i( "GetAppLanguagesUseCase", "invoke: ${languageList.first()}" )
             val toLanguages = languageList.filter { it.isToLanguage }
 
             val fromLanguage =

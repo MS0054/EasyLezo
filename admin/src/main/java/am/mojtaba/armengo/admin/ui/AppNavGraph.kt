@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.DropdownMenu
@@ -41,6 +40,8 @@ import am.mojtaba.armengo.admin.ui.screen.category.CategoryV
 import am.mojtaba.armengo.admin.ui.screen.auth.AuthScreen
 import am.mojtaba.armengo.admin.ui.screen.auth.AuthV
 import am.mojtaba.armengo.admin.ui.screen.category.CategoryS
+import am.mojtaba.armengo.admin.ui.screen.error.ErrorS
+import am.mojtaba.armengo.admin.ui.screen.error.ErrorV
 import am.mojtaba.armengo.admin.ui.screen.language.LanguageS
 import am.mojtaba.armengo.admin.ui.screen.language.LanguageV
 import am.mojtaba.armengo.admin.ui.screen.metadata.MetadataV
@@ -66,6 +67,7 @@ sealed class Screen(val route: String) {
     data object Category : Screen("category")
     data object Language : Screen("language")
     data object Resource : Screen("resource")
+    data object Error : Screen("error")
     data object User : Screen("user")
     object Sentence : Screen("sentence/{categoryId}") {
         fun createRoute(categoryId: String) = "sentence/$categoryId"
@@ -96,6 +98,7 @@ fun AppNavGraph() {
     val languageV: LanguageV = hiltViewModel()
     val metadataV: MetadataV = hiltViewModel()
     val resourceV: ResourceV = hiltViewModel()
+    val errorV: ErrorV = hiltViewModel()
     val userV: UserV = hiltViewModel()
     val sheetV: SheetV = hiltViewModel()
 
@@ -110,6 +113,7 @@ fun AppNavGraph() {
         languageV,
         metadataV,
         resourceV,
+        errorV,
         onLogoutSuccess = {
 
             navController.navigate(Screen.Auth.route) {
@@ -123,7 +127,6 @@ fun AppNavGraph() {
         },
         onRefresh = { refreshStatus = it },
         isSyncNeeded = {
-            Log.i("YAYA", "isSyncNeeded: $it")
             isSyncNeeded = isSyncNeeded || it } // if was true don't change it
     )
     refreshIconColor = when (refreshStatus) {
@@ -156,6 +159,7 @@ fun AppNavGraph() {
             metadataV,
             languageV,
             resourceV,
+            errorV,
             sheetV
         )
     }
@@ -175,6 +179,7 @@ fun MyNavHost(
     metadataV: MetadataV,
     languageV: LanguageV,
     resourceV: ResourceV,
+    errorV: ErrorV,
     sheetV: SheetV
 ) {
     NavHost(
@@ -224,11 +229,16 @@ fun MyNavHost(
             ResourceS (
                 resourceV = resourceV ,
                 onEdit = { sheetV.openSheet(AppSheet.EditResource(it)) },
-                onAdd = { sheetV.openSheet(AppSheet.AddCategory(it)) },
-                openSentences = { }
+                onAdd = { sheetV.openSheet(AppSheet.AddResource) }
             )
         }
-
+        composable(Screen.Error.route) {
+            ErrorS (
+                errorV = errorV,
+                onEdit = { sheetV.openSheet(AppSheet.EditError(it)) },
+                onAdd = { sheetV.openSheet(AppSheet.AddError) },
+            )
+        }
         composable(Screen.Sentence.route) { backStackEntry->
             val categoryId = backStackEntry.arguments?.getString("categoryId") ?: ""
             SentenceS(
@@ -300,6 +310,9 @@ fun DynamicHeader(
                     text = { Text("Resource") },
                     onClick = { showMenu = false; onScreenOpen(Screen.Resource) })
                 DropdownMenuItem(
+                    text = { Text("Error") },
+                    onClick = { showMenu = false; onScreenOpen(Screen.Error) })
+                DropdownMenuItem(
                     text = { Text("Logout", color = Color.Red) },
                     onClick = { showMenu = false; onSheetOpen(AppSheet.Logout) })
                 DropdownMenuItem(
@@ -337,11 +350,6 @@ fun DynamicHeader(
             if (currentRoute == Screen.Language.route) {
                 IconButton(onClick = { onSheetOpen(AppSheet.SortLanguage) }) {
                     Icon(Icons.Default.List, contentDescription = null)
-                }
-            }
-            if (currentRoute == Screen.Resource.route) {
-                IconButton(onClick = { onSheetOpen(AppSheet.AddResource) }) {
-                    Icon(Icons.Default.Add, contentDescription = null)
                 }
             }
             Box(  modifier = Modifier.padding(end = 16.dp).size(16.dp).background(color = refreshIconColor.copy(.4f), shape = CircleShape).clickable(

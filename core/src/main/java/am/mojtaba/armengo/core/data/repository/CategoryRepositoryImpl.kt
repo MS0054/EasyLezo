@@ -9,7 +9,9 @@ import am.mojtaba.armengo.core.domain.repository.CategoryRepository
 import am.mojtaba.armengo.core.domain.repository.MetadataRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import okio.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,7 +25,6 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override fun observe(): Flow<List<Category>> = categoryDao.observe().map { list -> list?.map { it?.toDomain() ?: Category() } ?: emptyList() }
     override fun observeUnsyncedStatus(): Flow<Boolean> = categoryDao.observeUnsyncedStatus()
-
     override suspend fun syncFromServer(isForce: Boolean): Result<Unit> {
         return try {
             val metadata = metadataRepository.observeMetadata().first()

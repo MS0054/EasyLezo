@@ -30,6 +30,7 @@ import coil3.compose.AsyncImage
 import am.mojtaba.armengo.core.domain.model.Language
 import am.mojtaba.armengo.core.domain.model.Translate
 import am.mojtaba.armengo.core.domain.model.Word
+import android.util.Log
 import androidx.compose.material3.Switch
 import androidx.compose.ui.Alignment
 import java.util.UUID
@@ -43,7 +44,7 @@ fun AddWordSheet(
     onDismiss: () -> Unit,
     onSubmit: (Word) -> Unit
 ) {
-
+    Log.i("TOTO", "categoryId: $categoryId")
     val translationMap = remember { mutableStateMapOf<String, String>() }
     var level by remember { mutableStateOf("") }
     var imageUrl by remember { mutableStateOf("") }
@@ -84,12 +85,18 @@ fun AddWordSheet(
                         label = { Text("Level") },
                         modifier = Modifier.fillMaxWidth()
                     )
-                }
-                item {
+
                     OutlinedTextField(
                         value = voiceUrl,
                         onValueChange = { voiceUrl = it },
                         label = { Text("VoiceUrl") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = imageUrl,
+                        onValueChange = { imageUrl = it },
+                        label = { Text("ImageUrl") },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }

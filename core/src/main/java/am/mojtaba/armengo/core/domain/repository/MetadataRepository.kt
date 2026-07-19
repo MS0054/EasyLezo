@@ -1,6 +1,7 @@
 package am.mojtaba.armengo.core.domain.repository
 
 import am.mojtaba.armengo.core.domain.model.AppLanguages
+import am.mojtaba.armengo.core.domain.model.Error
 import am.mojtaba.armengo.core.domain.model.LastUpdate
 import am.mojtaba.armengo.core.domain.model.Resource
 import am.mojtaba.armengo.core.domain.model.Settings
@@ -18,4 +19,5 @@ interface MetadataRepository {
     suspend fun updateMetadataSettings( settings: Settings)
     suspend fun updateMetadataUpdateInfo( updateInfo: UpdateInfo)
     suspend fun updateMetadataResourcesServer( resources: List<Resource>)
+    suspend fun updateMetadataErrorsServer( errors: List<Error>)
 }

@@ -83,13 +83,18 @@ fun EditWordSheet(
                         label = { Text("Level") },
                         modifier = Modifier.fillMaxWidth()
                     )
-                }
 
-                item {
                     OutlinedTextField(
                         value = voiceUrl,
                         onValueChange = { voiceUrl = it },
                         label = { Text("VoiceUrl") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = imageUrl,
+                        onValueChange = { imageUrl = it },
+                        label = { Text("ImageUrl") },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }

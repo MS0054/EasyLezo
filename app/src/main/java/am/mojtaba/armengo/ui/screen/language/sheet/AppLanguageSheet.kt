@@ -39,11 +39,10 @@ import am.mojtaba.armengo.ui.component.LanguageAwareText
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppLanguageSheet(
-    uiState: UiState<AppLanguages>,
+    appLanguages: AppLanguages,
     onLanguageSelected: (AppLanguages) -> Unit,
     onDismiss: () -> Unit
 ) {
-
 
 
     ModalBottomSheet(
@@ -51,23 +50,11 @@ fun AppLanguageSheet(
         containerColor = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
     ) {
-        when {
-            uiState.isLoading -> {
-//                LoadingStateView()
-            }
-
-            uiState.error != null -> {
-//                ErrorStateView(uiState.error)
-            }
-
-            uiState.data != null -> {
-                LanguageSheetContent(
-                    data = uiState.data,
-                    onLanguageSelected = onLanguageSelected,
-                    onDismiss = onDismiss
-                )
-            }
-        }
+        LanguageSheetContent(
+            data = appLanguages,
+            onLanguageSelected = onLanguageSelected,
+            onDismiss = onDismiss
+        )
     }
 }
 
@@ -93,7 +80,7 @@ private fun LanguageSheetContent(
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
 
-        )
+            )
 
         Spacer(Modifier.height(32.dp))
 
@@ -124,7 +111,7 @@ private fun LanguageSheetContent(
                 LanguageItemView(
                     modifier = Modifier.weight(1f),
                     flagUrl = toLanguage?.flag,
-                    name = ( toLanguage?.name) ?: "",
+                    name = (toLanguage?.name) ?: "",
                     onClick = { showToPicker = true }
                 )
             }
@@ -140,7 +127,7 @@ private fun LanguageSheetContent(
             languages = data.fromLanguages,
             selectedLanguage = fromLanguage,
             onLanguageSelected = { newLanguage ->
-                onLanguageSelected(data.copy(fromLanguage = newLanguage, from=newLanguage.name))
+                onLanguageSelected(data.copy(fromLanguage = newLanguage, from = newLanguage.name))
             },
             onDismiss = { showFromPicker = false }
         )
@@ -149,7 +136,7 @@ private fun LanguageSheetContent(
     if (showToPicker) {
         LanguageSelectionSheet(
             title = "To Language",
-            languages = data.toLanguages ,
+            languages = data.toLanguages,
             selectedLanguage = toLanguage,
             onLanguageSelected = { newLanguage ->
                 onLanguageSelected(data.copy(toLanguage = newLanguage, to = newLanguage.name))

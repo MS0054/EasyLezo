@@ -1,6 +1,7 @@
 package am.mojtaba.armengo.core.data.remote.api
 
 import am.mojtaba.armengo.core.data.remote.model.AppLanguagesDto
+import am.mojtaba.armengo.core.data.remote.model.ErrorDto
 import am.mojtaba.armengo.core.data.remote.model.LastUpdateDto
 import am.mojtaba.armengo.core.data.remote.model.MetadataDto
 import am.mojtaba.armengo.core.data.remote.model.SettingsDto
@@ -14,4 +15,5 @@ interface MetadataApi {
     suspend fun updateMetadataSettings( settings: SettingsDto)
     suspend fun updateMetadataUpdateInfo( updateInfo: UpdateInfoDto)
     suspend fun updateMetadataResources( resources: List<ResourceDto>)
+    suspend fun updateMetadataErrors( errors: List<ErrorDto>)
 }

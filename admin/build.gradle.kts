@@ -33,9 +33,9 @@ android {
         }
 
         debug {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            isDebuggable = false
+//            isMinifyEnabled = true
+//            isShrinkResources = true
+//            isDebuggable = false
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

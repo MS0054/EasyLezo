@@ -9,7 +9,7 @@ import am.mojtaba.armengo.core.data.local.dao.MetadataDao
 import am.mojtaba.armengo.core.data.local.dao.SentenceDao
 import am.mojtaba.armengo.core.data.local.dao.UserDao
 import am.mojtaba.armengo.core.data.local.dao.WordDao
-import am.mojtaba.armengo.core.data.manager.SyncManagerImpl
+import am.mojtaba.armengo.core.data.worker.SyncManagerImpl
 import am.mojtaba.armengo.core.data.remote.api.AuthApi
 import am.mojtaba.armengo.core.data.remote.api.AuthApiImpl
 import am.mojtaba.armengo.core.data.remote.api.CategoryApi
@@ -55,7 +55,7 @@ import am.mojtaba.armengo.core.domain.usecase.auth.GetUserRoleUseCase
 import am.mojtaba.armengo.core.domain.usecase.appLanguages.GetAppLanguagesUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.GetSentencesUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
-import am.mojtaba.armengo.core.domain.usecase.word.GetWordUseCase
+import am.mojtaba.armengo.core.domain.usecase.word.GetWordsUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.SyncWordFromServerUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -274,7 +274,7 @@ object AppModule {
     fun provideSyncSentencesUseCase(sentenceRepository: SentenceRepository) = SyncSentenceFromServerUseCase(sentenceRepository)
     @Singleton
     @Provides
-    fun provideGetWordsUseCase(wordRepository: WordRepository, appLanguagesRepository: AppLanguagesRepository) = GetWordUseCase(wordRepository, appLanguagesRepository)
+    fun provideGetWordsUseCase(wordRepository: WordRepository, appLanguagesRepository: AppLanguagesRepository) = GetWordsUseCase(wordRepository, appLanguagesRepository)
     @Singleton
     @Provides
     fun provideSyncWordsUseCase(wordRepository: WordRepository) = SyncWordFromServerUseCase(wordRepository)

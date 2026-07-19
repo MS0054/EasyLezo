@@ -9,7 +9,10 @@ import am.mojtaba.armengo.core.domain.usecase.metadata.CheckUpdateUseCase
 import am.mojtaba.armengo.core.domain.usecase.metadata.SyncMetadataUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.auth.GetUserRoleUseCase
+import am.mojtaba.armengo.core.domain.usecase.word.SyncWordFromServerUseCase
 import am.mojtaba.armengo.ui.Screen
+import android.util.Log
+import android.widget.Toast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +26,7 @@ class SplashViewModel @Inject constructor(
     private val syncMetadataUseCase: SyncMetadataUseCase,
     private val syncLanguageFromServerUseCase: SyncLanguageFromServerUseCase,
     private val syncCategoryFromServerUseCase: SyncCategoryFromServerUseCase,
+    private val syncWordFromServerUseCase: SyncWordFromServerUseCase,
     private val getUserRoleUseCase: GetUserRoleUseCase,
     private val syncSentenceFromServerUseCase: SyncSentenceFromServerUseCase,
     private val checkUpdateUseCase: CheckUpdateUseCase
@@ -51,11 +55,12 @@ class SplashViewModel @Inject constructor(
                 joinAll(
                     async { syncCategoryFromServerUseCase() },
                     async { syncLanguageFromServerUseCase() },
-                    async { syncSentenceFromServerUseCase() }
+                    async { syncSentenceFromServerUseCase() },
+                    async { syncWordFromServerUseCase() }
                 )
 //                _screen.value = Screen.Category
             } catch (e: Exception) {
-//                Toast.makeText(context, "$e", Toast.LENGTH_SHORT).show()
+                Log.i("TOTO", "e : $e")
             }
         }
     }

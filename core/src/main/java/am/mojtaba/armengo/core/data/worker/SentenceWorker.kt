@@ -1,29 +1,29 @@
-package am.mojtaba.armengo.core.data.manager
+package am.mojtaba.armengo.core.data.worker
 
+import am.mojtaba.armengo.core.data.local.dao.SentenceDao
+import am.mojtaba.armengo.core.data.mapper.toDto
+import am.mojtaba.armengo.core.data.remote.api.SentenceApi
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import am.mojtaba.armengo.core.data.local.dao.CategoryDao
-import am.mojtaba.armengo.core.data.mapper.toDto
-import am.mojtaba.armengo.core.data.remote.api.CategoryApi
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
 @HiltWorker
-class CategoryWorker @AssistedInject constructor(
+class SentenceWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val categoryDao: CategoryDao,
-    private val categoryApi: CategoryApi
+    private val sentenceDao: SentenceDao,
+    private val sentenceApi: SentenceApi
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
         return try {
-            val items = categoryDao.observeUnsynced()
+            val items = sentenceDao.observeUnsynced()
             if (items.isNotEmpty()) {
-                categoryApi.syncCategories(items.map { it.toDto() })
-                categoryDao.markAsSynced(items.map { it.id })
+                sentenceApi.syncSentences(items.map { it.toDto() })
+                sentenceDao.markAsSynced(items.map { it.id })
             }
             Result.success()
         } catch (e: Exception) {

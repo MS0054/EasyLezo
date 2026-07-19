@@ -51,9 +51,9 @@ class ResourceV @Inject constructor(
         }
     }
 
-    fun addResource(context: Context, resource: Resource) {
+    fun addResource(resource: Resource) {
         launchWithEvent(
-            action = { addMetadataResourceUseCase(context,resource) },
+            action = { addMetadataResourceUseCase(resource) },
             successMessage = "Added"
         )
     }

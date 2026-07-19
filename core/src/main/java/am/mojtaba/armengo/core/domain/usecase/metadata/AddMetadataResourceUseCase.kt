@@ -4,14 +4,16 @@ import android.content.Context
 import android.widget.Toast
 import am.mojtaba.armengo.core.domain.model.Resource
 import am.mojtaba.armengo.core.domain.repository.MetadataRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class AddMetadataResourceUseCase @Inject constructor(
-    private val metadataRepository: MetadataRepository
+    private val metadataRepository: MetadataRepository,
+    @ApplicationContext private val context: Context
 ) {
-    suspend operator fun invoke(context: Context,resource: Resource) {
+    suspend operator fun invoke(resource: Resource) {
         val resources = metadataRepository.observeMetadata().map { it.resources }.first()
 
         if (resources.any { it.name == resource.name }) {

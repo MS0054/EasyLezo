@@ -1,6 +1,7 @@
 package am.mojtaba.armengo.core.data.remote.api
 
 import am.mojtaba.armengo.core.data.remote.model.AppLanguagesDto
+import am.mojtaba.armengo.core.data.remote.model.ErrorDto
 import am.mojtaba.armengo.core.data.remote.model.LastUpdateDto
 import am.mojtaba.armengo.core.data.remote.model.MetadataDto
 import am.mojtaba.armengo.core.data.remote.model.SentenceDto
@@ -26,19 +27,8 @@ class MetadataApiImpl @Inject constructor(
     private val metadataCol = db.collection("Metadata")
 
     override suspend fun getMetadata(): MetadataDto {
-//        dothis3()
-//        dothis()
-//        dothis2()
-
         val main = metadataCol.document("Main").get().await()
         return main.toObject(MetadataDto::class.java) ?: MetadataDto()
-
-//        return MetadataDto(
-//            id = firestoreDto.id,
-//            lastUpdate = firestoreDto.lastUpdate,
-//            settings = firestoreDto.settings,
-//            resource = firestoreDto.resource
-//        )
     }
 
     override suspend fun updateMetadataLastUpdate(lastUpdate: LastUpdateDto) {
@@ -77,6 +67,12 @@ class MetadataApiImpl @Inject constructor(
     override suspend fun updateMetadataResources(resources: List<ResourceDto>) {
         try {
             metadataCol.document("Main").update("resources", resources).await()
+        } catch (e: Exception) {
+        }
+    }
+    override suspend fun updateMetadataErrors(errors: List<ErrorDto>) {
+        try {
+            metadataCol.document("Main").update("errors", errors).await()
         } catch (e: Exception) {
         }
     }
