@@ -27,9 +27,11 @@ sealed class AppSheet {
     object SortCategory : AppSheet()
     class EditCategory(val category: Category) : AppSheet()
 
-    class AddSentence(val maxOrder: Int) : AppSheet()
-    object SortSentence : AppSheet()
+    object AddSentence : AppSheet()
     class EditSentence(val sentence: Sentence) : AppSheet()
+
+    object AssignCategorySentence : AppSheet()
+    object SortCategorySentence : AppSheet()
 
     class AddWord(val maxOrder: Int) : AppSheet()
     object SortWord : AppSheet()

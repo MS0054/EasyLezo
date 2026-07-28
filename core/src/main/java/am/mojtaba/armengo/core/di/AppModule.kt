@@ -4,6 +4,7 @@ import android.content.Context
 import am.mojtaba.armengo.core.data.datastore.AppDataStore
 import am.mojtaba.armengo.core.data.local.dao.AppLanguagesDao
 import am.mojtaba.armengo.core.data.local.dao.CategoryDao
+import am.mojtaba.armengo.core.data.local.dao.CategorySentenceDao
 import am.mojtaba.armengo.core.data.local.dao.LanguageDao
 import am.mojtaba.armengo.core.data.local.dao.MetadataDao
 import am.mojtaba.armengo.core.data.local.dao.SentenceDao
@@ -14,6 +15,8 @@ import am.mojtaba.armengo.core.data.remote.api.AuthApi
 import am.mojtaba.armengo.core.data.remote.api.AuthApiImpl
 import am.mojtaba.armengo.core.data.remote.api.CategoryApi
 import am.mojtaba.armengo.core.data.remote.api.CategoryApiImpl
+import am.mojtaba.armengo.core.data.remote.api.CategorySentenceApi
+import am.mojtaba.armengo.core.data.remote.api.CategorySentenceApiImpl
 import am.mojtaba.armengo.core.data.remote.api.LanguageApi
 import am.mojtaba.armengo.core.data.remote.api.LanguageApiImpl
 import am.mojtaba.armengo.core.data.remote.api.MetadataApi
@@ -28,6 +31,7 @@ import am.mojtaba.armengo.core.data.repository.AppInfoProviderImpl
 import am.mojtaba.armengo.core.data.repository.AppLanguagesRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.AuthRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.CategoryRepositoryImpl
+import am.mojtaba.armengo.core.data.repository.CategorySentenceRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.LanguageRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.MetadataRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.SentenceRepositoryImpl
@@ -38,6 +42,7 @@ import am.mojtaba.armengo.core.domain.repository.AppInfoProvider
 import am.mojtaba.armengo.core.domain.repository.AppLanguagesRepository
 import am.mojtaba.armengo.core.domain.repository.AuthRepository
 import am.mojtaba.armengo.core.domain.repository.CategoryRepository
+import am.mojtaba.armengo.core.domain.repository.CategorySentenceRepository
 import am.mojtaba.armengo.core.domain.repository.LanguageRepository
 import am.mojtaba.armengo.core.domain.repository.MetadataRepository
 import am.mojtaba.armengo.core.domain.repository.SentenceRepository
@@ -53,7 +58,7 @@ import am.mojtaba.armengo.core.domain.usecase.user.SyncUserUseCase
 import am.mojtaba.armengo.core.domain.usecase.appLanguages.SyncAppLanguagesUseCase
 import am.mojtaba.armengo.core.domain.usecase.auth.GetUserRoleUseCase
 import am.mojtaba.armengo.core.domain.usecase.appLanguages.GetAppLanguagesUseCase
-import am.mojtaba.armengo.core.domain.usecase.sentence.GetSentencesUseCase
+import am.mojtaba.armengo.core.domain.usecase.sentence.GetCategorySentencesUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.GetWordsUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.SyncWordFromServerUseCase
@@ -165,12 +170,27 @@ object AppModule {
     fun provideSentenceRepository(
         metadataRepository: MetadataRepository,
         sentenceDao: SentenceDao,
-        sentenceApi: SentenceApi
+        sentenceApi: SentenceApi,
+        categorySentenceDao: CategorySentenceDao,
+        categorySentenceApi: CategorySentenceApi
     ): SentenceRepository = SentenceRepositoryImpl(
         metadataRepository,
         sentenceDao,
-        sentenceApi
+        sentenceApi,
+        categorySentenceDao,
+        categorySentenceApi
     )
+
+    @Singleton
+    @Provides
+    fun provideCategorySentenceRepository(
+        categorySentenceDao: CategorySentenceDao,
+        categorySentenceApi: CategorySentenceApi
+    ): CategorySentenceRepository = CategorySentenceRepositoryImpl(
+        categorySentenceDao,
+        categorySentenceApi
+    )
+
 
     @Singleton
     @Provides
@@ -205,7 +225,6 @@ object AppModule {
     @Provides
     fun provideAuthApi(auth: FirebaseAuth, db: FirebaseFirestore): AuthApi = AuthApiImpl(auth, db)
 
-
     @Singleton
     @Provides
     fun provideUserApi(db: FirebaseFirestore): UserApi = UserApiImpl(db)
@@ -217,6 +236,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideSentenceApi(db: FirebaseFirestore): SentenceApi = SentenceApiImpl(db)
+
+    @Singleton
+    @Provides
+    fun provideCategorySentenceApi(db: FirebaseFirestore): CategorySentenceApi = CategorySentenceApiImpl(db)
 
     @Singleton
     @Provides
@@ -268,7 +291,7 @@ object AppModule {
     fun provideGetCategoriesUseCase(categoryRepository: CategoryRepository, appLanguagesRepository: AppLanguagesRepository)= GetCategoriesUseCase(categoryRepository, appLanguagesRepository)
     @Singleton
     @Provides
-    fun provideGetSentencesUseCase(sentenceRepository: SentenceRepository, appLanguagesRepository: AppLanguagesRepository) = GetSentencesUseCase(sentenceRepository, appLanguagesRepository)
+    fun provideGetSentencesUseCase(sentenceRepository: SentenceRepository, appLanguagesRepository: AppLanguagesRepository) = GetCategorySentencesUseCase(sentenceRepository, appLanguagesRepository)
     @Singleton
     @Provides
     fun provideSyncSentencesUseCase(sentenceRepository: SentenceRepository) = SyncSentenceFromServerUseCase(sentenceRepository)

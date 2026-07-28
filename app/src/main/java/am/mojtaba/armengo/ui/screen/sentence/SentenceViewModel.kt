@@ -1,7 +1,7 @@
 package am.mojtaba.armengo.ui.screen.sentence
 
 import am.mojtaba.armengo.AudioHelper
-import am.mojtaba.armengo.core.domain.usecase.sentence.GetSentencesUseCase
+import am.mojtaba.armengo.core.domain.usecase.sentence.GetCategorySentencesUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.GetWordsUseCase
 import am.mojtaba.armengo.ui.UiEvent
 import am.mojtaba.armengo.ui.manager.ErrorMessageProvider
@@ -24,7 +24,7 @@ import javax.inject.Inject
 class SentenceViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val audioManager: AudioHelper,
-    private val getSentencesUseCase: GetSentencesUseCase,
+    private val getCategorySentencesUseCase: GetCategorySentencesUseCase,
     private val getWordsUseCase: GetWordsUseCase,
     private val errorMessageProvider: ErrorMessageProvider
 ) : ViewModel() {
@@ -41,7 +41,7 @@ class SentenceViewModel @Inject constructor(
             emit(emptyList())
         }
 
-        val sentencesFlow = getSentencesUseCase(categoryId).catch { throwable ->
+        val sentencesFlow = getCategorySentencesUseCase(categoryId).catch { throwable ->
             _uiEvent.emit(UiEvent.ShowSnackbar(errorMessageProvider.getMessage(throwable)))
             emit(emptyList())
         }

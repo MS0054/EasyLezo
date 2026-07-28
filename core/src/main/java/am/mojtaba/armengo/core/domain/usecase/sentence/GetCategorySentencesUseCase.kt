@@ -7,12 +7,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
-class GetSentencesUseCase @Inject constructor(
+class GetCategorySentencesUseCase @Inject constructor(
     private val sentenceRepository: SentenceRepository,
     private val appLanguagesRepository: AppLanguagesRepository
 ) {
-    operator fun invoke(): Flow<List<Sentence>> {
-        val sentencesFlow = sentenceRepository.observe()
+    operator fun invoke(categoryId: String): Flow<List<Sentence>> {
+        val sentencesFlow = sentenceRepository.observe(categoryId)
         val appLanguagesFlow = appLanguagesRepository.observeAppLanguages()
 
 

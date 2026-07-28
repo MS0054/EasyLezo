@@ -39,12 +39,10 @@ import java.util.UUID
 @Composable
 fun AddSentenceSheet(
     languages: List<Language>,
-    categoryId: String,
-    maxOrder: Int,
     onDismiss: () -> Unit,
     onSubmit: (Sentence) -> Unit
 ) {
-    Log.i("TOTO", "categoryId: $categoryId")
+
     val translationMap = remember { mutableStateMapOf<String, String>() }
     var level by remember { mutableStateOf("") }
     var imageUrl by remember { mutableStateOf("") }
@@ -60,10 +58,9 @@ fun AddSentenceSheet(
                 val translations = translationMap.map { (code, text) -> Translate(language = code, text = text) }
                 onSubmit( Sentence(
                     id = UUID.randomUUID().toString(),
-                    categoryId = categoryId,
+//                    categoryId = categoryId,
                     level = level,
                     image = imageUrl,
-                    order = maxOrder + 1,
                     createdAt = System.currentTimeMillis(),
                     updatedAt = System.currentTimeMillis(),
                     voiceUrl = voiceUrl,

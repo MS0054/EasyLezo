@@ -8,12 +8,10 @@ import am.mojtaba.armengo.core.domain.usecase.sentence.AddSentenceUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.DeleteSentenceUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.DownloadVoiceOfSentencesUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.ObserveUnSyncedSentenceUseCase
-import am.mojtaba.armengo.core.domain.usecase.sentence.SortSentenceUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.UpdateSentenceUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.GetSentencesUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceToServerUseCase
-import android.util.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,38 +26,34 @@ class SentenceV @Inject constructor(
     private val getSentencesUseCase: GetSentencesUseCase,
     private val addSentenceUseCase: AddSentenceUseCase,
     private val updateSentenceUseCase: UpdateSentenceUseCase,
-    private val sortSentencesUseCase: SortSentenceUseCase,
     private val deleteSentenceUseCase: DeleteSentenceUseCase,
     private val syncSentenceFromServerUseCase: SyncSentenceFromServerUseCase,
     private val syncSentenceToServerUseCase: SyncSentenceToServerUseCase,
-    private val observeUnSyncedSentenceUseCase : ObserveUnSyncedSentenceUseCase,
-    private val downloadVoiceOfSentencesUseCase: DownloadVoiceOfSentencesUseCase
+    private val observeUnSyncedSentenceUseCase: ObserveUnSyncedSentenceUseCase,
+    private val downloadVoiceOfSentencesUseCase: DownloadVoiceOfSentencesUseCase,
 
 ) : BaseViewModel() {
 
-
-    private val _sentenceUiState = MutableStateFlow(UiState<List<Sentence>>())
-    val sentenceUiState: StateFlow<UiState<List<Sentence>>> = _sentenceUiState.asStateFlow()
-
-    private val _selectedCategoryId = MutableStateFlow<String?>(null)
-    val selectedCategoryId: StateFlow<String?> = _selectedCategoryId.asStateFlow()
-
+    private val _sentencesUiState = MutableStateFlow(UiState<List<Sentence>>())
+    val sentencesUiState: StateFlow<UiState<List<Sentence>>> = _sentencesUiState.asStateFlow()
     private val _unsyncedSentenceState = MutableStateFlow(false)
     val unsyncedSentenceState: StateFlow<Boolean> = _unsyncedSentenceState.asStateFlow()
 
 
     init {
+        observeSentences()
         observeSyncStatus()
     }
 
-     fun observeSentences(categoryId: String) {
-         _selectedCategoryId.value = categoryId
+    fun observeSentences() {
         viewModelScope.launch {
-            getSentencesUseCase(categoryId)
-                .onStart { _sentenceUiState.value = UiState(isLoading = true) }
-                .catch { e -> _sentenceUiState.value = UiState(error = e.message ?: "Unknown error") }
+            getSentencesUseCase()
+                .onStart { _sentencesUiState.value = UiState(isLoading = true) }
+                .catch { e ->
+                    _sentencesUiState.value = UiState(error = e.message ?: "Unknown error")
+                }
                 .collect { sentences ->
-                    _sentenceUiState.value = UiState(data = sentences)
+                    _sentencesUiState.value = UiState(data = sentences)
                     observeSyncStatus()
                 }
         }
@@ -91,7 +85,6 @@ class SentenceV @Inject constructor(
     }
 
     fun addSentence(sentence: Sentence) {
-        Log.i("MMOOJJII", "sentence: $sentence")
         launchWithEvent(
             action = { addSentenceUseCase(sentence) },
             successMessage = "Added"
@@ -102,13 +95,6 @@ class SentenceV @Inject constructor(
         launchWithEvent(
             action = { updateSentenceUseCase(sentence) },
             successMessage = "Updated"
-        )
-    }
-
-    fun sortSentences(sorted: List<Sentence>)  {
-        launchWithEvent(
-            action = { sortSentencesUseCase(sorted) },
-            successMessage = "Sorted"
         )
     }
 

@@ -29,31 +29,52 @@ import am.mojtaba.armengo.core.domain.model.Sentence
 fun SortSentenceSheet(
     sentences: List<Sentence>,
     onDismiss: () -> Unit,
-    onSubmit: (List<Sentence>) -> Unit
+    onSubmit: (orderedIds: List<String>) -> Unit // 👈 خروجی لیستی از IDهای جدید به ترتیب است
 ) {
-    val list = remember { mutableStateListOf<Sentence>().apply { addAll(sentences.sortedBy { it.order }) } }
+    // مقداردهی اولیه لیست بدون تغییر ترتیب پیش‌فرضی که از ورودی آمده است
+    val list = remember(sentences) {
+        mutableStateListOf<Sentence>().apply { addAll(sentences) }
+    }
 
-    Column(Modifier.Companion.fillMaxWidth().padding(20.dp)) {
-        Row(Modifier.Companion.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            IconButton(onClick = onDismiss) { Icon(Icons.Default.Close, contentDescription = null) }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onDismiss) {
+                Icon(Icons.Default.Close, contentDescription = "Close")
+            }
             Text("Sort Sentences", style = MaterialTheme.typography.titleLarge)
-            Button(onClick = { val reordered = list.mapIndexed { index, cat -> cat.copy(order = index) }; onSubmit(reordered) }) { Text("Save") }
+
+            Button(
+                onClick = {
+                    // 👈 استخراج لیست IDها بر اساس مرتب‌سازی فعلی لیست
+                    val orderedIds = list.map { it.id }
+                    onSubmit(orderedIds)
+                }
+            ) {
+                Text("Save")
+            }
         }
-        Spacer(Modifier.Companion.size(16.dp))
+
+        Spacer(Modifier.size(16.dp))
 
         DraggableLazyColumn(
             items = list,
+            key = { item -> item.id }, // 👈 ارسال key برای جلوگیری از مشکلات Recomposition
             onMove = { from, to ->
                 list.move(from, to)
             }
         ) { sentence, isDragging ->
             SentenceDragItem(sentence, isDragging)
         }
-
     }
-
 }
-
 
 @Composable
 fun SentenceDragItem(sentence: Sentence, isDragging: Boolean) {
@@ -63,7 +84,7 @@ fun SentenceDragItem(sentence: Sentence, isDragging: Boolean) {
             .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 4.dp)
             .graphicsLayer(
-                shadowElevation = with(density) {if (isDragging) 16.dp.toPx() else 2.dp.toPx()},
+                shadowElevation = with(density) { if (isDragging) 16.dp.toPx() else 2.dp.toPx() },
                 scaleX = if (isDragging) 1.03f else 1f,
                 scaleY = if (isDragging) 1.03f else 1f
             )
@@ -81,19 +102,21 @@ fun SentenceDragItem(sentence: Sentence, isDragging: Boolean) {
             )
             Spacer(Modifier.width(12.dp))
             Text(
-                sentence.fromText,
+                text = sentence.fromText,
                 style = MaterialTheme.typography.titleMedium
             )
         }
     }
 }
 
+// 👈 پشتیبانی از انواع مدل‌ها به صورت Generic
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DraggableLazyColumn(
-    items: SnapshotStateList<Sentence>,
+fun <T> DraggableLazyColumn(
+    items: SnapshotStateList<T>,
+    key: (T) -> Any,
     onMove: (fromIndex: Int, toIndex: Int) -> Unit,
-    itemContent: @Composable (Sentence, Boolean) -> Unit
+    itemContent: @Composable (T, Boolean) -> Unit
 ) {
     val listState = rememberLazyListState()
     var draggingItemIndex by remember { mutableStateOf<Int?>(null) }
@@ -113,10 +136,8 @@ fun DraggableLazyColumn(
                         change.consume()
                         val currentIndex = draggingItemIndex ?: return@detectDragGesturesAfterLongPress
 
-                        // مختصات pointer نسبت به کل لیست
                         val pointerY = change.position.y.toInt() + listState.firstVisibleItemScrollOffset
 
-                        // پیدا کردن آیتمی که pointer روی اون قرار گرفته
                         val newIndex = listState.layoutInfo.visibleItemsInfo
                             .firstOrNull { pointerY in it.offset..(it.offset + it.size) }
                             ?.index
@@ -131,9 +152,12 @@ fun DraggableLazyColumn(
                 )
             }
     ) {
-        itemsIndexed(items, key = { _, item -> item.id }) { index, item ->
+        itemsIndexed(items, key = { _, item -> key(item) }) { index, item ->
             Box(
-                modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null, placementSpec = spring(stiffness = Spring.StiffnessMediumLow)
+                modifier = Modifier.animateItem(
+                    fadeInSpec = null,
+                    fadeOutSpec = null,
+                    placementSpec = spring(stiffness = Spring.StiffnessMediumLow)
                 )
             ) {
                 itemContent(item, draggingItemIndex == index)
@@ -141,7 +165,6 @@ fun DraggableLazyColumn(
         }
     }
 
-    // Auto-scroll
     LaunchedEffect(draggingItemIndex) {
         val index = draggingItemIndex ?: return@LaunchedEffect
         val visibleItemInfo = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == index }
@@ -158,5 +181,3 @@ fun DraggableLazyColumn(
         }
     }
 }
-
-

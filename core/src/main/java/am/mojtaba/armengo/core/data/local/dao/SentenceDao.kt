@@ -9,8 +9,15 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SentenceDao {
 
-    @Query("SELECT * FROM sentence WHERE categoryId = :categoryId AND isDeleted = 0 ORDER BY `order` ASC")
+    @Query("""
+        SELECT s.* FROM sentence s
+        INNER JOIN category_sentence cs ON s.id = cs.sentenceId
+        WHERE cs.categoryId = :categoryId AND cs.isDeleted = 0
+        ORDER BY cs.`order` ASC
+    """)
     fun observe(categoryId: String): Flow<List<SentenceEntity?>?>
+    @Query("SELECT * FROM sentence WHERE isDeleted = 0 ORDER BY `order` ASC")
+    fun observe(): Flow<List<SentenceEntity?>?>
     @Query("SELECT * FROM sentence WHERE isSynced = 0")
     suspend fun observeUnsynced(): List<SentenceEntity>
     @Query("SELECT EXISTS(SELECT 1 FROM sentence WHERE isSynced = 0)")

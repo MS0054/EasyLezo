@@ -5,7 +5,7 @@ import com.google.firebase.firestore.Exclude
 
 data class SentenceDto(
     val id: String = "",
-    val categoryId: String = "",
+//    val categoryId: String = "",
     val level: String = "",
     val image: String = "",
     val order: Int = 0,

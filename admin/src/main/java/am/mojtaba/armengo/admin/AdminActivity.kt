@@ -12,23 +12,33 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import am.mojtaba.armengo.admin.ui.AppNavGraph
 import am.mojtaba.armengo.admin.ui.theme.EasyLezoTheme
+import android.graphics.Color
+import androidx.activity.SystemBarStyle
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AdminActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.auto(
+                lightScrim = Color.TRANSPARENT, // در حالت تم روشن، نوار شفاف بماند
+                darkScrim = Color.TRANSPARENT   // در حالت تم تاریک، نوار شفاف بماند
+            ),
+            navigationBarStyle = SystemBarStyle.auto(
+                Color.TRANSPARENT,
+                Color.TRANSPARENT
+            )
+        )
         setContent {
             EasyLezoTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Surface(
-                        modifier = Modifier.fillMaxSize().padding(innerPadding),
-                        color = MaterialTheme.colorScheme.background
-                    ) {
-                        AppNavGraph()
-                    }
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    AppNavGraph()
                 }
+
             }
         }
     }

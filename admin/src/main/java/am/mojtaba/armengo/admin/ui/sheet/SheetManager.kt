@@ -37,8 +37,10 @@ import am.mojtaba.armengo.admin.ui.screen.metadata.sheet.UpdateInfoSheet
 import am.mojtaba.armengo.admin.ui.screen.resource.ResourceV
 import am.mojtaba.armengo.admin.ui.screen.resource.sheet.AddResourceSheet
 import am.mojtaba.armengo.admin.ui.screen.resource.sheet.EditResourceSheet
+import am.mojtaba.armengo.admin.ui.screen.sentence.CategorySentenceV
 import am.mojtaba.armengo.admin.ui.screen.sentence.SentenceV
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.AddSentenceSheet
+import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.AssignSentencesSheet
 import am.mojtaba.armengo.admin.ui.screen.word.sheet.AddWordSheet
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.EditSentenceSheet
 import am.mojtaba.armengo.admin.ui.screen.word.sheet.EditWordSheet
@@ -62,6 +64,7 @@ fun SheetManager(
     userV: UserV,
     categoryV: CategoryV,
     sentenceV: SentenceV,
+    categorySentenceV: CategorySentenceV,
     wordV: WordV,
     languageV: LanguageV,
     metadataV: MetadataV,
@@ -83,6 +86,7 @@ fun SheetManager(
             languageV.event,
             categoryV.event,
             sentenceV.event,
+            categorySentenceV.event,
             wordV.event,
             userV.event,
             resourceV.event,
@@ -143,6 +147,7 @@ fun SheetManager(
                         val isExistUnSyncedUser = false
                         val isExistUnSyncedCategory = categoryV.unsyncedCategoryState.value ?: false
                         val isExistUnSyncedSentence = sentenceV.unsyncedSentenceState.value ?: false
+                        val isExistUnSyncedCategorySentence = categorySentenceV.unsyncedCategorySentenceState.value ?: false
                         val isExistUnSyncedWord = wordV.unsyncedWordState.value ?: false
                         val isExistUnSyncedLanguage = languageV.unsyncedLanguageState.value ?: false
 
@@ -150,6 +155,7 @@ fun SheetManager(
                             isExistUnSyncedUser,
                             isExistUnSyncedCategory,
                             isExistUnSyncedSentence,
+                            isExistUnSyncedCategorySentence,
                             isExistUnSyncedWord,
                             isExistUnSyncedLanguage,
                             onConfirm = {
@@ -161,6 +167,7 @@ fun SheetManager(
                                             "User" -> ""
                                             "Category" -> categoryV.syncCategoryToServer()
                                             "Sentence" -> sentenceV.syncSentenceToServer()
+                                            "CategorySentence" -> categorySentenceV.syncSentenceToServer()
                                             "Word" -> wordV.syncWordToServer()
                                             "Language" -> languageV.syncLanguageToServer()
                                         }
@@ -178,6 +185,7 @@ fun SheetManager(
                                             "User" -> ""
                                             "Category" -> categoryV.rejectCategoryChanges()
                                             "Sentence" -> sentenceV.rejectSentenceChanges()
+                                            "CategorySentence" -> sentenceV.rejectSentenceChanges()
                                             "Word" -> wordV.rejectWordChanges()
                                             "Language" -> languageV.rejectLanguageChanges()
                                         }
@@ -348,12 +356,9 @@ fun SheetManager(
 
                     is AppSheet.AddSentence -> {
                         val languages = languageV.languageUiState.value.data ?: emptyList()
-                        val categoryId = sentenceV.selectedCategoryId.value ?: ""
 
                         AddSentenceSheet(
                             languages,
-                            categoryId,
-                            maxOrder = currentSheet.maxOrder,
                             onDismiss = { sheetV.closeSheet() },
                             onSubmit = {
                                 sentenceV.addSentence(it)
@@ -375,13 +380,31 @@ fun SheetManager(
                         )
                     }
 
-                    is AppSheet.SortSentence -> {
-                        val sentences = sentenceV.sentenceUiState.value.data ?: emptyList()
+                    is AppSheet.SortCategorySentence -> {
+                        val sentences = categorySentenceV.categorySentencesUiState.value.data ?: emptyList()
+                        val categoryId = categorySentenceV.selectedCategoryId.value ?: ""
                         SortSentenceSheet(
                             sentences = sentences,
                             onDismiss = { sheetV.closeSheet() },
                             onSubmit = {
-                                sentenceV.sortSentences(it)
+                                categorySentenceV.sortCategorySentences(categoryId, it)
+                                sheetV.closeSheet()
+                            }
+                        )
+                    }
+
+                    is AppSheet.AssignCategorySentence -> {
+                        val sentences = sentenceV.sentencesUiState.value.data ?: emptyList()
+                        val categorySentenceIds = categorySentenceV.categorySentencesUiState.value.data?.map { it.id } ?: emptyList()
+                        val categoryId = categorySentenceV.selectedCategoryId.value ?: ""
+
+                        AssignSentencesSheet (
+                            sentences = sentences, // لیست کامل تمام جملات دیتابیس
+                            initiallySelectedIds = categorySentenceIds, // آی‌دی جملاتی که همین الان داخل این کتگوری هستن
+                            onDismiss = { sheetV.closeSheet() },
+                            onSubmit = { selectedIds ->
+                                categorySentenceV.updateCategorySentences(categoryId, selectedIds)
+                                sheetV.closeSheet()
                             }
                         )
                     }

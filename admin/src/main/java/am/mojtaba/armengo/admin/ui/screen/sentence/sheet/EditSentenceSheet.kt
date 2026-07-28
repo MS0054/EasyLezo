@@ -60,7 +60,7 @@ fun EditSentenceSheet(
                 Button(onClick = {
                     val updatedTranslations = translationMap.map { (code, text) -> Translate(language = code, text = text) }
                     onSubmit(sentence.copy(
-                        categoryId = sentence.categoryId,
+//                        categoryId = sentence.categoryId,
                         level = level,
                         image = imageUrl,
                         updatedAt = System.currentTimeMillis(),

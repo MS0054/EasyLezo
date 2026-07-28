@@ -47,6 +47,8 @@ import am.mojtaba.armengo.admin.ui.screen.language.LanguageV
 import am.mojtaba.armengo.admin.ui.screen.metadata.MetadataV
 import am.mojtaba.armengo.admin.ui.screen.resource.ResourceS
 import am.mojtaba.armengo.admin.ui.screen.resource.ResourceV
+import am.mojtaba.armengo.admin.ui.screen.sentence.CategorySentenceS
+import am.mojtaba.armengo.admin.ui.screen.sentence.CategorySentenceV
 import am.mojtaba.armengo.admin.ui.screen.sentence.SentenceS
 import am.mojtaba.armengo.admin.ui.screen.sentence.SentenceV
 import am.mojtaba.armengo.admin.ui.screen.splash.SplashScreen
@@ -58,19 +60,19 @@ import am.mojtaba.armengo.admin.ui.screen.word.WordV
 import am.mojtaba.armengo.admin.ui.sheet.AppSheet
 import am.mojtaba.armengo.admin.ui.sheet.SheetManager
 import am.mojtaba.armengo.admin.ui.sheet.SheetV
-import android.util.Log
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 sealed class Screen(val route: String) {
     data object Splash : Screen("splash")
     data object Auth : Screen("auth")
     data object Category : Screen("category")
+    data object Sentence : Screen("sentence")
     data object Language : Screen("language")
     data object Resource : Screen("resource")
     data object Error : Screen("error")
     data object User : Screen("user")
-    object Sentence : Screen("sentence/{categoryId}") {
-        fun createRoute(categoryId: String) = "sentence/$categoryId"
+    object CategorySentences : Screen("categorySentences/{categoryId}") {
+        fun createRoute(categoryId: String) = "categorySentences/$categoryId"
     }
     object Word : Screen("word/{categoryId}") {
         fun createRoute(categoryId: String) = "word/$categoryId"
@@ -94,6 +96,7 @@ fun AppNavGraph() {
     val authV: AuthV = hiltViewModel()
     val categoryV: CategoryV = hiltViewModel()
     val sentenceV: SentenceV = hiltViewModel()
+    val categorySentenceV: CategorySentenceV = hiltViewModel()
     val wordV: WordV = hiltViewModel()
     val languageV: LanguageV = hiltViewModel()
     val metadataV: MetadataV = hiltViewModel()
@@ -109,6 +112,7 @@ fun AppNavGraph() {
         userV,
         categoryV,
         sentenceV,
+        categorySentenceV,
         wordV,
         languageV,
         metadataV,
@@ -146,13 +150,14 @@ fun AppNavGraph() {
                 onRefresh = { splashV.start(true)}
             )
         }
-    ) { paddingValues ->
+    ) { _ ->
         MyNavHost(
             navController,
-            Modifier.padding(paddingValues),
+            Modifier.padding(top = 60.dp),
             splashV,
             categoryV,
             sentenceV,
+            categorySentenceV,
             wordV,
             authV,
             userV,
@@ -173,6 +178,7 @@ fun MyNavHost(
     splashV: SplashV,
     categoryV: CategoryV,
     sentenceV: SentenceV,
+    categorySentenceV: CategorySentenceV,
     wordV: WordV,
     authV: AuthV,
     userV: UserV,
@@ -208,7 +214,7 @@ fun MyNavHost(
                 categoryV,
                 onEdit = { sheetV.openSheet(AppSheet.EditCategory(it)) },
                 onAdd = { sheetV.openSheet(AppSheet.AddCategory(it)) },
-                openSentences = { navController.navigate(Screen.Sentence.createRoute(it)) },
+                openSentences = { navController.navigate(Screen.CategorySentences.createRoute(it)) },
                 openWords = { navController.navigate(Screen.Word.createRoute(it)) },
             )
         }
@@ -239,14 +245,22 @@ fun MyNavHost(
                 onAdd = { sheetV.openSheet(AppSheet.AddError) },
             )
         }
-        composable(Screen.Sentence.route) { backStackEntry->
+        composable(Screen.CategorySentences.route) { backStackEntry->
             val categoryId = backStackEntry.arguments?.getString("categoryId") ?: ""
-            SentenceS(
+            CategorySentenceS (
                 categoryId,
-                sentenceV,
-                onAdd = { sheetV.openSheet(AppSheet.AddSentence(it)) },
+                categorySentenceV,
+                onAdd = { sheetV.openSheet(AppSheet.AssignCategorySentence) },
                 onEdit = { sheetV.openSheet(AppSheet.EditSentence(it))
             })
+        }
+
+        composable(Screen.Sentence.route) {
+            SentenceS(
+                sentenceV,
+                onAdd = { sheetV.openSheet(AppSheet.AddSentence) },
+                onEdit = { sheetV.openSheet(AppSheet.EditSentence(it))
+                })
         }
         composable(Screen.Word.route) { backStackEntry->
             val categoryId = backStackEntry.arguments?.getString("categoryId") ?: ""
@@ -301,6 +315,9 @@ fun DynamicHeader(
                     text = { Text("Category") },
                     onClick = { showMenu = false; onScreenOpen(Screen.Category) })
                 DropdownMenuItem(
+                    text = { Text("Sentence") },
+                    onClick = { showMenu = false; onScreenOpen(Screen.Sentence) })
+                DropdownMenuItem(
                     text = { Text("User") },
                     onClick = { showMenu = false; onScreenOpen(Screen.User) })
                 DropdownMenuItem(
@@ -337,8 +354,8 @@ fun DynamicHeader(
                     Icon(Icons.Default.List, contentDescription = null)
                 }
             }
-            if (currentRoute == Screen.Sentence.route) {
-                IconButton(onClick = { onSheetOpen(AppSheet.SortSentence) }) {
+            if (currentRoute == Screen.CategorySentences.route) {
+                IconButton(onClick = { onSheetOpen(AppSheet.SortCategorySentence) }) {
                     Icon(Icons.Default.List, contentDescription = null)
                 }
             }

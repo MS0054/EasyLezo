@@ -104,7 +104,7 @@ class MetadataApiImpl @Inject constructor(
 
         val sen = SentenceDto(
             id = "1",
-            categoryId = "CV2oNsuWO2n0ETi7A4Xg",
+//            categoryId = "CV2oNsuWO2n0ETi7A4Xg",
             level = "1",
             image = "",
             order = 1,

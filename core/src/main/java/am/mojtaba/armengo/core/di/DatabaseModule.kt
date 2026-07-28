@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import am.mojtaba.armengo.core.data.local.dao.AppLanguagesDao
 import am.mojtaba.armengo.core.data.local.dao.CategoryDao
+import am.mojtaba.armengo.core.data.local.dao.CategorySentenceDao
 import am.mojtaba.armengo.core.data.local.dao.LanguageDao
 import am.mojtaba.armengo.core.data.local.dao.MetadataDao
 import am.mojtaba.armengo.core.data.local.dao.SentenceDao
@@ -48,6 +49,9 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun provideSentenceDao(db: AppDatabase): SentenceDao = db.sentenceDao()
+    @Singleton
+    @Provides
+    fun provideCategorySentenceDao(db: AppDatabase): CategorySentenceDao = db.categorySentenceDao()
     @Singleton
     @Provides
     fun provideWordDao(db: AppDatabase): WordDao = db.wordDao()

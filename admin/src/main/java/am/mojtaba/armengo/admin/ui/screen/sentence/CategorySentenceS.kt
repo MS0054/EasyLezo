@@ -1,7 +1,6 @@
 package am.mojtaba.armengo.admin.ui.screen.sentence
 
-import am.mojtaba.armengo.admin.ui.component.LanguageAwareText
-import am.mojtaba.armengo.core.domain.model.Sentence
+import android.os.Environment
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -25,31 +24,48 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
+import am.mojtaba.armengo.admin.ui.component.LanguageAwareText
+import am.mojtaba.armengo.core.domain.model.Sentence
+import java.io.File
 
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SentenceS(
-    sentenceV: SentenceV,
-    onAdd: () -> Unit,
+fun CategorySentenceS(
+    categoryId: String,
+    categorySentenceV: CategorySentenceV,
+    onAdd: (Int) -> Unit,
     onEdit: (Sentence) -> Unit,
 ) {
+    val mContext = LocalContext.current
+    var runPlayer by remember { mutableStateOf(false) }
+    val sentenceUiState by categorySentenceV.categorySentencesUiState.collectAsState()
+    var maxOrder by remember { mutableIntStateOf(0) }
 
-    val sentenceUiState by sentenceV.sentencesUiState.collectAsStateWithLifecycle()
-    LaunchedEffect(Unit) { sentenceV.observeSentences() }
+
+    LaunchedEffect(categoryId) {
+        categorySentenceV.observeCategorySentences(categoryId)
+    }
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { onAdd() }
+                onClick = { onAdd(maxOrder) }
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -66,6 +82,7 @@ fun SentenceS(
 
             else -> {
                 val sentences = sentenceUiState.data ?: emptyList()
+                maxOrder = sentences.size
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -82,6 +99,7 @@ fun SentenceS(
                                         .padding(vertical = 2.dp)
                                         .combinedClickable(
                                             onClick = {
+                                                runPlayer = true
                                             },
                                             onLongClick = {
                                                 onEdit(sentence)
@@ -120,5 +138,24 @@ fun SentenceS(
                 }
             }
         }
+    }
+
+    if (runPlayer) {
+//        val myFile = File(mContext.filesDir.toString() + "/word/" + "" + ".mp3")
+        val myFile = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath + "/word/" + "5616132941561" + ".mp3")
+//        val saveDirectory = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "word")
+
+
+
+        val exoPlayer = remember { ExoPlayer.Builder(mContext).build() }
+        val mediaSource = remember(myFile.absolutePath) { MediaItem.fromUri(myFile.absolutePath) }
+//        val mediaSource = remember(myUri) { MediaItem.fromUri(myUri) }
+        LaunchedEffect(mediaSource) {
+            exoPlayer.setMediaItem(mediaSource);
+            exoPlayer.prepare()
+            exoPlayer.playWhenReady = true
+            runPlayer = false
+        }
+//        DisposableEffect(Unit) { onDispose { exoPlayer.release() ;runPlayer =false } }
     }
 }

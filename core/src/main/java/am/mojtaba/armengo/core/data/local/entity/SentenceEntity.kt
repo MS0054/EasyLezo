@@ -8,7 +8,7 @@ import am.mojtaba.armengo.core.domain.model.Translate
 data class SentenceEntity(
     @PrimaryKey
     val id: String = "",
-    val categoryId: String = "",
+//    val categoryId: String = "",
     val level: String = "",
     val image: String = "",
     val order: Int = 0,
