@@ -62,6 +62,19 @@ class WordV @Inject constructor(
         }
     }
 
+    fun observeWords() {
+        _selectedCategoryId.value = null
+        viewModelScope.launch {
+            getWordsUseCase()
+                .onStart { _wordUiState.value = UiState(isLoading = true) }
+                .catch { e -> _wordUiState.value = UiState(error = e.message ?: "Unknown error") }
+                .collect { words ->
+                    _wordUiState.value = UiState(data = words)
+                    observeSyncStatus()
+                }
+        }
+    }
+
 
     fun observeSyncStatus() {
         viewModelScope.launch {

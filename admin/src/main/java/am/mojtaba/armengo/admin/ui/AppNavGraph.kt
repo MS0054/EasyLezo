@@ -55,6 +55,8 @@ import am.mojtaba.armengo.admin.ui.screen.splash.SplashScreen
 import am.mojtaba.armengo.admin.ui.screen.splash.SplashV
 import am.mojtaba.armengo.admin.ui.screen.user.UserS
 import am.mojtaba.armengo.admin.ui.screen.user.UserV
+import am.mojtaba.armengo.admin.ui.screen.word.CategoryWordS
+import am.mojtaba.armengo.admin.ui.screen.word.CategoryWordV
 import am.mojtaba.armengo.admin.ui.screen.word.WordS
 import am.mojtaba.armengo.admin.ui.screen.word.WordV
 import am.mojtaba.armengo.admin.ui.sheet.AppSheet
@@ -67,6 +69,7 @@ sealed class Screen(val route: String) {
     data object Auth : Screen("auth")
     data object Category : Screen("category")
     data object Sentence : Screen("sentence")
+    data object Words : Screen("words")
     data object Language : Screen("language")
     data object Resource : Screen("resource")
     data object Error : Screen("error")
@@ -98,6 +101,7 @@ fun AppNavGraph() {
     val sentenceV: SentenceV = hiltViewModel()
     val categorySentenceV: CategorySentenceV = hiltViewModel()
     val wordV: WordV = hiltViewModel()
+    val categoryWordV: CategoryWordV = hiltViewModel()
     val languageV: LanguageV = hiltViewModel()
     val metadataV: MetadataV = hiltViewModel()
     val resourceV: ResourceV = hiltViewModel()
@@ -114,6 +118,7 @@ fun AppNavGraph() {
         sentenceV,
         categorySentenceV,
         wordV,
+        categoryWordV,
         languageV,
         metadataV,
         resourceV,
@@ -159,6 +164,7 @@ fun AppNavGraph() {
             sentenceV,
             categorySentenceV,
             wordV,
+            categoryWordV,
             authV,
             userV,
             metadataV,
@@ -180,6 +186,7 @@ fun MyNavHost(
     sentenceV: SentenceV,
     categorySentenceV: CategorySentenceV,
     wordV: WordV,
+    categoryWordV: CategoryWordV,
     authV: AuthV,
     userV: UserV,
     metadataV: MetadataV,
@@ -262,12 +269,19 @@ fun MyNavHost(
                 onEdit = { sheetV.openSheet(AppSheet.EditSentence(it))
                 })
         }
+        composable(Screen.Words.route) {
+            WordS(
+                wordV,
+                onAdd = { sheetV.openSheet(AppSheet.AddWord(0)) },
+                onEdit = { sheetV.openSheet(AppSheet.EditWord(it))
+                })
+        }
         composable(Screen.Word.route) { backStackEntry->
             val categoryId = backStackEntry.arguments?.getString("categoryId") ?: ""
-            WordS(
+            CategoryWordS(
                 categoryId,
-                wordV,
-                onAdd = { sheetV.openSheet(AppSheet.AddWord(it)) },
+                categoryWordV,
+                onAdd = { sheetV.openSheet(AppSheet.AssignCategoryWord) },
                 onEdit = { sheetV.openSheet(AppSheet.EditWord(it))
                 })
         }
@@ -318,6 +332,9 @@ fun DynamicHeader(
                     text = { Text("Sentence") },
                     onClick = { showMenu = false; onScreenOpen(Screen.Sentence) })
                 DropdownMenuItem(
+                    text = { Text("Words") },
+                    onClick = { showMenu = false; onScreenOpen(Screen.Words) })
+                DropdownMenuItem(
                     text = { Text("User") },
                     onClick = { showMenu = false; onScreenOpen(Screen.User) })
                 DropdownMenuItem(
@@ -360,7 +377,7 @@ fun DynamicHeader(
                 }
             }
             if (currentRoute == Screen.Word.route) {
-                IconButton(onClick = { onSheetOpen(AppSheet.SortWord) }) {
+                IconButton(onClick = { onSheetOpen(AppSheet.SortCategoryWord) }) {
                     Icon(Icons.Default.List, contentDescription = null)
                 }
             }

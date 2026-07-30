@@ -60,7 +60,6 @@ class SplashViewModel @Inject constructor(
                 )
 //                _screen.value = Screen.Category
             } catch (e: Exception) {
-                Log.i("TOTO", "e : $e")
             }
         }
     }

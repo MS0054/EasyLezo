@@ -5,6 +5,7 @@ import am.mojtaba.armengo.core.data.datastore.AppDataStore
 import am.mojtaba.armengo.core.data.local.dao.AppLanguagesDao
 import am.mojtaba.armengo.core.data.local.dao.CategoryDao
 import am.mojtaba.armengo.core.data.local.dao.CategorySentenceDao
+import am.mojtaba.armengo.core.data.local.dao.CategoryWordDao
 import am.mojtaba.armengo.core.data.local.dao.LanguageDao
 import am.mojtaba.armengo.core.data.local.dao.MetadataDao
 import am.mojtaba.armengo.core.data.local.dao.SentenceDao
@@ -17,6 +18,8 @@ import am.mojtaba.armengo.core.data.remote.api.CategoryApi
 import am.mojtaba.armengo.core.data.remote.api.CategoryApiImpl
 import am.mojtaba.armengo.core.data.remote.api.CategorySentenceApi
 import am.mojtaba.armengo.core.data.remote.api.CategorySentenceApiImpl
+import am.mojtaba.armengo.core.data.remote.api.CategoryWordApi
+import am.mojtaba.armengo.core.data.remote.api.CategoryWordApiImpl
 import am.mojtaba.armengo.core.data.remote.api.LanguageApi
 import am.mojtaba.armengo.core.data.remote.api.LanguageApiImpl
 import am.mojtaba.armengo.core.data.remote.api.MetadataApi
@@ -32,6 +35,7 @@ import am.mojtaba.armengo.core.data.repository.AppLanguagesRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.AuthRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.CategoryRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.CategorySentenceRepositoryImpl
+import am.mojtaba.armengo.core.data.repository.CategoryWordRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.LanguageRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.MetadataRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.SentenceRepositoryImpl
@@ -43,6 +47,7 @@ import am.mojtaba.armengo.core.domain.repository.AppLanguagesRepository
 import am.mojtaba.armengo.core.domain.repository.AuthRepository
 import am.mojtaba.armengo.core.domain.repository.CategoryRepository
 import am.mojtaba.armengo.core.domain.repository.CategorySentenceRepository
+import am.mojtaba.armengo.core.domain.repository.CategoryWordRepository
 import am.mojtaba.armengo.core.domain.repository.LanguageRepository
 import am.mojtaba.armengo.core.domain.repository.MetadataRepository
 import am.mojtaba.armengo.core.domain.repository.SentenceRepository
@@ -184,11 +189,9 @@ object AppModule {
     @Singleton
     @Provides
     fun provideCategorySentenceRepository(
-        categorySentenceDao: CategorySentenceDao,
-        categorySentenceApi: CategorySentenceApi
+        categorySentenceDao: CategorySentenceDao
     ): CategorySentenceRepository = CategorySentenceRepositoryImpl(
-        categorySentenceDao,
-        categorySentenceApi
+        categorySentenceDao
     )
 
 
@@ -198,10 +201,24 @@ object AppModule {
         metadataRepository: MetadataRepository,
         wordDao: WordDao,
         wordApi: WordApi,
+        categoryWordDao: CategoryWordDao,
+        categoryWordApi: CategoryWordApi
     ): WordRepository = WordRepositoryImpl(
         metadataRepository,
         wordDao,
-        wordApi
+        wordApi,
+        categoryWordDao,
+        categoryWordApi
+    )
+
+    @Singleton
+    @Provides
+    fun provideCategoryWordRepository(
+        categoryWordDao: CategoryWordDao,
+        categoryWordApi: CategoryWordApi
+    ): CategoryWordRepository = CategoryWordRepositoryImpl(
+        categoryWordDao,
+        categoryWordApi
     )
 
 
@@ -244,6 +261,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideWordApi(db: FirebaseFirestore): WordApi = WordApiImpl(db)
+
+    @Singleton
+    @Provides
+    fun provideCategoryWordApi(db: FirebaseFirestore): CategoryWordApi = CategoryWordApiImpl(db)
 
 
 //    --- WordManager ---

@@ -9,8 +9,16 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface WordDao {
 
-    @Query("SELECT * FROM words WHERE categoryId = :categoryId AND isDeleted = 0 ORDER BY `order` ASC")
+    @Query("""
+        SELECT w.* FROM words w
+        INNER JOIN category_word cw ON w.id = cw.wordId
+        WHERE cw.categoryId = :categoryId AND cw.isDeleted = 0
+        ORDER BY cw.`order` ASC
+    """)
     fun observe(categoryId: String): Flow<List<WordEntity?>?>
+
+    @Query("SELECT * FROM words WHERE isDeleted = 0 ORDER BY `order` ASC")
+    fun observe(): Flow<List<WordEntity?>?>
     @Query("SELECT * FROM words WHERE isSynced = 0")
     suspend fun observeUnsynced(): List<WordEntity>
     @Query("SELECT EXISTS(SELECT 1 FROM words WHERE isSynced = 0)")

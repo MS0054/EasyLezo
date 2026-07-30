@@ -22,8 +22,7 @@ import javax.inject.Singleton
 
 @Singleton
 class CategorySentenceRepositoryImpl @Inject constructor(
-    private val categorySentenceDao: CategorySentenceDao,
-    private val categorySentenceApi: CategorySentenceApi
+    private val categorySentenceDao: CategorySentenceDao
 
 ): CategorySentenceRepository {
 

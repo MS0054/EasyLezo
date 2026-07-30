@@ -34,7 +34,7 @@ class SentenceRepositoryImpl @Inject constructor(
     override suspend fun syncFromServer(isForce: Boolean): Result<Unit> {
         return try {
             val metadata = metadataRepository.observeMetadata().first()
-            if (metadata.lastUpdate.existNewSentenceData || isForce) {
+            if (metadata.lastUpdate.existNewSentenceData || metadata.lastUpdate.existNewCategorySentenceData || isForce) {
                 val newSentences = sentenceApi.getSentences()
                 val newCategorySentence = categorySentenceApi.getCategorySentences()
 
@@ -44,7 +44,10 @@ class SentenceRepositoryImpl @Inject constructor(
                 categorySentenceDao.clearAll()
                 categorySentenceDao.upsertAll(newCategorySentence.map { it.toEntity() })
 
-                val updatedMetadata = metadata.copy(lastUpdate = metadata.lastUpdate.copy(existNewSentenceData = false))
+                val updatedMetadata = metadata.copy(lastUpdate = metadata.lastUpdate.copy(
+                    existNewSentenceData = false,
+                    existNewCategorySentenceData = false
+                ))
                 metadataRepository.clearAndInsert(updatedMetadata)
             }
             Result.success(Unit)

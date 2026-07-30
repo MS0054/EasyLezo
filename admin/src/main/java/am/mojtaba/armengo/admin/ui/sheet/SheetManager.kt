@@ -41,16 +41,19 @@ import am.mojtaba.armengo.admin.ui.screen.sentence.CategorySentenceV
 import am.mojtaba.armengo.admin.ui.screen.sentence.SentenceV
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.AddSentenceSheet
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.AssignSentencesSheet
-import am.mojtaba.armengo.admin.ui.screen.word.sheet.AddWordSheet
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.EditSentenceSheet
-import am.mojtaba.armengo.admin.ui.screen.word.sheet.EditWordSheet
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.SortSentenceSheet
-import am.mojtaba.armengo.admin.ui.screen.word.sheet.SortWordSheet
 import am.mojtaba.armengo.admin.ui.screen.user.UserV
 import am.mojtaba.armengo.admin.ui.screen.user.sheet.EditUserSheet
+import am.mojtaba.armengo.admin.ui.screen.word.CategoryWordV
 import am.mojtaba.armengo.admin.ui.screen.word.WordV
 import am.mojtaba.armengo.admin.ui.screen.word.sheet.AddErrorSheet
+import am.mojtaba.armengo.admin.ui.screen.word.sheet.AddWordSheet
+import am.mojtaba.armengo.admin.ui.screen.word.sheet.AssignWordsSheet
 import am.mojtaba.armengo.admin.ui.screen.word.sheet.EditErrorSheet
+import am.mojtaba.armengo.admin.ui.screen.word.sheet.EditWordSheet
+import am.mojtaba.armengo.admin.ui.screen.word.sheet.SortCategoryWordSheet
+import am.mojtaba.armengo.admin.ui.screen.word.sheet.SortWordSheet
 import am.mojtaba.armengo.core.domain.model.AppLanguages
 import am.mojtaba.armengo.core.domain.model.Settings
 import am.mojtaba.armengo.core.domain.model.UpdateInfo
@@ -66,6 +69,7 @@ fun SheetManager(
     sentenceV: SentenceV,
     categorySentenceV: CategorySentenceV,
     wordV: WordV,
+    categoryWordV: CategoryWordV,
     languageV: LanguageV,
     metadataV: MetadataV,
     resourceV: ResourceV,
@@ -88,6 +92,7 @@ fun SheetManager(
             sentenceV.event,
             categorySentenceV.event,
             wordV.event,
+            categoryWordV.event,
             userV.event,
             resourceV.event,
             errorV.event,
@@ -149,15 +154,17 @@ fun SheetManager(
                         val isExistUnSyncedSentence = sentenceV.unsyncedSentenceState.value ?: false
                         val isExistUnSyncedCategorySentence = categorySentenceV.unsyncedCategorySentenceState.value ?: false
                         val isExistUnSyncedWord = wordV.unsyncedWordState.value ?: false
+                        val isExistUnSyncedCategoryWord = categoryWordV.unsyncedCategoryWordState.value ?: false
                         val isExistUnSyncedLanguage = languageV.unsyncedLanguageState.value ?: false
 
                         SyncSheet(
-                            isExistUnSyncedUser,
-                            isExistUnSyncedCategory,
-                            isExistUnSyncedSentence,
-                            isExistUnSyncedCategorySentence,
-                            isExistUnSyncedWord,
-                            isExistUnSyncedLanguage,
+                            isExistUnSyncedUser = isExistUnSyncedUser,
+                            isExistUnSyncedCategory = isExistUnSyncedCategory,
+                            isExistUnSyncedSentence = isExistUnSyncedSentence,
+                            isExistUnSyncedCategorySentence = isExistUnSyncedCategorySentence,
+                            isExistUnSyncedWord = isExistUnSyncedWord,
+                            isExistUnSyncedCategoryWord = isExistUnSyncedCategoryWord,
+                            isExistUnSyncedLanguage = isExistUnSyncedLanguage,
                             onConfirm = {
                                 ConfirmSheet(
                                     title = "Confirm",
@@ -169,6 +176,7 @@ fun SheetManager(
                                             "Sentence" -> sentenceV.syncSentenceToServer()
                                             "CategorySentence" -> categorySentenceV.syncSentenceToServer()
                                             "Word" -> wordV.syncWordToServer()
+                                            "CategoryWord" -> categoryWordV.syncWordToServer()
                                             "Language" -> languageV.syncLanguageToServer()
                                         }
                                         sheetV.closeSheet()
@@ -187,6 +195,7 @@ fun SheetManager(
                                             "Sentence" -> sentenceV.rejectSentenceChanges()
                                             "CategorySentence" -> sentenceV.rejectSentenceChanges()
                                             "Word" -> wordV.rejectWordChanges()
+                                            "CategoryWord" -> categoryWordV.syncWordToServer() // Should probably be reject
                                             "Language" -> languageV.rejectLanguageChanges()
                                         }
                                         sheetV.closeSheet()
@@ -404,6 +413,35 @@ fun SheetManager(
                             onDismiss = { sheetV.closeSheet() },
                             onSubmit = { selectedIds ->
                                 categorySentenceV.updateCategorySentences(categoryId, selectedIds)
+                                sheetV.closeSheet()
+                            }
+                        )
+                    }
+
+                    is AppSheet.SortCategoryWord -> {
+                        val words = categoryWordV.categoryWordsUiState.value.data ?: emptyList()
+                        val categoryId = categoryWordV.selectedCategoryId.value ?: ""
+                        SortCategoryWordSheet(
+                            words = words,
+                            onDismiss = { sheetV.closeSheet() },
+                            onSubmit = {
+                                categoryWordV.sortCategoryWords(categoryId, it)
+                                sheetV.closeSheet()
+                            }
+                        )
+                    }
+
+                    is AppSheet.AssignCategoryWord -> {
+                        val words = wordV.wordUiState.value.data ?: emptyList()
+                        val categoryWordIds = categoryWordV.categoryWordsUiState.value.data?.map { it.id } ?: emptyList()
+                        val categoryId = categoryWordV.selectedCategoryId.value ?: ""
+
+                        AssignWordsSheet (
+                            words = words,
+                            initiallySelectedIds = categoryWordIds,
+                            onDismiss = { sheetV.closeSheet() },
+                            onSubmit = { selectedIds ->
+                                categoryWordV.updateCategoryWords(categoryId, selectedIds)
                                 sheetV.closeSheet()
                             }
                         )

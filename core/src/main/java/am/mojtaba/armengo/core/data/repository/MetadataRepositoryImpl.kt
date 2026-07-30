@@ -50,7 +50,9 @@ class MetadataRepositoryImpl @Inject constructor(
                 existNewLanguageData = language > currentMetadata.lastUpdate.language
                 existNewCategoryData = category > currentMetadata.lastUpdate.category
                 existNewSentenceData = sentence > currentMetadata.lastUpdate.sentence
+                existNewCategorySentenceData = categorySentence > currentMetadata.lastUpdate.categorySentence
                 existNewWordData = word > currentMetadata.lastUpdate.word
+                existNewCategoryWordData = categoryWord > currentMetadata.lastUpdate.categoryWord
                 existNewUserData = user > currentMetadata.lastUpdate.user
             }
 

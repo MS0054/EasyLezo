@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface WordRepository {
 
     fun observe(categoryId: String): Flow<List<Word>>
+    fun observe(): Flow<List<Word>>
     fun observeUnsynced(): Flow<Boolean>
     suspend fun syncFromServer(isForce: Boolean ): Result<Unit>
     suspend fun addWordLocal(word: Word)

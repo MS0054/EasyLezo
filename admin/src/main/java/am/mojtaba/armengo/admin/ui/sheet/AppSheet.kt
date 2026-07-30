@@ -37,6 +37,9 @@ sealed class AppSheet {
     object SortWord : AppSheet()
     class EditWord(val word: Word) : AppSheet()
 
+    object AssignCategoryWord : AppSheet()
+    object SortCategoryWord : AppSheet()
+
     class AddLanguage(val maxOrder: Int) : AppSheet()
     object SortLanguage : AppSheet()
     class EditLanguage(val language: Language) : AppSheet()

@@ -6,4 +6,5 @@ interface SyncManager {
     fun syncSentenceToServer(workerTag: String)
     fun syncWordToServer(workerTag: String)
     fun syncCategorySentenceToServer(workerTag: String)
+    fun syncCategoryWordToServer(workerTag: String)
 }

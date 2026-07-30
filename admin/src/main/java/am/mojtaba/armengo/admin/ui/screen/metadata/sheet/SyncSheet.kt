@@ -31,6 +31,7 @@ fun SyncSheet(
     isExistUnSyncedSentence: Boolean,
     isExistUnSyncedCategorySentence: Boolean,
     isExistUnSyncedWord: Boolean,
+    isExistUnSyncedCategoryWord: Boolean,
     isExistUnSyncedLanguage: Boolean,
     onConfirm: @Composable (String) -> Unit,
     onReject: @Composable (String) -> Unit
@@ -64,6 +65,7 @@ fun SyncSheet(
         if (isExistUnSyncedSentence) SyncItem("Sentence", onConfirm = onConfirm, onReject = onReject)
         if (isExistUnSyncedCategorySentence) SyncItem("CategorySentence", onConfirm = onConfirm, onReject = onReject)
         if (isExistUnSyncedWord) SyncItem("Word", onConfirm = onConfirm, onReject = onReject)
+        if (isExistUnSyncedCategoryWord) SyncItem("CategoryWord", onConfirm = onConfirm, onReject = onReject)
         if (isExistUnSyncedLanguage) SyncItem("Language", onConfirm = onConfirm, onReject = onReject)
 
 

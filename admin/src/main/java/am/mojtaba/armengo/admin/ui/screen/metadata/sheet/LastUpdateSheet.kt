@@ -17,7 +17,9 @@ fun LastUpdateSheet(
     var existUser by remember { mutableStateOf(false) }
     var existCategory by remember { mutableStateOf(false) }
     var existSentence by remember { mutableStateOf(false) }
+    var existCategorySentence by remember { mutableStateOf(false) }
     var existWord by remember { mutableStateOf(false) }
+    var existCategoryWord by remember { mutableStateOf(false) }
     var existLanguage by remember { mutableStateOf(false) }
 
         Column(
@@ -33,7 +35,9 @@ fun LastUpdateSheet(
             CheckboxItem("User", existUser) { existUser = it }
             CheckboxItem("Category", existCategory) { existCategory = it }
             CheckboxItem("Sentence", existSentence) { existSentence = it }
+            CheckboxItem("CategorySentence", existCategorySentence) { existCategorySentence = it }
             CheckboxItem("Word", existWord) { existWord = it }
+            CheckboxItem("CategoryWord", existCategoryWord) { existCategoryWord = it }
             CheckboxItem("Language", existLanguage) { existLanguage = it }
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -44,7 +48,9 @@ fun LastUpdateSheet(
                         existNewUserData = existUser,
                         existNewCategoryData = existCategory,
                         existNewSentenceData = existSentence,
+                        existNewCategorySentenceData = existCategorySentence,
                         existNewWordData = existWord,
+                        existNewCategoryWordData = existCategoryWord,
                         existNewLanguageData = existLanguage
                     )
 
