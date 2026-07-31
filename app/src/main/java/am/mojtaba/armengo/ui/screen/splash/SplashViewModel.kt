@@ -11,8 +11,6 @@ import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUse
 import am.mojtaba.armengo.core.domain.usecase.auth.GetUserRoleUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.SyncWordFromServerUseCase
 import am.mojtaba.armengo.ui.Screen
-import android.util.Log
-import android.widget.Toast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,17 +46,6 @@ class SplashViewModel @Inject constructor(
             try {
                 syncMetadataUseCase()
                 checkAppUpdate()
-//                syncCategoriesUseCase()
-//                syncLanguagesUseCase()
-//                syncSentencesUseCase()
-                // اجرا به صورت همزمان برای صرفه‌جویی در زمان
-                joinAll(
-                    async { syncCategoryFromServerUseCase() },
-                    async { syncLanguageFromServerUseCase() },
-                    async { syncSentenceFromServerUseCase() },
-                    async { syncWordFromServerUseCase() }
-                )
-//                _screen.value = Screen.Category
             } catch (e: Exception) {
             }
         }
@@ -68,6 +55,12 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val updateInfo = checkUpdateUseCase()
+                joinAll(
+                    async { syncCategoryFromServerUseCase() },
+                    async { syncLanguageFromServerUseCase() },
+                    async { syncSentenceFromServerUseCase() },
+                    async { syncWordFromServerUseCase() }
+                )
                 _updateState.value = UpdateStatus.Success(updateInfo)
             } catch (e: Exception) {
                 _updateState.value = UpdateStatus.Error

@@ -35,7 +35,7 @@ fun SettingsScreen(
 
     val uriHandler = LocalUriHandler.current
     Column (
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier.padding(top = 42.dp, start = 16.dp, end = 16.dp)
     ){
         Box(
             modifier = Modifier.fillMaxWidth()
