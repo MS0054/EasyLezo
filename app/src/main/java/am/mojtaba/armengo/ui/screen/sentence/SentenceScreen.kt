@@ -67,8 +67,6 @@ fun SentenceScreen(
             )
         }
 
-//        Spacer(Modifier.height(8.dp))
-
         when {
             uiState.isLoading -> {
                 SentenceShimmerList()
@@ -88,7 +86,6 @@ fun SentencesList(
     onSentenceClick: (Sentence) -> Unit,
     onPlayVoice: (String) -> Unit,
 ) {
-    // ۱. تعریف وضعیت اسکرول لیست
     val listState = rememberLazyListState()
 
     // ۲. محاسبه پویای شفافیت (Alpha) بر اساس اسکرول اولین آیتم

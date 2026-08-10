@@ -1,5 +1,6 @@
 package am.mojtaba.armengo.ui
 
+import am.mojtaba.armengo.ui.ads.AdBanner
 import androidx.compose.runtime.Composable
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -41,6 +42,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
+        bottomBar = { AdBanner() },
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         }

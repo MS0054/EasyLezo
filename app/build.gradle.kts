@@ -109,6 +109,10 @@ dependencies {
     // Splash
     implementation("androidx.core:core-splashscreen:1.0.1")
 
+
+//    GoogleAds
+    implementation("com.google.android.gms:play-services-ads:23.6.0")
+
     // Testing
 //    testImplementation(libs.junit)
 

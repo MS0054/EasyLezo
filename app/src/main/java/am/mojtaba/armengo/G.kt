@@ -2,6 +2,7 @@ package am.mojtaba.armengo
 
 import android.app.Application
 import android.util.Log
+import com.google.android.gms.ads.MobileAds
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 
@@ -12,6 +13,8 @@ class G : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+
+        MobileAds.initialize(this) {}
 
         FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
             Log.d("FCM_TOKEN", token)

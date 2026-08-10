@@ -31,10 +31,12 @@ class SplashViewModel @Inject constructor(
 ) : ViewModel() {
 
 
+
+
     private val _updateState = MutableStateFlow<UpdateStatus>(UpdateStatus.Idle)
     val updateState = _updateState.asStateFlow()
-    private val _screen = MutableStateFlow<Screen?>(null)
-    val screen = _screen.asStateFlow()
+//    private val _screen = MutableStateFlow<Screen?>(null)
+//    val screen = _screen.asStateFlow()
 
     init {
         start()
@@ -67,11 +69,4 @@ class SplashViewModel @Inject constructor(
             }
         }
     }
-}
-
-
-sealed class UpdateStatus {
-    object Idle : UpdateStatus()
-    data class Success(val updateResult: UpdateResult) : UpdateStatus()
-    object Error : UpdateStatus()
 }

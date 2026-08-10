@@ -39,16 +39,13 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import am.mojtaba.armengo.ui.Screen
-import am.mojtaba.armengo.ui.sheet.UpdateBottomSheet
 import androidx.core.net.toUri
 import coil3.compose.AsyncImage
 import am.mojtaba.armengo.app.R
 import am.mojtaba.armengo.core.data.datastore.enums.UpdateType
 import am.mojtaba.armengo.core.domain.model.UpdateResult
-import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import kotlinx.coroutines.delay

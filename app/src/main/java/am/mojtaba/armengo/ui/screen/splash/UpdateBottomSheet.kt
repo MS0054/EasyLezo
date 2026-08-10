@@ -1,4 +1,4 @@
-package am.mojtaba.armengo.ui.sheet
+package am.mojtaba.armengo.ui.screen.splash
 
 import am.mojtaba.armengo.core.data.datastore.enums.UpdateType
 import androidx.activity.compose.BackHandler

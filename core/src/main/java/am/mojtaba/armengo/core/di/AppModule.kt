@@ -65,6 +65,8 @@ import am.mojtaba.armengo.core.domain.usecase.auth.GetUserRoleUseCase
 import am.mojtaba.armengo.core.domain.usecase.appLanguages.GetAppLanguagesUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.GetCategorySentencesUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
+import am.mojtaba.armengo.core.domain.usecase.settings.GetThemeUseCase
+import am.mojtaba.armengo.core.domain.usecase.settings.SaveThemeUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.GetWordsUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.SyncWordFromServerUseCase
 import com.google.firebase.auth.FirebaseAuth
@@ -90,7 +92,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideAppDataStore(context: Context) = AppDataStore(context)
+    fun provideAppDataStore(@ApplicationContext context: Context) = AppDataStore(context)
 
 
 
@@ -319,7 +321,16 @@ object AppModule {
     @Singleton
     @Provides
     fun provideGetWordsUseCase(wordRepository: WordRepository, appLanguagesRepository: AppLanguagesRepository) = GetWordsUseCase(wordRepository, appLanguagesRepository)
+
     @Singleton
     @Provides
     fun provideSyncWordsUseCase(wordRepository: WordRepository) = SyncWordFromServerUseCase(wordRepository)
+
+    @Singleton
+    @Provides
+    fun provideGetThemeUseCase(appDataStore: AppDataStore) = GetThemeUseCase(appDataStore)
+
+    @Singleton
+    @Provides
+    fun provideSaveThemeUseCase(appDataStore: AppDataStore) = SaveThemeUseCase(appDataStore)
 }

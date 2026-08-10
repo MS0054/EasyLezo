@@ -1,6 +1,8 @@
 package am.mojtaba.armengo.ui.screen.settings
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +15,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
+import am.mojtaba.armengo.core.data.datastore.enums.ThemeMode
 import am.mojtaba.armengo.core.domain.model.Settings
 import am.mojtaba.armengo.ui.component.LanguageAwareText
 
@@ -32,6 +36,8 @@ fun SettingsScreen(
 
     val settingsUiState by settingsViewModel.settingsUiState.collectAsState()
     val settings = settingsUiState.data ?: Settings()
+
+    val themeMode by settingsViewModel.themeMode.collectAsState()
 
     val uriHandler = LocalUriHandler.current
     Column (
@@ -49,9 +55,17 @@ fun SettingsScreen(
         }
         Spacer(modifier = Modifier.padding(8.dp))
 
-//        MenuItem(title = "Notification", icon = Icons.Default.Settings) {
-//
-//        }
+        val isDark = when (themeMode) {
+            ThemeMode.DARK -> true
+            ThemeMode.LIGHT -> false
+            ThemeMode.SYSTEM -> isSystemInDarkTheme()
+        }
+
+        ThemeToggleItem(
+            title = "Dark Mode",
+            isDark = isDark,
+            onToggle = { settingsViewModel.toggleTheme(it) }
+        )
 
         MenuItem(title = "Privacy Policy", icon = Icons.Default.Settings) {
             uriHandler.openUri(settings.policyUrl )
@@ -72,6 +86,30 @@ fun SettingsScreen(
 
 
 
+}
+
+@Composable
+fun ThemeToggleItem(
+    title: String,
+    isDark: Boolean,
+    onToggle: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp,14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        LanguageAwareText(
+            text = title,
+            style = MaterialTheme.typography.titleLarge
+        )
+        Switch(
+            checked = isDark,
+            onCheckedChange = onToggle
+        )
+    }
 }
 
 @Composable
