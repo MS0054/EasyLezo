@@ -62,6 +62,7 @@ import am.mojtaba.armengo.core.domain.usecase.metadata.SyncMetadataUseCase
 import am.mojtaba.armengo.core.domain.usecase.user.SyncUserUseCase
 import am.mojtaba.armengo.core.domain.usecase.appLanguages.SyncAppLanguagesUseCase
 import am.mojtaba.armengo.core.domain.usecase.auth.GetUserRoleUseCase
+import am.mojtaba.armengo.core.domain.usecase.auth.SignInWithGoogleUseCase
 import am.mojtaba.armengo.core.domain.usecase.appLanguages.GetAppLanguagesUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.GetCategorySentencesUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
@@ -121,12 +122,14 @@ object AppModule {
     fun provideMetadataRepository(
         appLanguagesRepository: AppLanguagesRepository,
         metadataDao: MetadataDao,
-        metadataApi: MetadataApi
+        metadataApi: MetadataApi,
+        @ApplicationContext context: Context
     ): MetadataRepository {
         return MetadataRepositoryImpl(
             appLanguagesRepository,
             metadataDao,
-            metadataApi
+            metadataApi,
+            context
         )
     }
 
@@ -242,7 +245,11 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideAuthApi(auth: FirebaseAuth, db: FirebaseFirestore): AuthApi = AuthApiImpl(auth, db)
+    fun provideAuthApi(
+        auth: FirebaseAuth,
+        db: FirebaseFirestore,
+        @ApplicationContext context: Context
+    ): AuthApi = AuthApiImpl(auth, db, context)
 
     @Singleton
     @Provides
@@ -297,6 +304,9 @@ object AppModule {
     @Singleton
     @Provides
     fun provideDecideUserRoleUseCase(authRepo: AuthRepository) = GetUserRoleUseCase(authRepo)
+    @Singleton
+    @Provides
+    fun provideSignInWithGoogleUseCase(authRepo: AuthRepository) = SignInWithGoogleUseCase(authRepo)
     @Singleton
     @Provides
     fun provideGetAppLanguagesUseCase(getLanguagesUseCase: GetLanguagesUseCase, appLanguagesRepository: AppLanguagesRepository) = GetAppLanguagesUseCase(getLanguagesUseCase,  appLanguagesRepository)

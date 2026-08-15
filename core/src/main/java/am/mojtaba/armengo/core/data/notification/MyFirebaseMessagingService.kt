@@ -1,4 +1,4 @@
-package am.mojtaba.armengo
+package am.mojtaba.armengo.core.data.notification
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage

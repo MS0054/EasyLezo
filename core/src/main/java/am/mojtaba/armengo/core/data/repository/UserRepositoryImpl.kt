@@ -43,23 +43,31 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun syncUser(uid: String?) {
+        if (uid == null) {
+            userDao.clearAll()
+            return
+        }
 
         val metadata = metadataRepository.observeMetadata().first()
-        if (metadata.lastUpdate.existNewUserData) {
+        val localUser = userDao.observeUser().firstOrNull()
+
+        if (metadata.lastUpdate.existNewUserData || localUser == null || localUser.uid != uid) {
             val newUserData = userApi.getUser(uid)
 
-            userDao.clearAll()
-            userDao.insert(newUserData.toEntity())
+            if (newUserData.uid.isNotEmpty()) {
+                userDao.clearAll()
+                userDao.insert(newUserData.toEntity())
 
-            if (newUserData.appLanguages == AppLanguagesDto()) {
-                val appLanguages = appLanguagesRepository.observeAppLanguages().first()
-                updateUserAppLanguagesServer(appLanguages)
-            } else {
-                appLanguagesRepository.updateLocalAppLanguages(newUserData.appLanguages.toDomain())
+                if (newUserData.appLanguages == AppLanguagesDto()) {
+                    val appLanguages = appLanguagesRepository.observeAppLanguages().first()
+                    updateUserAppLanguagesServer(appLanguages)
+                } else {
+                    appLanguagesRepository.updateLocalAppLanguages(newUserData.appLanguages.toDomain())
+                }
+
+                metadata.lastUpdate.existNewUserData = false
+                metadataRepository.clearAndInsert(metadata)
             }
-
-            metadata.lastUpdate.existNewUserData = false
-            metadataRepository.clearAndInsert(metadata)
         }
     }
 

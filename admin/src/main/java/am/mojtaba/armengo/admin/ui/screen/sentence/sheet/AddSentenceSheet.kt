@@ -37,13 +37,14 @@ import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddSentenceSheet(
+fun AddSentenceSheet (
     languages: List<Language>,
     onDismiss: () -> Unit,
     onSubmit: (Sentence) -> Unit
 ) {
 
     val translationMap = remember { mutableStateMapOf<String, String>() }
+    val phoneticMap = remember { mutableStateMapOf<String, String>() }
     var level by remember { mutableStateOf("") }
     var imageUrl by remember { mutableStateOf("") }
     var voiceUrl by remember { mutableStateOf("") }
@@ -55,7 +56,13 @@ fun AddSentenceSheet(
             IconButton (onClick = onDismiss) { Icon(Icons.Default.Close, contentDescription = null) }
             Text("Add Sentence", style = MaterialTheme.typography.headlineSmall)
             Button(onClick = {
-                val translations = translationMap.map { (code, text) -> Translate(language = code, text = text) }
+                val translations = translationMap.map { (code, text) -> 
+                    Translate(
+                        language = code, 
+                        text = text,
+                        phonetic = phoneticMap[code] ?: ""
+                    ) 
+                }
                 onSubmit( Sentence(
                     id = UUID.randomUUID().toString(),
 //                    categoryId = categoryId,
@@ -93,14 +100,29 @@ fun AddSentenceSheet(
                 }
 
                 items(languages) { language ->
-                    OutlinedTextField(
-                        value = translationMap[language.name] ?: "",
-                        onValueChange = { translationMap[language.name] = it },
-                        label = { Text(language.name) },
-                        placeholder = { Text(language.name) },
-                        modifier = Modifier.fillMaxWidth(),
-                        leadingIcon = { AsyncImage( model = language.flag, contentDescription = null, modifier = Modifier.size(24.dp) ) }
-                    )
+                    Column {
+                        OutlinedTextField(
+                            value = translationMap[language.name] ?: "",
+                            onValueChange = { translationMap[language.name] = it },
+                            label = { Text(language.name) },
+                            placeholder = { Text(language.name) },
+                            modifier = Modifier.fillMaxWidth(),
+                            leadingIcon = {
+                                AsyncImage(
+                                    model = language.flag,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        )
+                        OutlinedTextField(
+                            value = phoneticMap[language.name] ?: "",
+                            onValueChange = { phoneticMap[language.name] = it },
+                            label = { Text("${language.name} Phonetic") },
+                            placeholder = { Text("${language.name} Phonetic") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
 
                 item {

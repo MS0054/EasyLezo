@@ -1,4 +1,4 @@
-package am.mojtaba.armengo.ui.screen.language.sheet
+package am.mojtaba.armengo.ui.screen.language
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,7 +33,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import am.mojtaba.armengo.core.domain.model.AppLanguages
-import am.mojtaba.armengo.ui.UiState
 import am.mojtaba.armengo.ui.component.LanguageAwareText
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -168,7 +167,7 @@ private fun LanguageItemView(
                 model = flagUrl,
                 contentDescription = name,
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(36.dp)
                     .clip(RoundedCornerShape(8.dp)),
                 // اضافه کردن Placeholder برای زمانی که تصویر در حال لود است
                 contentScale = ContentScale.Crop

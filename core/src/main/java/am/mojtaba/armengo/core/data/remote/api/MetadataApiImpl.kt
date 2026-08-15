@@ -12,6 +12,7 @@ import am.mojtaba.armengo.core.domain.model.ResourceDto
 import am.mojtaba.armengo.core.domain.model.Settings
 import am.mojtaba.armengo.core.domain.model.Translate
 import am.mojtaba.armengo.core.domain.model.UpdateInfoDto
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -33,6 +34,7 @@ class MetadataApiImpl @Inject constructor(
 
     override suspend fun updateMetadataLastUpdate(lastUpdate: LastUpdateDto) {
         try {
+            Log.i("GGGG", lastUpdate.toString())
             metadataCol.document("Main").update("lastUpdate", lastUpdate).await()
         } catch (e: Exception) {
             // مدیریت خطا (مثلاً عدم دسترسی یا قطعی اینترنت)

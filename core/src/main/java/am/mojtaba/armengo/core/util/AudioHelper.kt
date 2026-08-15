@@ -1,4 +1,4 @@
-package am.mojtaba.armengo
+package am.mojtaba.armengo.core.util
 
 import android.content.Context
 import androidx.media3.common.MediaItem

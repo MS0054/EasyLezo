@@ -5,7 +5,7 @@ import am.mojtaba.armengo.core.domain.usecase.appLanguages.GetAppLanguagesUseCas
 import am.mojtaba.armengo.core.domain.usecase.appLanguages.SyncAppLanguagesUseCase
 import am.mojtaba.armengo.core.domain.usecase.category.GetCategoriesUseCase
 import am.mojtaba.armengo.ui.UiEvent
-import am.mojtaba.armengo.ui.manager.ErrorMessageProvider
+import am.mojtaba.armengo.core.util.ErrorMessageProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel

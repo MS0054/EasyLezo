@@ -28,6 +28,7 @@ firebaseBom = "33.7.0"
 ksp = "2.0.0-1.0.21"
 
 googleServices = "4.4.2"
+google-auth = "21.3.0"
 
 media3Exoplayer = "1.5.0"
 media3ExoplayerDash = "1.5.0"
@@ -77,6 +78,7 @@ hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hil
 
 # Firebase
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+google-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "google-auth" }
 
 # Datastore
 datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }

@@ -1,4 +1,4 @@
-package am.mojtaba.armengo.ui.screen.language.sheet
+package am.mojtaba.armengo.ui.screen.language
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column

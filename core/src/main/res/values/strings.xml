@@ -1,0 +1,5 @@
+<resources>
+    <string name="err_network_unavailable">Network unavailable</string>
+    <string name="err_local_data_empty">Local data empty</string>
+    <string name="err_unknown">Unknown error</string>
+</resources>

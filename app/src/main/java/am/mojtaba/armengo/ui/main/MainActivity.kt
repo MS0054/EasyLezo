@@ -1,4 +1,4 @@
-package am.mojtaba.armengo
+package am.mojtaba.armengo.ui.main
 
 import am.mojtaba.armengo.ui.AppNavGraph
 import am.mojtaba.armengo.ui.theme.EasyLezoTheme

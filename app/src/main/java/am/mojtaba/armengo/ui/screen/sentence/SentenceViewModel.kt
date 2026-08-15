@@ -1,10 +1,10 @@
 package am.mojtaba.armengo.ui.screen.sentence
 
-import am.mojtaba.armengo.AudioHelper
+import am.mojtaba.armengo.core.util.AudioHelper
 import am.mojtaba.armengo.core.domain.usecase.sentence.GetCategorySentencesUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.GetWordsUseCase
 import am.mojtaba.armengo.ui.UiEvent
-import am.mojtaba.armengo.ui.manager.ErrorMessageProvider
+import am.mojtaba.armengo.core.util.ErrorMessageProvider
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

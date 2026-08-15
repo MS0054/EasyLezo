@@ -1,10 +1,12 @@
-package am.mojtaba.armengo.ui.manager
-import am.mojtaba.armengo.app.R
-import android.content.Context
+package am.mojtaba.armengo.core.util
+
 import am.mojtaba.armengo.core.domain.model.AppError
 import am.mojtaba.armengo.core.domain.usecase.error.GetTranslatedErrorTextUseCase
+import android.content.Context
+import am.mojtaba.armengo.core.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+
 import javax.inject.Singleton
 
 @Singleton

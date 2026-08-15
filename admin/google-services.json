@@ -12,7 +12,28 @@
           "package_name": "am.mojtaba.armengo"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "906570310314-2fdfn3v5aps8sko815st1naadfp9ufa9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "am.mojtaba.armengo",
+            "certificate_hash": "126dc47877d0f0561ec26e36e4de959735022536"
+          }
+        },
+        {
+          "client_id": "906570310314-p96h8gc970qbngg1gj9urdu4dc6b7p87.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "am.mojtaba.armengo",
+            "certificate_hash": "668e3722e086d97f3158f22fb0a4f3cdf1676cec"
+          }
+        },
+        {
+          "client_id": "906570310314-sdac02b5mus8a6df15okr1o1c2d1846b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBXN0ybENmgonoFRH0s_xf4lAK6Lgf9Vp0"
@@ -20,7 +41,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "906570310314-sdac02b5mus8a6df15okr1o1c2d1846b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     },
@@ -31,7 +57,12 @@
           "package_name": "am.mojtaba.armengo.admin"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "906570310314-sdac02b5mus8a6df15okr1o1c2d1846b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBXN0ybENmgonoFRH0s_xf4lAK6Lgf9Vp0"
@@ -39,7 +70,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "906570310314-sdac02b5mus8a6df15okr1o1c2d1846b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

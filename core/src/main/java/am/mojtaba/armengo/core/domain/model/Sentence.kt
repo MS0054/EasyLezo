@@ -2,7 +2,6 @@ package am.mojtaba.armengo.core.domain.model
 
 data class Sentence(
     val id: String = "",
-//    val categoryId: String = "",
     val level: String = "",
     val image: String = "",
     val fromText:String = "",

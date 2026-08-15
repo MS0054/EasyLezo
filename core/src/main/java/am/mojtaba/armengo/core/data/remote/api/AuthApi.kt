@@ -14,7 +14,9 @@ interface AuthApi {
         password: String
     ): String
 
-    fun signOut()
+    suspend fun signInWithGoogle(idToken: String): String
+
+    suspend fun signOut()
 
      fun currentUserUid(): String
 

@@ -112,6 +112,10 @@ dependencies {
 
 //    GoogleAds
     implementation("com.google.android.gms:play-services-ads:23.6.0")
+    implementation(libs.google.auth)
+
+    // Animate Toolbar
+    implementation("me.onebone:toolbar-compose:2.3.5")
 
     // Testing
 //    testImplementation(libs.junit)

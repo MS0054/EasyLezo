@@ -1,7 +1,4 @@
 <resources>
     <string name="app_name">ArmenGo</string>
     <string name="title_activity_ac_splash">AcSplash</string>
-    <string name="err_network_unavailable">Network unavailable</string>
-    <string name="err_local_data_empty">Local data empty</string>
-    <string name="err_unknown">Unknown error</string>
 </resources>

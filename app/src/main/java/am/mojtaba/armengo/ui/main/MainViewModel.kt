@@ -1,4 +1,4 @@
-package am.mojtaba.armengo
+package am.mojtaba.armengo.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

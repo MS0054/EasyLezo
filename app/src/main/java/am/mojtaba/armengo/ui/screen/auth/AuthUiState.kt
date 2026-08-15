@@ -1,8 +1,8 @@
 package am.mojtaba.armengo.ui.screen.auth
 
-sealed class AuthUiState {
-    object Idle: AuthUiState()
-    object Loading: AuthUiState()
-    data class Success(val uid: String): AuthUiState()
-    data class Error(val message: String): AuthUiState()
-}
+import am.mojtaba.armengo.core.data.datastore.enums.UserRole
+
+data class AuthUiState(
+    val isLoading: Boolean = false,
+    val userRole: UserRole? = null
+)

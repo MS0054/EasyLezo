@@ -9,7 +9,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class G : Application() {
+class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
@@ -31,7 +31,7 @@ class G : Application() {
     }
 
     companion object {
-        lateinit var instance: G
+        lateinit var instance: MainApplication
             private set
     }
 }

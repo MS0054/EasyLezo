@@ -1,69 +1,102 @@
 package am.mojtaba.armengo.ui.screen.settings
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import am.mojtaba.armengo.core.data.datastore.enums.ThemeMode
-import am.mojtaba.armengo.core.domain.model.Settings
 import am.mojtaba.armengo.core.domain.usecase.appLanguages.GetMetadataSettingsUseCase
 import am.mojtaba.armengo.core.domain.usecase.settings.GetThemeUseCase
 import am.mojtaba.armengo.core.domain.usecase.settings.SaveThemeUseCase
-import am.mojtaba.armengo.ui.UiState
-import android.util.Log
+import am.mojtaba.armengo.core.domain.usecase.user.GetUserUseCase
+import am.mojtaba.armengo.core.domain.usecase.user.SyncUserUseCase
+import am.mojtaba.armengo.core.domain.usecase.auth.SignOutUseCase
+import am.mojtaba.armengo.ui.UiEvent
+import am.mojtaba.armengo.core.util.ErrorMessageProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val getMetadataSettingsUseCase: GetMetadataSettingsUseCase,
-    private val getThemeUseCase: GetThemeUseCase,
-    private val saveThemeUseCase: SaveThemeUseCase
-): ViewModel()  {
+    getMetadataSettingsUseCase: GetMetadataSettingsUseCase,
+    getThemeUseCase: GetThemeUseCase,
+    getUserUseCase: GetUserUseCase,
+    private val syncUserUseCase: SyncUserUseCase,
+    private val signOutUseCase: SignOutUseCase,
+    private val saveThemeUseCase: SaveThemeUseCase,
+    private val errorMessageProvider: ErrorMessageProvider
+) : ViewModel() {
 
-    private val _settingsUiState = MutableStateFlow(UiState<Settings>())
-    val settingsUiState: StateFlow<UiState<Settings>> = _settingsUiState.asStateFlow()
-
-    private val _themeMode = MutableStateFlow(ThemeMode.SYSTEM)
-    val themeMode: StateFlow<ThemeMode> = _themeMode.asStateFlow()
+    private val _uiEvent = MutableSharedFlow<UiEvent>()
+    val uiEvent: SharedFlow<UiEvent> = _uiEvent.asSharedFlow()
 
     init {
-        getSettings()
-        getTheme()
-    }
-
-    private fun getTheme() {
         viewModelScope.launch {
-            getThemeUseCase().collect {
-                Log.d("TAGG", "getTheme: $it")
-                _themeMode.value = it
+            runCatching {
+                syncUserUseCase()
+            }.onFailure { throwable ->
+                _uiEvent.emit(UiEvent.ShowSnackbar(errorMessageProvider.getMessage(throwable)))
             }
         }
     }
 
+    private val settingsFlow = getMetadataSettingsUseCase().catch { throwable ->
+        _uiEvent.emit(UiEvent.ShowSnackbar(errorMessageProvider.getMessage(throwable)))
+    }
+
+    private val themeFlow = getThemeUseCase().catch { throwable ->
+        _uiEvent.emit(UiEvent.ShowSnackbar(errorMessageProvider.getMessage(throwable)))
+    }
+
+    private val userFlow = getUserUseCase().catch { throwable ->
+        _uiEvent.emit(UiEvent.ShowSnackbar(errorMessageProvider.getMessage(throwable)))
+    }
+
+    val uiState: StateFlow<SettingsUiState> = combine(
+        settingsFlow,
+        themeFlow,
+        userFlow
+    ) { settings, themeMode, user ->
+        SettingsUiState(
+            isLoading = false,
+            settings = settings,
+            themeMode = themeMode,
+            user = user
+        )
+    }
+        .onStart { emit(SettingsUiState(isLoading = true)) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = SettingsUiState(isLoading = true)
+        )
+
     fun toggleTheme(isDark: Boolean) {
         viewModelScope.launch {
-            val mode = if (isDark) ThemeMode.DARK else ThemeMode.LIGHT
-            saveThemeUseCase(mode)
+            runCatching {
+                val mode = if (isDark) ThemeMode.DARK else ThemeMode.LIGHT
+                saveThemeUseCase(mode)
+            }.onFailure { throwable ->
+                _uiEvent.emit(UiEvent.ShowSnackbar(errorMessageProvider.getMessage(throwable)))
+            }
         }
     }
 
-    private fun getSettings() {
+    fun signOut() {
         viewModelScope.launch {
-            getMetadataSettingsUseCase()
-                .onStart {
-                    _settingsUiState.value = UiState(isLoading = true)
-                }
-                .catch { e ->
-                    _settingsUiState.value = UiState(error = e.message ?: "Unknown error")
-                }
-                .collect { settings ->
-                    _settingsUiState.value = UiState(data = settings)
-                }
+            runCatching {
+                signOutUseCase()
+            }.onFailure { throwable ->
+                _uiEvent.emit(UiEvent.ShowSnackbar(errorMessageProvider.getMessage(throwable)))
+            }
         }
     }
 }

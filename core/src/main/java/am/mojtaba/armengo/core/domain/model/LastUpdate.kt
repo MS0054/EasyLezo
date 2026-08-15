@@ -9,13 +9,15 @@ data class LastUpdate(
     var word: Long = 0L,
     var categoryWord: Long = 0L,
     var user: Long = 0L,
+    var image: Long = 0L,
     var existNewUserData: Boolean = false,
     var existNewLanguageData: Boolean = false,
     var existNewCategoryData: Boolean = false,
     var existNewSentenceData: Boolean = false,
     var existNewCategorySentenceData: Boolean = false,
     var existNewWordData: Boolean = false,
-    var existNewCategoryWordData: Boolean = false
+    var existNewCategoryWordData: Boolean = false,
+    var existNewImageData: Boolean = false
 ) {
     fun mergeWith(current: LastUpdate, currentTime: Long) {
         user = if (existNewUserData) currentTime else current.user
@@ -25,5 +27,6 @@ data class LastUpdate(
         word = if (existNewWordData) currentTime else current.word
         categoryWord = if (existNewCategoryWordData) currentTime else current.categoryWord
         language = if (existNewLanguageData) currentTime else current.language
+        image = if (existNewImageData) currentTime else current.image
     }
 }

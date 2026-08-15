@@ -18,6 +18,9 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signIn(email: String, password: String): Result<String> =
         runCatching { authApi.signInWithEmail(email, password) }
 
+    override suspend fun signInWithGoogle(idToken: String): Result<String> =
+        runCatching { authApi.signInWithGoogle(idToken) }
+
     override suspend fun signOut() = authApi.signOut()
 
     override suspend fun isCurrentUserAdmin(): Boolean = authApi.isCurrentUserAdmin()

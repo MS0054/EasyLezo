@@ -32,7 +32,7 @@ import am.mojtaba.armengo.ui.component.LanguageAwareText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UpdateBottomSheet(
+fun UpdateAppBottomSheet(
     updateResult: UpdateResult,
     onUpdateClick: (String) -> Unit,
     onDismiss: () -> Unit

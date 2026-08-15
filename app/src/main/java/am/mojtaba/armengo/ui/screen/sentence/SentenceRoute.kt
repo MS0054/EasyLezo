@@ -3,8 +3,6 @@ package am.mojtaba.armengo.ui.screen.sentence
 import am.mojtaba.armengo.core.domain.model.Sentence
 import am.mojtaba.armengo.core.domain.model.Word
 import am.mojtaba.armengo.ui.UiEvent
-import am.mojtaba.armengo.ui.screen.category.CategoryScreen
-import am.mojtaba.armengo.ui.screen.language.sheet.AppLanguageSheet
 import am.mojtaba.armengo.ui.screen.sentence.sheet.ShowSentenceSheet
 import am.mojtaba.armengo.ui.screen.sentence.sheet.ShowWordSheet
 import androidx.compose.material3.SnackbarHostState
@@ -18,7 +16,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @Composable
 fun SentenceRoute(
-    snackbarHostState: SnackbarHostState,
+    snackBarHostState: SnackbarHostState,
     onBack: () -> Unit,
     viewModel: SentenceViewModel = hiltViewModel()
 ) {
@@ -34,7 +32,7 @@ fun SentenceRoute(
         viewModel.uiEvent.collect { event ->
             when (event) {
                 is UiEvent.ShowSnackbar -> {
-                    snackbarHostState.showSnackbar(event.message)
+                    snackBarHostState.showSnackbar(event.message)
                 }
             }
         }

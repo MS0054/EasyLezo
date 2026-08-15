@@ -46,6 +46,9 @@ fun EditSentenceSheet(
     val translationMap = remember { mutableStateMapOf<String, String>().apply {
         sentence.translations.forEach { put(it.language, it.text) }
     } }
+    val phoneticMap = remember { mutableStateMapOf<String, String>().apply {
+        sentence.translations.forEach { put(it.language, it.phonetic) }
+    } }
     var level by remember { mutableStateOf(sentence.level) }
     var imageUrl by remember { mutableStateOf( sentence.image) }
     var voiceUrl by remember { mutableStateOf(sentence.voiceUrl) }
@@ -58,7 +61,13 @@ fun EditSentenceSheet(
             Row {
                 IconButton(onClick = { onDelete(sentence.id) }) { Icon(Icons.Default.Delete, tint = Color.Red, contentDescription = null) }
                 Button(onClick = {
-                    val updatedTranslations = translationMap.map { (code, text) -> Translate(language = code, text = text) }
+                    val updatedTranslations = translationMap.map { (code, text) -> 
+                        Translate(
+                            language = code, 
+                            text = text,
+                            phonetic = phoneticMap[code] ?: ""
+                        ) 
+                    }
                     onSubmit(sentence.copy(
 //                        categoryId = sentence.categoryId,
                         level = level,
@@ -95,14 +104,29 @@ fun EditSentenceSheet(
                 }
 
                 items(languages) { language ->
-                    OutlinedTextField(
-                        value = translationMap[language.name] ?: "",
-                        onValueChange = { translationMap[language.name] = it },
-                        label = { Text(language.name) },
-                        placeholder = { Text(language.name) },
-                        modifier = Modifier.fillMaxWidth(),
-                        leadingIcon = { AsyncImage( model = language.flag, contentDescription = null, modifier = Modifier.size(24.dp) ) }
-                    )
+                    Column {
+                        OutlinedTextField(
+                            value = translationMap[language.name] ?: "",
+                            onValueChange = { translationMap[language.name] = it },
+                            label = { Text(language.name) },
+                            placeholder = { Text(language.name) },
+                            modifier = Modifier.fillMaxWidth(),
+                            leadingIcon = {
+                                AsyncImage(
+                                    model = language.flag,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        )
+                        OutlinedTextField(
+                            value = phoneticMap[language.name] ?: "",
+                            onValueChange = { phoneticMap[language.name] = it },
+                            label = { Text("${language.name} Phonetic") },
+                            placeholder = { Text("${language.name} Phonetic") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
 
                 item {

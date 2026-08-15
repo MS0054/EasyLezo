@@ -77,7 +77,7 @@ fun CategoryScreen(
 
             else -> {
                 LazyVerticalGrid(
-                    contentPadding = PaddingValues(top = 120.dp),
+                    contentPadding = PaddingValues(top = 120.dp, bottom = 360.dp),
                     columns = GridCells.Fixed(2)
                 ) {
                     items(uiState.categories) { category ->

@@ -15,12 +15,17 @@ import am.mojtaba.armengo.core.domain.model.Settings
 import am.mojtaba.armengo.core.domain.model.UpdateInfo
 import am.mojtaba.armengo.core.domain.repository.AppLanguagesRepository
 import am.mojtaba.armengo.core.domain.repository.MetadataRepository
+import android.content.Context
 import android.telephony.mbms.MbmsErrors
 import android.util.Log
+import coil3.imageLoader
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,7 +33,8 @@ import javax.inject.Singleton
 class MetadataRepositoryImpl @Inject constructor(
     private val appLanguagesRepository: AppLanguagesRepository,
     private val metadataDao: MetadataDao,
-    private val metadataApi: MetadataApi
+    private val metadataApi: MetadataApi,
+    @ApplicationContext private val context: Context
 ) : MetadataRepository {
 
     override fun observeMetadata(): Flow<Metadata> {
@@ -54,8 +60,9 @@ class MetadataRepositoryImpl @Inject constructor(
                 existNewWordData = word > currentMetadata.lastUpdate.word
                 existNewCategoryWordData = categoryWord > currentMetadata.lastUpdate.categoryWord
                 existNewUserData = user > currentMetadata.lastUpdate.user
+                existNewImageData = image > currentMetadata.lastUpdate.image
             }
-
+            Log.i("GGG", "00: $newMetadata")
             val appLanguages = appLanguagesRepository.observeAppLanguages().firstOrNull()
             if (appLanguages == null || appLanguages.isDefault || isForce) {
                 appLanguagesRepository.updateLocalAppLanguages(newMetadata.appLanguages.toDomain())
@@ -67,6 +74,24 @@ class MetadataRepositoryImpl @Inject constructor(
         }
     }
 
+
+    override suspend fun syncImage (isForce: Boolean): Result<Unit>{
+        return try {
+            val metadata = metadataDao.observeMetadata().first() ?: MetadataEntity()
+            if (metadata.lastUpdate.existNewImageData || isForce) {
+                withContext(Dispatchers.IO) {
+                    val imageLoader = context.imageLoader
+                    // پاک کردن کش در حافظه رم
+                    imageLoader.memoryCache?.clear()
+                    // پاک کردن کش در دیسک (حافظه داخلی)
+                    imageLoader.diskCache?.clear()
+                }
+            }
+            Result.success(Unit)
+        } catch (e: Exception){
+            Result.failure(e)
+        }
+    }
 
     override suspend fun clearAndInsert(metadata: Metadata) {
         metadataDao.clearAndInsert(metadata.toEntity())
