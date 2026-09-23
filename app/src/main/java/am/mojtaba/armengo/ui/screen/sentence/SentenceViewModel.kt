@@ -35,38 +35,51 @@ class SentenceViewModel @Inject constructor(
     private val _uiEvent = MutableSharedFlow<UiEvent>()
     val uiEvent: SharedFlow<UiEvent> = _uiEvent.asSharedFlow()
 
+    val allWordsFlow = getWordsUseCase().catch { throwable ->
+        _uiEvent.emit(UiEvent.ShowSnackbar(errorMessageProvider.getMessage(throwable)))
+        emit(emptyList())
+    }
 
-        val wordsFlow = getWordsUseCase(categoryId).catch { throwable ->
-            _uiEvent.emit(UiEvent.ShowSnackbar(errorMessageProvider.getMessage(throwable)))
-            emit(emptyList())
+    val wordsFlow = getWordsUseCase(categoryId).catch { throwable ->
+        _uiEvent.emit(UiEvent.ShowSnackbar(errorMessageProvider.getMessage(throwable)))
+        emit(emptyList())
+    }
+
+    val sentencesFlow = getCategorySentencesUseCase(categoryId).catch { throwable ->
+        _uiEvent.emit(UiEvent.ShowSnackbar(errorMessageProvider.getMessage(throwable)))
+        emit(emptyList())
+    }
+
+    val uiState: StateFlow<SentenceUiState> =
+        combine(allWordsFlow, wordsFlow, sentencesFlow) { allWords, words, sentences ->
+            SentenceUiState(
+                isLoading = false,
+                title = categoryName,
+                allWords = allWords,
+                words = words,
+                sentences = sentences
+            )
         }
-
-        val sentencesFlow = getCategorySentencesUseCase(categoryId).catch { throwable ->
-            _uiEvent.emit(UiEvent.ShowSnackbar(errorMessageProvider.getMessage(throwable)))
-            emit(emptyList())
-        }
-
-        val uiState: StateFlow<SentenceUiState> = combine(wordsFlow,sentencesFlow) { words, sentences ->
-                SentenceUiState(isLoading = false, title = categoryName, words = words, sentences = sentences)
+            .onStart {
+                emit(SentenceUiState(isLoading = true))
             }
-                .onStart {
-                    emit(SentenceUiState(isLoading = true))
-                }
-                .stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.WhileSubscribed(5000),
-                    initialValue = SentenceUiState(
-                        isLoading = true
-                    )
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = SentenceUiState(
+                    isLoading = true
                 )
+            )
 
 
     fun playVoice(voiceUrl: String) {
         audioManager.playAudio(voiceUrl)
     }
+
     fun stopVoice() {
         audioManager.stopAudio()
     }
+
     fun releaseVoice() {
         audioManager.release()
     }

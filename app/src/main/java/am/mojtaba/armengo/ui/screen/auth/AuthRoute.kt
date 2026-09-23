@@ -12,6 +12,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 fun AuthRoute(
     snackBarHostState: SnackbarHostState,
     onAuthSuccess: () -> Unit,
+    onCloseClick: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -36,6 +37,7 @@ fun AuthRoute(
         },
         onGoogleSignInClick = { idToken ->
             viewModel.signInWithGoogle(idToken, onSuccess = onAuthSuccess)
-        }
+        },
+        onCloseClick = onCloseClick
     )
 }

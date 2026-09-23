@@ -207,14 +207,17 @@ fun MyNavHost(
             }
         }
         composable(Screen.Auth.route) {
-            AuthScreen(authV) {
-                navController.navigate(Screen.Category.route) {
-                    popUpTo(Screen.Auth.route) {
-                        inclusive = true
+            AuthScreen(
+                authV = authV,
+                onSuccess = {
+                    navController.navigate(Screen.Category.route) {
+                        popUpTo(Screen.Auth.route) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
                     }
-                    launchSingleTop = true
                 }
-            }
+            )
         }
         composable(Screen.Category.route) {
             CategoryS(

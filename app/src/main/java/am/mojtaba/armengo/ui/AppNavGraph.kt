@@ -82,6 +82,9 @@ fun AppNavGraph(
                                 inclusive = true
                             }
                         }
+                    },
+                    onCloseClick = {
+                        navController.popBackStack()
                     }
                 )
             }

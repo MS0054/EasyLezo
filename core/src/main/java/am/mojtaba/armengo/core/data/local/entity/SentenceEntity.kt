@@ -1,5 +1,6 @@
 package am.mojtaba.armengo.core.data.local.entity
 
+import am.mojtaba.armengo.core.domain.model.SentenceAlternative
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import am.mojtaba.armengo.core.domain.model.Translate
@@ -18,5 +19,6 @@ data class SentenceEntity(
     val hasVoice: Boolean = false,
     val isSynced: Boolean = true,
     val isDeleted: Boolean = false,
-    val translations: List<Translate> = emptyList()
+    val translations: List<Translate> = emptyList(),
+    val alternatives: List<SentenceAlternative> = emptyList()
 )

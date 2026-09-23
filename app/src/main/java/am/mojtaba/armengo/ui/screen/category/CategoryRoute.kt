@@ -70,7 +70,7 @@ fun CategoryRoute(
                 // با احتمال ۳۰ درصد (0.30f) تبلیغ نمایش داده می‌شود
                 interstitialAdManager.showAdWithProbability(
                     activity = activity,
-                    probability = 0.50f
+                    probability = 0.10f
                 ) {
                     onCategorySelected(category)
                 }

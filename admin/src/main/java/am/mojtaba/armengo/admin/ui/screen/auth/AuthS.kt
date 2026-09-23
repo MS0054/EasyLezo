@@ -14,10 +14,14 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+
 @Composable
 fun AuthScreen(
     authV: AuthV,
-    onSuccess: () -> Unit
+    onSuccess: () -> Unit,
+    onCloseClick: (() -> Unit)? = null
 ) {
     val state by authV.authUiState.collectAsState()
     var email by remember { mutableStateOf("mojtaabaa@gmail.com") }
@@ -39,7 +43,27 @@ fun AuthScreen(
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(24.dp), verticalArrangement = Arrangement.Center) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (onCloseClick != null) {
+            IconButton(
+                onClick = onCloseClick,
+                modifier = Modifier
+                    .align(androidx.compose.ui.Alignment.TopStart)
+                    .padding(top = 42.dp, start = 16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close"
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
         Text(if (isSignUp) "Sign Up" else "Sign In", style = MaterialTheme.typography.headlineMedium)
 
 
@@ -69,4 +93,5 @@ fun AuthScreen(
             Text(if (isSignUp) "Already have account? Sign In" else "Don't have account? Sign Up")
         }
     }
+}
 }

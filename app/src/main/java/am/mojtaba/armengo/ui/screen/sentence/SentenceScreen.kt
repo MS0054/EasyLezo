@@ -1,13 +1,24 @@
 package am.mojtaba.armengo.ui.screen.sentence
 
+import am.mojtaba.armengo.core.domain.model.Sentence
+import am.mojtaba.armengo.core.domain.model.Word
+import am.mojtaba.armengo.ui.component.LanguageAwareText
+import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.rounded.ArrowForward
+import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,21 +26,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import am.mojtaba.armengo.core.domain.model.Sentence
-import am.mojtaba.armengo.core.domain.model.Word
-import am.mojtaba.armengo.ui.component.LanguageAwareText
-import am.mojtaba.armengo.ui.screen.category.CategoryUiState
-import am.mojtaba.armengo.ui.screen.sentence.sheet.ShowSentenceSheet
-import android.graphics.drawable.GradientDrawable
-import android.util.Log
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.rounded.ArrowForward
-import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.ui.graphics.graphicsLayer
-
 
 @Composable
 fun SentenceScreen(
@@ -39,7 +43,6 @@ fun SentenceScreen(
     onPlayVoice: (String) -> Unit,
     onBack: () -> Unit
 ) {
-
 
     Column(
         modifier = Modifier
@@ -74,7 +77,7 @@ fun SentenceScreen(
 
             else -> {
                 WordsList(uiState.words, onWordClick, onPlayVoice)
-                SentencesList(uiState.sentences, onSentenceClick, onPlayVoice)
+                SentencesList(uiState.allWords, uiState.sentences, onSentenceClick, onPlayVoice)
             }
         }
     }
@@ -82,10 +85,13 @@ fun SentenceScreen(
 
 @Composable
 fun SentencesList(
+    words: List<Word>,
     sentences: List<Sentence>,
     onSentenceClick: (Sentence) -> Unit,
     onPlayVoice: (String) -> Unit,
 ) {
+    Log.i("FGFGFG",words.toString())
+
     val listState = rememberLazyListState()
 
     // ۲. محاسبه پویای شفافیت (Alpha) بر اساس اسکرول اولین آیتم
@@ -117,6 +123,7 @@ fun SentencesList(
             ) { sentence ->
                 SentenceItem(
                     sentence = sentence,
+                    words ,
                     openSheet = {
                         onSentenceClick(sentence)
                     },
@@ -158,66 +165,162 @@ fun SentencesList(
         }
     }
 }
-
 @Composable
-fun SentenceItem(sentence: Sentence, openSheet: () -> Unit, playVoice: () -> Unit) {
-    val actionIcon =
-        if (sentence.hasVoice) Icons.Rounded.PlayArrow else Icons.Rounded.ArrowForward // (ترجیحاً ArrowForward برای جلو رفتن به جای Back)
-    val actionClick = if (sentence.hasVoice) playVoice else openSheet
+fun SentenceItem(
+    sentence: Sentence,
+    allWords: List<Word>, // لیست کل لغات جهت Map کردن آیدی‌ها به دیتای واقعی
+    openSheet: () -> Unit,
+    playVoice: (String) -> Unit
+) {
+    // کلمه انتخابی فعلی کاربر
+    var selectedWord by remember(sentence) { mutableStateOf<Word?>(null) }
+    var isExpanded by remember { mutableStateOf(false) }
+
+    val activeAlternative = sentence.alternatives.firstOrNull()
+
+    // ۱. پیدا کردن کلمه اولیه (پیش‌فرض) از لیست allWords بر اساس slotKey
+    val defaultWord = remember(activeAlternative, allWords) {
+        if (activeAlternative != null) {
+            allWords.find { it.fromText.equals(activeAlternative.slotKey, ignoreCase = true) }
+        } else null
+    }
+
+    // ۲. جایگزین کردن کلمه انتخابی در متن انگلیسی اصلی
+    val currentFromText = remember(selectedWord, sentence.fromText) {
+        if (selectedWord != null && activeAlternative != null) {
+            sentence.fromText.replace(activeAlternative.slotKey, selectedWord!!.fromText, ignoreCase = true)
+        } else {
+            sentence.fromText
+        }
+    }
+
+    // ۳. جایگزین کردن کلمه ارمنی جدید به جای کلمه ارمنی قبلی در متن معنی/تلفظ
+    val currentToText = remember(selectedWord, sentence.toText, defaultWord) {
+        if (selectedWord != null && defaultWord != null && defaultWord.toText.isNotEmpty()) {
+            sentence.toText.replace(defaultWord.toText, selectedWord!!.toText, ignoreCase = true)
+        } else {
+            sentence.toText
+        }
+    }
+
+    val currentVoiceUrl = remember(selectedWord, sentence.voiceUrl) {
+        selectedWord?.voiceUrl?.ifEmpty { sentence.voiceUrl } ?: sentence.voiceUrl
+    }
+
+    val actionIcon = if (sentence.hasVoice) Icons.Rounded.PlayArrow else Icons.Rounded.ArrowForward
+    val actionClick = {
+        if (sentence.hasVoice) playVoice(currentVoiceUrl) else openSheet()
+    }
+
     Card(
         shape = RoundedCornerShape(20.dp),
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-        onClick = openSheet
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                if (sentence.alternatives.isNotEmpty()) {
+                    isExpanded = !isExpanded
+                } else {
+                    openSheet()
+                }
+            },
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                horizontalAlignment = Alignment.End
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                LanguageAwareText(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = sentence.fromText,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontSize = 20.sp
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                LanguageAwareText(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = sentence.toText,
-                    fontSize = 15.sp,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f)
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    // مشخص کردن کلمه قابل تغییر با زیرخط و رنگ متفاوت
+                    val annotatedFromText = buildAnnotatedString {
+                        if (activeAlternative != null) {
+                            val activeWordText = selectedWord?.fromText ?: activeAlternative.slotKey
+                            val parts = currentFromText.split(Regex("(?i)\\b$activeWordText\\b"))
+
+                            if (parts.size > 1) {
+                                append(parts[0])
+                                withStyle(
+                                    style = SpanStyle(
+                                        color = MaterialTheme.colorScheme.primary,
+                                        textDecoration = TextDecoration.Underline
+                                    )
+                                ) {
+                                    append(activeWordText)
+                                }
+                                append(parts[1])
+                            } else {
+                                append(currentFromText)
+                            }
+                        } else {
+                            append(currentFromText)
+                        }
+                    }
+
+                    Text(
+                        text = annotatedFromText,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontSize = 20.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = currentToText,
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .background(
+                            MaterialTheme.colorScheme.background,
+                            RoundedCornerShape(topStart = 25.dp, bottomStart = 25.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    IconButton(
+                        modifier = Modifier.size(64.dp),
+                        onClick = actionClick
+                    ) {
+                        Icon(actionIcon, contentDescription = "Play", modifier = Modifier.size(28.dp))
+                    }
+                }
             }
 
-            Box(
-                modifier = Modifier
-                    .size(64.dp)
-                    .background(
-                        MaterialTheme.colorScheme.background,
-                        RoundedCornerShape(topStart = 25.dp, bottomStart = 25.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                IconButton(
+            // نمایش چیپ‌های افقی
+            AnimatedVisibility(visible = isExpanded && activeAlternative != null) {
+                Row(
                     modifier = Modifier
-                        .size(64.dp),
-//                        .background(MaterialTheme.colorScheme.onTertiary, RoundedCornerShape(20.dp)),
-                    onClick = actionClick
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(actionIcon, contentDescription = "Play", Modifier.size(28.dp))
+                    val options = activeAlternative?.wordIds?.mapNotNull { id ->
+                        allWords.find { it.id == id }
+                    } ?: emptyList()
+
+                    options.forEach { word ->
+                        FilterChip(
+                            selected = selectedWord?.id == word.id,
+                            onClick = { selectedWord = word },
+                            label = { Text(text = word.fromText) },
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                    }
                 }
             }
         }
     }
 }
-
 @Composable
 fun SentenceShimmerList() {
     val transition = rememberInfiniteTransition(label = "shimmer")

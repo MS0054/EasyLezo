@@ -12,6 +12,7 @@ import am.mojtaba.armengo.core.domain.usecase.sentence.UpdateSentenceUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.GetSentencesUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.sentence.SyncSentenceToServerUseCase
+import android.util.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

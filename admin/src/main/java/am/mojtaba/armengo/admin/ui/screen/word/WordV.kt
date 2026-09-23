@@ -11,6 +11,7 @@ import am.mojtaba.armengo.core.domain.usecase.word.SortWordUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.SyncWordFromServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.SyncWordToServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.UpdateWordUseCase
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -14,6 +14,12 @@ data class Sentence(
     val isSynced: Boolean = true,
     val isDeleted: Boolean = false,
     val translations: List<Translate> = emptyList(),
+    val alternatives: List<SentenceAlternative> = emptyList()
+)
+
+data class SentenceAlternative(
+    val slotKey: String = "",
+    val wordIds: List<String> = emptyList()
 )
 
 

@@ -4,6 +4,7 @@ import am.mojtaba.armengo.ui.component.LanguageAwareText
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,11 +13,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -44,7 +48,8 @@ fun AuthScreen(
     uiState: AuthUiState,
     onSignInClick: (email: String, pass: String) -> Unit,
     onSignUpClick: (email: String, pass: String, display: String) -> Unit,
-    onGoogleSignInClick: (idToken: String) -> Unit
+    onGoogleSignInClick: (idToken: String) -> Unit,
+    onCloseClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
@@ -64,13 +69,28 @@ fun AuthScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
+        IconButton(
+            onClick = onCloseClick,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(top = 42.dp, start = 16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Close"
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
         LanguageAwareText(
             text = if (isSignUp) "Sign Up" else "Sign In",
             style = MaterialTheme.typography.headlineMedium
@@ -182,4 +202,5 @@ fun AuthScreen(
             }
         }
     }
+}
 }

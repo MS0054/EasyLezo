@@ -6,6 +6,7 @@ import am.mojtaba.armengo.core.domain.model.Word
 data class SentenceUiState(
     val isLoading: Boolean = false,
     val title: String = "",
+    val allWords: List<Word> = emptyList(),
     val words: List<Word> = emptyList(),
     val sentences: List<Sentence> = emptyList()
 )

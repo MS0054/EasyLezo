@@ -8,6 +8,7 @@ import am.mojtaba.armengo.core.domain.usecase.word.ObserveUnSyncedCategoryWordUs
 import am.mojtaba.armengo.core.domain.usecase.word.SortCategoryWordUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.SyncCategoryWordToServerUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.UpdateCategoryWordsUseCase
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

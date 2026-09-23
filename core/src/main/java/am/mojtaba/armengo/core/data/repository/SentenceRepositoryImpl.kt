@@ -59,7 +59,6 @@ class SentenceRepositoryImpl @Inject constructor(
     override suspend fun addSentenceLocal(sentence: Sentence) = sentenceDao.upsert(sentence.toEntity().copy(isSynced = false))
     override suspend fun updateSentenceLocal(sentence: Sentence) = sentenceDao.upsert(sentence.toEntity().copy(isSynced = false))
     override suspend fun deleteSentenceLocal(id: String) = sentenceDao.softDelete(id)
-
     override suspend fun downloadVoice(sentences: List<Sentence>) = sentenceApi.downloadVoices(sentences.map { it.toDto() })
 
 

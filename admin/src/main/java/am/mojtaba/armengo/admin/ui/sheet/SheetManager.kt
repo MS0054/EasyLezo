@@ -365,9 +365,11 @@ fun SheetManager(
 
                     is AppSheet.AddSentence -> {
                         val languages = languageV.languageUiState.value.data ?: emptyList()
+                        val words = wordV.wordUiState.value.data ?: emptyList()
 
                         AddSentenceSheet(
                             languages,
+                            words,
                             onDismiss = { sheetV.closeSheet() },
                             onSubmit = {
                                 sentenceV.addSentence(it)
@@ -377,8 +379,11 @@ fun SheetManager(
 
                     is AppSheet.EditSentence -> {
                         val languages = languageV.languageUiState.value.data ?: emptyList()
+                        val words = wordV.wordUiState.value.data ?: emptyList()
+
                         EditSentenceSheet(
                             languages = languages,
+                            availableWords = words,
                             sentence = currentSheet.sentence,
                             onDelete = {
                                 sentenceV.deleteSentence(it)
