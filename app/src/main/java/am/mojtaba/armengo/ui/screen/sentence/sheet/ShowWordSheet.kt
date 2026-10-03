@@ -24,6 +24,10 @@ import androidx.compose.ui.unit.sp
 import am.mojtaba.armengo.core.domain.model.Sentence
 import am.mojtaba.armengo.core.domain.model.Word
 import am.mojtaba.armengo.ui.component.LanguageAwareText
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import coil3.compose.AsyncImage
 
@@ -35,11 +39,20 @@ fun ShowWordSheet(
     onPlay: (String) -> Unit
 ) {
 
-    ModalBottomSheet(onDismissRequest = onDismiss) {
+    val sheetState = rememberModalBottomSheetState (
+        skipPartiallyExpanded = true // کانتنت کامل و بدون مرحله اضافه نشان داده شود
+    )
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .wrapContentHeight()
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             if (word.image.isNotEmpty()) {
@@ -55,16 +68,36 @@ fun ShowWordSheet(
             Spacer(Modifier.height(32.dp))
             LanguageAwareText(
                 text = word.toText ,
-                fontSize = 32.sp,
+                fontSize = 28.sp,
                 style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(8.dp))
+
+            Box(modifier = Modifier
+                .background(
+                    Color.DarkGray.copy(.2f),
+                    RoundedCornerShape(25.dp)
+                ),
+            ) {
+                LanguageAwareText(
+                    text = word.phonetic,
+                    fontSize = 16.sp,
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier
+                        .padding(16.dp,0.dp)
+                        .align(Alignment.Center),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            Spacer(Modifier.height(16.dp))
 
             LanguageAwareText(
                 text = word.fromText ,
+                fontSize = 20.sp,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
@@ -76,7 +109,7 @@ fun ShowWordSheet(
             if (word.hasVoice) {
                 IconButton(
                     modifier = Modifier
-                        .size(64.dp, 70.dp)
+                        .size(64.dp, 64.dp)
                         .align(Alignment.CenterHorizontally)
                         .background(
                             MaterialTheme.colorScheme.onTertiary,
@@ -92,7 +125,7 @@ fun ShowWordSheet(
                 }
             }
 
-            Spacer(Modifier.height(96.dp))
+            Spacer(Modifier.height(48.dp))
 
         }
     }

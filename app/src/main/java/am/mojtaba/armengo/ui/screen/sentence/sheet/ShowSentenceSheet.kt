@@ -16,13 +16,18 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import am.mojtaba.armengo.core.domain.model.Sentence
 import am.mojtaba.armengo.ui.component.LanguageAwareText
+import androidx.compose.foundation.gestures.snapping.SnapPosition
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,24 +37,53 @@ fun ShowSentenceSheet(
     onPlay: (String) -> Unit
 ) {
 
-    ModalBottomSheet(onDismissRequest = onDismiss) {
+    val sheetState = rememberModalBottomSheetState (
+        skipPartiallyExpanded = true
+    )
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .wrapContentHeight()
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LanguageAwareText(
                 text = sentence.toText ,
-                fontSize = 32.sp,
+                fontSize = 28.sp,
                 style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(8.dp))
+
+            Box(modifier = Modifier
+                .background(
+                    Color.DarkGray.copy(.2f),
+                    RoundedCornerShape(25.dp)
+                ),
+            ) {
+                LanguageAwareText(
+                    text = sentence.phonetic,
+                    fontSize = 16.sp,
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier
+                        .padding(16.dp,0.dp)
+                        .align(Alignment.Center),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            Spacer(Modifier.height(16.dp))
 
             LanguageAwareText(
                 text = sentence.fromText ,
+                fontSize = 20.sp,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
@@ -61,7 +95,7 @@ fun ShowSentenceSheet(
             if (sentence.hasVoice) {
                 IconButton(
                     modifier = Modifier
-                        .size(64.dp, 70.dp)
+                        .size(64.dp, 64.dp)
                         .align(Alignment.CenterHorizontally)
                         .background(
                             MaterialTheme.colorScheme.onTertiary,
@@ -77,7 +111,7 @@ fun ShowSentenceSheet(
                 }
             }
 
-            Spacer(Modifier.height(96.dp))
+            Spacer(Modifier.height(48.dp))
 
         }
     }

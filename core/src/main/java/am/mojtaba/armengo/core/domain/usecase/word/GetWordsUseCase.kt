@@ -23,10 +23,12 @@ class GetWordsUseCase @Inject constructor(
             words.map { word ->
                 val fromText = word.translations.find { it.language == languages.from }?.text ?: ""
                 val toText = word.translations.find { it.language == languages.to }?.text ?: ""
+                val phonetic = word.translations.find { it.language == languages.to }?.phonetic ?: ""
 
                 word.copy(
                     fromText = fromText,
-                    toText = toText
+                    toText = toText,
+                    phonetic = phonetic
                 )
             }
         }

@@ -17,7 +17,7 @@ fun SentenceEntity.toDto() =
     SentenceDto(id, level, image, order, createdAt, updatedAt, voiceUrl, hasVoice, isSynced, isDeleted, translations, alternatives)
 
 fun SentenceEntity.toDomain() =
-    Sentence(id, level, image, "","",order, createdAt, updatedAt, voiceUrl, hasVoice, isSynced, isDeleted, translations, alternatives)
+    Sentence(id, level, image, "","","", order, createdAt, updatedAt, voiceUrl, hasVoice, isSynced, isDeleted, translations, alternatives)
 
 
 

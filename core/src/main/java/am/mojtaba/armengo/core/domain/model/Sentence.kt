@@ -6,6 +6,7 @@ data class Sentence(
     val image: String = "",
     val fromText:String = "",
     val toText: String= "",
+    val phonetic: String = "",
     val order: Int = 0,
     val createdAt: Long = 0,
     val updatedAt: Long = 0,

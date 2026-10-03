@@ -3,6 +3,7 @@ package am.mojtaba.armengo.core.domain.usecase.word
 import am.mojtaba.armengo.core.domain.model.Word
 import am.mojtaba.armengo.core.domain.repository.AppLanguagesRepository
 import am.mojtaba.armengo.core.domain.repository.WordRepository
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
@@ -19,10 +20,14 @@ class GetCategoryWordsUseCase @Inject constructor(
             words.map { word ->
                 val fromText = word.translations.find { it.language == languages.from }?.text ?: ""
                 val toText = word.translations.find { it.language == languages.to }?.text ?: ""
+                val phonetic = word.translations.find { it.language == languages.to }?.phonetic ?: ""
+                Log.i("DATAS: ","Words: $toText  \n")
+
 
                 word.copy(
                     fromText = fromText,
-                    toText = toText
+                    toText = toText,
+                    phonetic = phonetic
                 )
             }
         }

@@ -17,7 +17,7 @@ fun WordEntity.toDto() =
     WordDto(id, categoryId, level, image, order, createdAt, updatedAt, voiceUrl, hasVoice, isSynced, isDeleted, translations)
 
 fun WordEntity.toDomain() =
-    Word(id, categoryId, level, image, "","",order, createdAt, updatedAt, voiceUrl, hasVoice, isSynced, isDeleted, translations)
+    Word(id, categoryId, level, image, "","","", order, createdAt, updatedAt, voiceUrl, hasVoice, isSynced, isDeleted, translations)
 
 
 

@@ -43,86 +43,121 @@ fun EditWordSheet(
     onSubmit: (Word) -> Unit
 ) {
 
-    val translationMap = remember { mutableStateMapOf<String, String>().apply {
-        word.translations.forEach { put(it.language, it.text) }
-    } }
+    val translationMap = remember {
+        mutableStateMapOf<String, String>().apply {
+            word.translations.forEach { put(it.language, it.text) }
+        }
+    }
+    val phoneticMap = remember {
+        mutableStateMapOf<String, String>().apply {
+            word.translations.forEach { put(it.language, it.phonetic) }
+        }
+    }
     var level by remember { mutableStateOf(word.level) }
-    var imageUrl by remember { mutableStateOf( word.image) }
+    var imageUrl by remember { mutableStateOf(word.image) }
     var voiceUrl by remember { mutableStateOf(word.voiceUrl) }
     var hasVoice by remember { mutableStateOf(word.hasVoice) }
 
 
-    Column(Modifier.fillMaxWidth().padding(20.dp)) {
-        Row (Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+    Column(Modifier
+        .fillMaxWidth()
+        .padding(20.dp)) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("Edit Word", style = MaterialTheme.typography.headlineSmall)
             Row {
-                IconButton(onClick = { onDelete(word.id) }) { Icon(Icons.Default.Delete, tint = Color.Red, contentDescription = null) }
+                IconButton(onClick = { onDelete(word.id) }) {
+                    Icon(
+                        Icons.Default.Delete,
+                        tint = Color.Red,
+                        contentDescription = null
+                    )
+                }
                 Button(onClick = {
-                    val updatedTranslations = translationMap.map { (code, text) -> Translate(language = code, text = text) }
-                    onSubmit(word.copy(
-                        categoryId = word.categoryId,
-                        level = level,
-                        image = imageUrl,
-                        updatedAt = System.currentTimeMillis(),
-                        voiceUrl = voiceUrl,
-                        hasVoice = hasVoice,
-                        translations = updatedTranslations
-                    )) }) { Text("Save") }
+                    val updatedTranslations = translationMap.map { (code, text) ->
+                        Translate(language = code, text = text, phonetic = phoneticMap[code] ?: "")
+                    }
+                    onSubmit(
+                        word.copy(
+                            categoryId = word.categoryId,
+                            level = level,
+                            image = imageUrl,
+                            updatedAt = System.currentTimeMillis(),
+                            voiceUrl = voiceUrl,
+                            hasVoice = hasVoice,
+                            translations = updatedTranslations
+                        )
+                    )
+                }) { Text("Save") }
             }
         }
         Spacer(Modifier.size(16.dp))
 
-            LazyColumn (
-                modifier = Modifier.weight(1f, fill = false),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                item {
-                    OutlinedTextField(
-                        value = level,
-                        onValueChange = { level = it },
-                        label = { Text("Level") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+        LazyColumn(
+            modifier = Modifier.weight(1f, fill = false),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            item {
+                OutlinedTextField(
+                    value = level,
+                    onValueChange = { level = it },
+                    label = { Text("Level") },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-                    OutlinedTextField(
-                        value = voiceUrl,
-                        onValueChange = { voiceUrl = it },
-                        label = { Text("VoiceUrl") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                OutlinedTextField(
+                    value = voiceUrl,
+                    onValueChange = { voiceUrl = it },
+                    label = { Text("VoiceUrl") },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-                    OutlinedTextField(
-                        value = imageUrl,
-                        onValueChange = { imageUrl = it },
-                        label = { Text("ImageUrl") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
+                OutlinedTextField(
+                    value = imageUrl,
+                    onValueChange = { imageUrl = it },
+                    label = { Text("ImageUrl") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
 
-                items(languages) { language ->
+            items(languages) { language ->
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     OutlinedTextField(
                         value = translationMap[language.name] ?: "",
                         onValueChange = { translationMap[language.name] = it },
                         label = { Text(language.name) },
                         placeholder = { Text(language.name) },
                         modifier = Modifier.fillMaxWidth(),
-                        leadingIcon = { AsyncImage( model = language.flag, contentDescription = null, modifier = Modifier.size(24.dp) ) }
+                        leadingIcon = {
+                            AsyncImage(
+                                model = language.flag,
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    )
+                    OutlinedTextField(
+                        value = phoneticMap[language.name] ?: "",
+                        onValueChange = { phoneticMap[language.name] = it },
+                        label = { Text("${language.name} Phonetic") },
+                        placeholder = { Text("${language.name} Phonetic") },
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
+            }
 
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text("HasVoice")
-                        Switch(
-                            checked = hasVoice,
-                            onCheckedChange = { hasVoice = it }
-                        )
-                    }
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("HasVoice")
+                    Switch(
+                        checked = hasVoice,
+                        onCheckedChange = { hasVoice = it }
+                    )
                 }
             }
         }
     }
+}
