@@ -5,13 +5,13 @@ import am.mojtaba.armengo.core.data.remote.model.MetadataDto
 import am.mojtaba.armengo.core.domain.model.Metadata
 
 fun MetadataDto.toEntity() =
-    MetadataEntity(id, lastUpdate, updateInfo, settings, errors, resources, reportTypes, appLanguages.toEntity())
+    MetadataEntity(id, lastUpdate, updateInfo, settings, errors, resources, reportTypes, reports, reportMessages, appLanguages.toEntity())
 
 fun Metadata.toEntity() =
-    MetadataEntity(id, lastUpdate, updateInfo, settings, errors, resources, reportTypes, appLanguages.toEntity())
+    MetadataEntity(id, lastUpdate, updateInfo, settings, errors, resources, reportTypes, reports, reportMessages, appLanguages.toEntity())
 
 fun MetadataDto.toDomain() =
-    Metadata(id, lastUpdate, updateInfo, settings, errors, resources, reportTypes, appLanguages.toDomain())
+    Metadata(id, lastUpdate, updateInfo, settings, errors, resources, reportTypes, reports, reportMessages, appLanguages.toDomain())
 
 fun MetadataEntity.toDomain() =
-    Metadata(id, lastUpdate, updateInfo, settings, errors, resources, reportTypes, appLanguages.toDomain())
+    Metadata(id, lastUpdate, updateInfo, settings, errors, resources, reportTypes, reports, reportMessages, appLanguages.toDomain())

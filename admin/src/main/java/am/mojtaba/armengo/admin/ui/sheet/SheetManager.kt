@@ -7,6 +7,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +35,12 @@ import am.mojtaba.armengo.admin.ui.screen.metadata.sheet.LastUpdateSheet
 import am.mojtaba.armengo.admin.ui.screen.metadata.sheet.SettingsSheet
 import am.mojtaba.armengo.admin.ui.screen.metadata.sheet.SyncSheet
 import am.mojtaba.armengo.admin.ui.screen.metadata.sheet.UpdateInfoSheet
+import am.mojtaba.armengo.admin.ui.screen.report.ReportV
+import am.mojtaba.armengo.admin.ui.screen.report.sheet.AddReportSheet
+import am.mojtaba.armengo.admin.ui.screen.report.sheet.EditReportSheet
+import am.mojtaba.armengo.admin.ui.screen.reportMessage.ReportMessageV
+import am.mojtaba.armengo.admin.ui.screen.reportMessage.sheet.AddReportMessageSheet
+import am.mojtaba.armengo.admin.ui.screen.reportMessage.sheet.EditReportMessageSheet
 import am.mojtaba.armengo.admin.ui.screen.reportType.ReportTypeV
 import am.mojtaba.armengo.admin.ui.screen.reportType.sheet.AddReportTypeSheet
 import am.mojtaba.armengo.admin.ui.screen.reportType.sheet.EditReportTypeSheet
@@ -77,6 +84,8 @@ fun SheetManager(
     metadataV: MetadataV,
     resourceV: ResourceV,
     reportTypeV: ReportTypeV,
+    reportV: ReportV,
+    reportMessageV: ReportMessageV,
     errorV: ErrorV,
     onLogoutSuccess: () -> Unit,
     onRefresh: (RefreshData) -> Unit,
@@ -100,6 +109,8 @@ fun SheetManager(
             userV.event,
             resourceV.event,
             reportTypeV.event,
+            reportV.event,
+            reportMessageV.event,
             errorV.event,
             metadataV.event
         ).collect { event ->
@@ -302,6 +313,52 @@ fun SheetManager(
                             },
                             onDelete = {
                                 reportTypeV.deleteReportType(it)
+                            }
+                        )
+                    }
+
+                    is AppSheet.AddReport -> {
+                        AddReportSheet(
+                            onDismiss = { sheetV.closeSheet() },
+                            onSubmit = {
+                                reportV.addReport(it)
+                            }
+                        )
+                    }
+
+                    is AppSheet.EditReport -> {
+                        EditReportSheet(
+                            report = currentSheet.report,
+                            onSubmit = {
+                                reportV.editReport(it)
+                            },
+                            onDelete = {
+                                reportV.deleteReport(it)
+                            }
+                        )
+                    }
+
+                    is AppSheet.AddReportMessage -> {
+                        val availableReportTypes by reportMessageV.reportTypesState.collectAsState()
+                        AddReportMessageSheet(
+                            availableReportTypes = availableReportTypes,
+                            onDismiss = { sheetV.closeSheet() },
+                            onSubmit = {
+                                reportMessageV.addReportMessage(it)
+                            }
+                        )
+                    }
+
+                    is AppSheet.EditReportMessage -> {
+                        val availableReportTypes by reportMessageV.reportTypesState.collectAsState()
+                        EditReportMessageSheet(
+                            availableReportTypes = availableReportTypes,
+                            reportMessage = currentSheet.reportMessage,
+                            onSubmit = {
+                                reportMessageV.editReportMessage(it)
+                            },
+                            onDelete = {
+                                reportMessageV.deleteReportMessage(it)
                             }
                         )
                     }

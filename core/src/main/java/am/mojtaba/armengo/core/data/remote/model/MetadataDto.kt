@@ -2,6 +2,8 @@ package am.mojtaba.armengo.core.data.remote.model
 
 import am.mojtaba.armengo.core.domain.model.Error
 import am.mojtaba.armengo.core.domain.model.LastUpdate
+import am.mojtaba.armengo.core.domain.model.Report
+import am.mojtaba.armengo.core.domain.model.ReportMessage
 import am.mojtaba.armengo.core.domain.model.ReportType
 import am.mojtaba.armengo.core.domain.model.Resource
 import am.mojtaba.armengo.core.domain.model.Settings
@@ -15,5 +17,7 @@ data class MetadataDto(
     val errors: List<Error> = emptyList(),
     val resources: List<Resource> = emptyList(),
     val reportTypes: List<ReportType> = emptyList(),
+    val reports: List<Report> = emptyList(),
+    val reportMessages: List<ReportMessage> = emptyList(),
     val appLanguages: AppLanguagesDto = AppLanguagesDto()
 )

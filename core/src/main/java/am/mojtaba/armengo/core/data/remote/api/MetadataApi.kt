@@ -5,6 +5,8 @@ import am.mojtaba.armengo.core.data.remote.model.ErrorDto
 import am.mojtaba.armengo.core.data.remote.model.LastUpdateDto
 import am.mojtaba.armengo.core.data.remote.model.MetadataDto
 import am.mojtaba.armengo.core.data.remote.model.SettingsDto
+import am.mojtaba.armengo.core.domain.model.ReportDto
+import am.mojtaba.armengo.core.domain.model.ReportMessageDto
 import am.mojtaba.armengo.core.domain.model.ReportTypeDto
 import am.mojtaba.armengo.core.domain.model.ResourceDto
 import am.mojtaba.armengo.core.domain.model.UpdateInfoDto
@@ -17,5 +19,7 @@ interface MetadataApi {
     suspend fun updateMetadataUpdateInfo( updateInfo: UpdateInfoDto)
     suspend fun updateMetadataResources( resources: List<ResourceDto>)
     suspend fun updateMetadataReportTypes( reportTypes: List<ReportTypeDto>)
+    suspend fun updateMetadataReports( reports: List<ReportDto>)
+    suspend fun updateMetadataReportMessages( reportMessages: List<ReportMessageDto>)
     suspend fun updateMetadataErrors( errors: List<ErrorDto>)
 }
