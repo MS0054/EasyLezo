@@ -5,6 +5,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import am.mojtaba.armengo.core.domain.model.LastUpdate
+import am.mojtaba.armengo.core.domain.model.ReportType
 import am.mojtaba.armengo.core.domain.model.Resource
 import am.mojtaba.armengo.core.domain.model.Settings
 import am.mojtaba.armengo.core.domain.model.UpdateInfo
@@ -26,6 +27,8 @@ data class MetadataEntity(
 
     // this field has specific TypeConverter instead of Embedded
     val resources: List<Resource> = emptyList(),
+
+    val reportTypes: List<ReportType> = emptyList(),
 
     @Embedded(prefix = "appLanguage_")
     val appLanguages: AppLanguagesEntity = AppLanguagesEntity()

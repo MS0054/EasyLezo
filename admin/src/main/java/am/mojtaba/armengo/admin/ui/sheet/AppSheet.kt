@@ -3,6 +3,7 @@ package am.mojtaba.armengo.admin.ui.sheet
 import am.mojtaba.armengo.core.domain.model.Category
 import am.mojtaba.armengo.core.domain.model.Error
 import am.mojtaba.armengo.core.domain.model.Language
+import am.mojtaba.armengo.core.domain.model.ReportType
 import am.mojtaba.armengo.core.domain.model.Resource
 import am.mojtaba.armengo.core.domain.model.Sentence
 import am.mojtaba.armengo.core.domain.model.User
@@ -19,6 +20,9 @@ sealed class AppSheet {
 
     object AddResource: AppSheet()
     class EditResource(val resource: Resource): AppSheet()
+
+    object AddReportType: AppSheet()
+    class EditReportType(val reportType: ReportType): AppSheet()
 
     object AddError: AppSheet()
     class EditError(val error: Error): AppSheet()

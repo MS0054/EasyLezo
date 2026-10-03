@@ -45,6 +45,8 @@ import am.mojtaba.armengo.admin.ui.screen.error.ErrorV
 import am.mojtaba.armengo.admin.ui.screen.language.LanguageS
 import am.mojtaba.armengo.admin.ui.screen.language.LanguageV
 import am.mojtaba.armengo.admin.ui.screen.metadata.MetadataV
+import am.mojtaba.armengo.admin.ui.screen.reportType.ReportTypeS
+import am.mojtaba.armengo.admin.ui.screen.reportType.ReportTypeV
 import am.mojtaba.armengo.admin.ui.screen.resource.ResourceS
 import am.mojtaba.armengo.admin.ui.screen.resource.ResourceV
 import am.mojtaba.armengo.admin.ui.screen.sentence.CategorySentenceS
@@ -72,6 +74,7 @@ sealed class Screen(val route: String) {
     data object Words : Screen("words")
     data object Language : Screen("language")
     data object Resource : Screen("resource")
+    data object ReportType : Screen("reportType")
     data object Error : Screen("error")
     data object User : Screen("user")
     object CategorySentences : Screen("categorySentences/{categoryId}") {
@@ -105,6 +108,7 @@ fun AppNavGraph() {
     val languageV: LanguageV = hiltViewModel()
     val metadataV: MetadataV = hiltViewModel()
     val resourceV: ResourceV = hiltViewModel()
+    val reportTypeV: ReportTypeV = hiltViewModel()
     val errorV: ErrorV = hiltViewModel()
     val userV: UserV = hiltViewModel()
     val sheetV: SheetV = hiltViewModel()
@@ -122,6 +126,7 @@ fun AppNavGraph() {
         languageV,
         metadataV,
         resourceV,
+        reportTypeV,
         errorV,
         onLogoutSuccess = {
 
@@ -170,6 +175,7 @@ fun AppNavGraph() {
             metadataV,
             languageV,
             resourceV,
+            reportTypeV,
             errorV,
             sheetV
         )
@@ -192,6 +198,7 @@ fun MyNavHost(
     metadataV: MetadataV,
     languageV: LanguageV,
     resourceV: ResourceV,
+    reportTypeV: ReportTypeV,
     errorV: ErrorV,
     sheetV: SheetV
 ) {
@@ -246,6 +253,13 @@ fun MyNavHost(
                 resourceV = resourceV ,
                 onEdit = { sheetV.openSheet(AppSheet.EditResource(it)) },
                 onAdd = { sheetV.openSheet(AppSheet.AddResource) }
+            )
+        }
+        composable(Screen.ReportType.route) {
+            ReportTypeS (
+                reportTypeV = reportTypeV,
+                onEdit = { sheetV.openSheet(AppSheet.EditReportType(it)) },
+                onAdd = { sheetV.openSheet(AppSheet.AddReportType) }
             )
         }
         composable(Screen.Error.route) {
@@ -346,6 +360,9 @@ fun DynamicHeader(
                 DropdownMenuItem(
                     text = { Text("Resource") },
                     onClick = { showMenu = false; onScreenOpen(Screen.Resource) })
+                DropdownMenuItem(
+                    text = { Text("ReportType") },
+                    onClick = { showMenu = false; onScreenOpen(Screen.ReportType) })
                 DropdownMenuItem(
                     text = { Text("Error") },
                     onClick = { showMenu = false; onScreenOpen(Screen.Error) })

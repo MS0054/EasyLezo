@@ -34,6 +34,9 @@ import am.mojtaba.armengo.admin.ui.screen.metadata.sheet.LastUpdateSheet
 import am.mojtaba.armengo.admin.ui.screen.metadata.sheet.SettingsSheet
 import am.mojtaba.armengo.admin.ui.screen.metadata.sheet.SyncSheet
 import am.mojtaba.armengo.admin.ui.screen.metadata.sheet.UpdateInfoSheet
+import am.mojtaba.armengo.admin.ui.screen.reportType.ReportTypeV
+import am.mojtaba.armengo.admin.ui.screen.reportType.sheet.AddReportTypeSheet
+import am.mojtaba.armengo.admin.ui.screen.reportType.sheet.EditReportTypeSheet
 import am.mojtaba.armengo.admin.ui.screen.resource.ResourceV
 import am.mojtaba.armengo.admin.ui.screen.resource.sheet.AddResourceSheet
 import am.mojtaba.armengo.admin.ui.screen.resource.sheet.EditResourceSheet
@@ -73,6 +76,7 @@ fun SheetManager(
     languageV: LanguageV,
     metadataV: MetadataV,
     resourceV: ResourceV,
+    reportTypeV: ReportTypeV,
     errorV: ErrorV,
     onLogoutSuccess: () -> Unit,
     onRefresh: (RefreshData) -> Unit,
@@ -95,6 +99,7 @@ fun SheetManager(
             categoryWordV.event,
             userV.event,
             resourceV.event,
+            reportTypeV.event,
             errorV.event,
             metadataV.event
         ).collect { event ->
@@ -276,6 +281,27 @@ fun SheetManager(
                             },
                             onDelete = {
                                 resourceV.deleteResource(it)
+                            }
+                        )
+                    }
+
+                    is AppSheet.AddReportType -> {
+                        AddReportTypeSheet(
+                            onDismiss = { sheetV.closeSheet() },
+                            onSubmit = {
+                                reportTypeV.addReportType(it)
+                            }
+                        )
+                    }
+
+                    is AppSheet.EditReportType -> {
+                        EditReportTypeSheet(
+                            reportType = currentSheet.reportType,
+                            onSubmit = {
+                                reportTypeV.editReportType(it)
+                            },
+                            onDelete = {
+                                reportTypeV.deleteReportType(it)
                             }
                         )
                     }

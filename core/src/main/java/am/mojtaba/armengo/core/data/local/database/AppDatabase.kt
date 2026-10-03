@@ -22,15 +22,16 @@ import am.mojtaba.armengo.core.data.local.entity.SentenceEntity
 import am.mojtaba.armengo.core.data.local.entity.UserEntity
 import am.mojtaba.armengo.core.data.local.entity.WordEntity
 import am.mojtaba.armengo.core.data.local.entity.converter.ErrorConverter
+import am.mojtaba.armengo.core.data.local.entity.converter.ReportTypeConverter
 import am.mojtaba.armengo.core.data.local.entity.converter.ResourceConverter
 import am.mojtaba.armengo.core.data.local.entity.converter.SentenceAlternativeConverter
 import am.mojtaba.armengo.core.data.local.entity.converter.TranslateConverter
 
 @Database(
     entities = [LanguageEntity::class, MetadataEntity::class, UserEntity::class, AppLanguagesEntity::class, CategoryEntity::class, SentenceEntity::class, WordEntity::class, CategorySentenceEntity::class, CategoryWordEntity::class],
-    version = 10
+    version = 11
 )
-@TypeConverters(TranslateConverter::class, ResourceConverter::class, ErrorConverter::class, SentenceAlternativeConverter::class)
+@TypeConverters(TranslateConverter::class, ResourceConverter::class, ReportTypeConverter::class, ErrorConverter::class, SentenceAlternativeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun languageDao(): LanguageDao
     abstract fun metadataDao(): MetadataDao

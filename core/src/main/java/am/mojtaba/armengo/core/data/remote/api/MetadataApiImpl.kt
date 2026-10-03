@@ -8,6 +8,7 @@ import am.mojtaba.armengo.core.data.remote.model.SentenceDto
 import am.mojtaba.armengo.core.data.remote.model.SettingsDto
 import am.mojtaba.armengo.core.domain.model.AppLanguages
 import am.mojtaba.armengo.core.domain.model.LastUpdate
+import am.mojtaba.armengo.core.domain.model.ReportTypeDto
 import am.mojtaba.armengo.core.domain.model.ResourceDto
 import am.mojtaba.armengo.core.domain.model.Settings
 import am.mojtaba.armengo.core.domain.model.Translate
@@ -69,6 +70,13 @@ class MetadataApiImpl @Inject constructor(
     override suspend fun updateMetadataResources(resources: List<ResourceDto>) {
         try {
             metadataCol.document("Main").update("resources", resources).await()
+        } catch (e: Exception) {
+        }
+    }
+
+    override suspend fun updateMetadataReportTypes(reportTypes: List<ReportTypeDto>) {
+        try {
+            metadataCol.document("Main").update("reportTypes", reportTypes).await()
         } catch (e: Exception) {
         }
     }
