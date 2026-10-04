@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,7 +39,8 @@ import coil3.compose.AsyncImage
 fun ShowWordSheet(
     word: Word,
     onDismiss: () -> Unit,
-    onPlay: (String) -> Unit
+    onPlay: (String) -> Unit,
+    onReportClick: () -> Unit = {}
 ) {
 
     val sheetState = rememberModalBottomSheetState (
@@ -54,6 +58,17 @@ fun ShowWordSheet(
                 .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                IconButton(onClick = onReportClick) {
+                    Icon(
+                        imageVector = Icons.Default.Warning,
+                        contentDescription = "Report"
+                    )
+                }
+            }
 
             if (word.image.isNotEmpty()) {
                 AsyncImage(

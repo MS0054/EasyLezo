@@ -24,6 +24,8 @@ import am.mojtaba.armengo.core.data.remote.api.LanguageApi
 import am.mojtaba.armengo.core.data.remote.api.LanguageApiImpl
 import am.mojtaba.armengo.core.data.remote.api.MetadataApi
 import am.mojtaba.armengo.core.data.remote.api.MetadataApiImpl
+import am.mojtaba.armengo.core.data.remote.api.ReportApi
+import am.mojtaba.armengo.core.data.remote.api.ReportApiImpl
 import am.mojtaba.armengo.core.data.remote.api.SentenceApi
 import am.mojtaba.armengo.core.data.remote.api.SentenceApiImpl
 import am.mojtaba.armengo.core.data.remote.api.UserApi
@@ -38,6 +40,7 @@ import am.mojtaba.armengo.core.data.repository.CategorySentenceRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.CategoryWordRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.LanguageRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.MetadataRepositoryImpl
+import am.mojtaba.armengo.core.data.repository.ReportRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.SentenceRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.UserRepositoryImpl
 import am.mojtaba.armengo.core.data.repository.WordRepositoryImpl
@@ -50,6 +53,7 @@ import am.mojtaba.armengo.core.domain.repository.CategorySentenceRepository
 import am.mojtaba.armengo.core.domain.repository.CategoryWordRepository
 import am.mojtaba.armengo.core.domain.repository.LanguageRepository
 import am.mojtaba.armengo.core.domain.repository.MetadataRepository
+import am.mojtaba.armengo.core.domain.repository.ReportRepository
 import am.mojtaba.armengo.core.domain.repository.SentenceRepository
 import am.mojtaba.armengo.core.domain.repository.UserRepository
 import am.mojtaba.armengo.core.domain.repository.WordRepository
@@ -270,6 +274,16 @@ object AppModule {
     @Singleton
     @Provides
     fun provideWordApi(db: FirebaseFirestore): WordApi = WordApiImpl(db)
+
+    @Singleton
+    @Provides
+    fun provideReportRepository(
+        reportApi: ReportApi
+    ): ReportRepository = ReportRepositoryImpl(reportApi)
+
+    @Singleton
+    @Provides
+    fun provideReportApi(db: FirebaseFirestore): ReportApi = ReportApiImpl(db)
 
     @Singleton
     @Provides

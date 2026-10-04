@@ -12,7 +12,7 @@ class DeleteMetadataReportMessageUseCase @Inject constructor(
     suspend operator fun invoke(reportMessage: ReportMessage) {
         val reportMessages = metadataRepository.observeMetadata().map { it.reportMessages }.first()
 
-        val updatedList = reportMessages.filterNot { it.key == reportMessage.key || (it.id != 0L && it.id == reportMessage.id) }
+        val updatedList = reportMessages.filterNot { it.key == reportMessage.key || (it.id != "" && it.id == reportMessage.id) }
         try {
             metadataRepository.updateMetadataReportMessagesServer(updatedList)
         } catch (e: Exception) {

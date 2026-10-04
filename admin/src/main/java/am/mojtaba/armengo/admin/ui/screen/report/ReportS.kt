@@ -75,24 +75,29 @@ fun ReportS(
                             ) {
                                 Column(modifier = Modifier.padding(12.dp)) {
                                     Text(
-                                        report.key,
+                                        text = "MessageKey: ${report.reportMessageKey}",
                                         fontSize = 16.sp,
                                         style = MaterialTheme.typography.titleLarge
                                     )
-                                    if (report.text.isNotBlank()) {
+                                    if (report.userComment.isNotBlank()) {
                                         Text(
-                                            report.text,
+                                            text = "Comment: ${report.userComment}",
                                             fontSize = 14.sp,
                                             style = MaterialTheme.typography.bodyLarge
                                         )
                                     }
-                                    if (report.description.isNotBlank()) {
+                                    if (report.itemId.isNotBlank()) {
                                         Text(
-                                            report.description,
+                                            text = "Item ID: ${report.itemId}",
                                             fontSize = 13.sp,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
+                                    Text(
+                                        text = "Device: ${report.deviceInfo} | App Ver: ${report.appVersion} | Lang: ${report.userAppLanguage}",
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.outline
+                                    )
                                 }
                             }
                         }

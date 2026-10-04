@@ -1,5 +1,6 @@
 package am.mojtaba.armengo.ui.screen.sentence
 
+import am.mojtaba.armengo.core.domain.model.ReportMessage
 import am.mojtaba.armengo.core.domain.model.Sentence
 import am.mojtaba.armengo.core.domain.model.Word
 
@@ -8,5 +9,6 @@ data class SentenceUiState(
     val title: String = "",
     val allWords: List<Word> = emptyList(),
     val words: List<Word> = emptyList(),
-    val sentences: List<Sentence> = emptyList()
+    val sentences: List<Sentence> = emptyList(),
+    val reportMessages: List<ReportMessage> = emptyList()
 )

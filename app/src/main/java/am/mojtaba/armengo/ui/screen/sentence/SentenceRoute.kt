@@ -3,6 +3,7 @@ package am.mojtaba.armengo.ui.screen.sentence
 import am.mojtaba.armengo.core.domain.model.Sentence
 import am.mojtaba.armengo.core.domain.model.Word
 import am.mojtaba.armengo.ui.UiEvent
+import am.mojtaba.armengo.ui.screen.sentence.sheet.ShowReportSheet
 import am.mojtaba.armengo.ui.screen.sentence.sheet.ShowSentenceSheet
 import am.mojtaba.armengo.ui.screen.sentence.sheet.ShowWordSheet
 import androidx.compose.material3.SnackbarHostState
@@ -14,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 @Composable
 fun SentenceRoute(
     snackBarHostState: SnackbarHostState,
@@ -25,6 +27,8 @@ fun SentenceRoute(
 
     var showSentenceSheet by remember { mutableStateOf(false) }
     var showWordSheet by remember { mutableStateOf(false) }
+    var showReportSheet by remember { mutableStateOf(false) }
+    var reportTargetType by remember { mutableStateOf<String?>(null) }
     var currentSentence by remember { mutableStateOf<Sentence?>(null) }
     var currentWord by remember { mutableStateOf<Word?>(null) }
 
@@ -43,7 +47,12 @@ fun SentenceRoute(
             ShowSentenceSheet(
                 sentence = sentence,
                 onDismiss = { showSentenceSheet = false },
-                onPlay = viewModel::playVoice
+                onPlay = viewModel::playVoice,
+                onReportClick = {
+                    showSentenceSheet = false
+                    reportTargetType = "Sentence"
+                    showReportSheet = true
+                }
             )
         }
     }
@@ -53,9 +62,29 @@ fun SentenceRoute(
             ShowWordSheet(
                 word = word,
                 onDismiss = { showWordSheet = false },
-                onPlay = viewModel::playVoice
+                onPlay = viewModel::playVoice,
+                onReportClick = {
+                    showWordSheet = false
+                    reportTargetType = "Word"
+                    showReportSheet = true
+                }
             )
         }
+    }
+
+    if (showReportSheet && reportTargetType != null) {
+        val filteredReportMessages = remember(uiState.reportMessages, reportTargetType) {
+            uiState.reportMessages.filter { msg ->
+                msg.reportTypes.any { it.equals(reportTargetType, ignoreCase = true) }
+            }
+        }
+        ShowReportSheet(
+            reportMessages = filteredReportMessages,
+            onDismiss = {
+                showReportSheet = false
+                reportTargetType = null
+            }
+        )
     }
 
     SentenceScreen(

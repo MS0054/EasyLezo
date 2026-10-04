@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import am.mojtaba.armengo.core.domain.model.ReportMessage
 import am.mojtaba.armengo.core.domain.model.ReportType
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,6 +35,7 @@ fun AddReportMessageSheet(
                     if (key.isNotBlank()) {
                         onSubmit(
                             ReportMessage(
+                                id = UUID.randomUUID().toString(),
                                 key = key,
                                 text = text,
                                 icon = icon,

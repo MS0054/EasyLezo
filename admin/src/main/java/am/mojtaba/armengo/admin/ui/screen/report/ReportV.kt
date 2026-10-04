@@ -4,10 +4,9 @@ import androidx.lifecycle.viewModelScope
 import am.mojtaba.armengo.admin.ui.UiState
 import am.mojtaba.armengo.admin.ui.screen.BaseViewModel
 import am.mojtaba.armengo.core.domain.model.Report
-import am.mojtaba.armengo.core.domain.usecase.metadata.AddMetadataReportUseCase
-import am.mojtaba.armengo.core.domain.usecase.metadata.DeleteMetadataReportUseCase
-import am.mojtaba.armengo.core.domain.usecase.metadata.GetMetadataReportsUseCase
-import am.mojtaba.armengo.core.domain.usecase.metadata.UpdateMetadataReportUseCase
+import am.mojtaba.armengo.core.domain.usecase.report.AddReportUseCase
+import am.mojtaba.armengo.core.domain.usecase.report.DeleteReportUseCase
+import am.mojtaba.armengo.core.domain.usecase.report.GetReportsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,10 +18,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReportV @Inject constructor(
-    private val getMetadataReportsUseCase: GetMetadataReportsUseCase,
-    private val addMetadataReportUseCase: AddMetadataReportUseCase,
-    private val updateMetadataReportUseCase: UpdateMetadataReportUseCase,
-    private val deleteMetadataReportUseCase: DeleteMetadataReportUseCase
+    private val getReportsUseCase: GetReportsUseCase,
+    private val addReportUseCase: AddReportUseCase,
+    private val deleteReportUseCase: DeleteReportUseCase
 ) : BaseViewModel() {
 
     private val _reportsUiState = MutableStateFlow(UiState<List<Report>>())
@@ -34,7 +32,7 @@ class ReportV @Inject constructor(
 
     private fun getReports() {
         viewModelScope.launch {
-            getMetadataReportsUseCase()
+            getReportsUseCase()
                 .onStart {
                     _reportsUiState.value = UiState(isLoading = true)
                 }
@@ -49,21 +47,21 @@ class ReportV @Inject constructor(
 
     fun addReport(report: Report) {
         launchWithEvent(
-            action = { addMetadataReportUseCase(report) },
+            action = { addReportUseCase(report) },
             successMessage = "Added"
         )
     }
 
     fun editReport(report: Report) {
         launchWithEvent(
-            action = { updateMetadataReportUseCase(report) },
+            action = { addReportUseCase(report) },
             successMessage = "Updated"
         )
     }
 
     fun deleteReport(report: Report) {
         launchWithEvent(
-            action = { deleteMetadataReportUseCase(report) },
+            action = { deleteReportUseCase(report.id) },
             successMessage = "Deleted"
         )
     }

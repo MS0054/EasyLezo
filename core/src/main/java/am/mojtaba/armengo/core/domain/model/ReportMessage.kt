@@ -1,7 +1,7 @@
 package am.mojtaba.armengo.core.domain.model
 
 data class ReportMessage(
-    val id: Long = 0L,
+    val id: String = "",
     val key: String = "",
     val reportTypes: List<String> = emptyList(),
     val text: String = "",

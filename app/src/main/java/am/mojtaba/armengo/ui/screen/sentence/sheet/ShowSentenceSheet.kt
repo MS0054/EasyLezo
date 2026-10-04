@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,7 +37,8 @@ import androidx.compose.ui.graphics.Color
 fun ShowSentenceSheet(
     sentence: Sentence,
     onDismiss: () -> Unit,
-    onPlay: (String) -> Unit
+    onPlay: (String) -> Unit,
+    onReportClick: () -> Unit = {}
 ) {
 
     val sheetState = rememberModalBottomSheetState (
@@ -52,6 +56,17 @@ fun ShowSentenceSheet(
                 .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                IconButton(onClick = onReportClick) {
+                    Icon(
+                        imageVector = Icons.Default.Warning,
+                        contentDescription = "Report"
+                    )
+                }
+            }
             LanguageAwareText(
                 text = sentence.toText ,
                 fontSize = 28.sp,

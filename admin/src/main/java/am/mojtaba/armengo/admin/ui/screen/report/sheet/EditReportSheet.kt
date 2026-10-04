@@ -17,38 +17,69 @@ fun EditReportSheet(
     onDelete: (Report) -> Unit,
     onSubmit: (Report) -> Unit
 ) {
-    var key by remember { mutableStateOf(report.key) }
-    var text by remember { mutableStateOf(report.text) }
-    var description by remember { mutableStateOf(report.description) }
+    var reportMessageKey by remember { mutableStateOf(report.reportMessageKey) }
+    var itemId by remember { mutableStateOf(report.itemId) }
+    var userComment by remember { mutableStateOf(report.userComment) }
+    var appVersion by remember { mutableStateOf(report.appVersion) }
+    var deviceInfo by remember { mutableStateOf(report.deviceInfo) }
+    var userAppLanguage by remember { mutableStateOf(report.userAppLanguage) }
 
     Column(Modifier.fillMaxWidth().padding(20.dp)) {
         Row (Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = "Edit Report", style = MaterialTheme.typography.headlineSmall)
+            Text(text = "Report Detail", style = MaterialTheme.typography.headlineSmall)
             Row {
-                IconButton (onClick = { onDelete(report) }) { Icon(Icons.Default.Delete, tint = Color.Red, contentDescription = null) }
-                Button(onClick = { onSubmit(Report(id = report.id, key = key, text = text, description = description)) }) { Text("Save") }
+                IconButton (onClick = { onDelete(report) }) { Icon(Icons.Default.Delete, tint = Color.Red, contentDescription = "Delete") }
+                Button(onClick = { onSubmit(report.copy(
+                    reportMessageKey = reportMessageKey,
+                    itemId = itemId,
+                    userComment = userComment,
+                    appVersion = appVersion,
+                    deviceInfo = deviceInfo,
+                    userAppLanguage = userAppLanguage
+                )) }) { Text("Save") }
             }
         }
         Spacer(Modifier.size(16.dp))
 
         OutlinedTextField(
-            value = key,
-            onValueChange = { key = it },
-            label = { Text("Key") },
+            value = reportMessageKey,
+            onValueChange = { reportMessageKey = it },
+            label = { Text("Report Message Key") },
             modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
-            value = text,
-            onValueChange = { text = it },
-            label = { Text("Text") },
+            value = itemId,
+            onValueChange = { itemId = it },
+            label = { Text("Item ID") },
             modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
-            value = description,
-            onValueChange = { description = it },
-            label = { Text("Description") },
+            value = userComment,
+            onValueChange = { userComment = it },
+            label = { Text("User Comment") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = appVersion,
+            onValueChange = { appVersion = it },
+            label = { Text("App Version") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = deviceInfo,
+            onValueChange = { deviceInfo = it },
+            label = { Text("Device Info") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = userAppLanguage,
+            onValueChange = { userAppLanguage = it },
+            label = { Text("User App Language") },
             modifier = Modifier.fillMaxWidth()
         )
     }

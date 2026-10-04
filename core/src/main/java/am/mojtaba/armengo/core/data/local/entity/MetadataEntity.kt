@@ -5,7 +5,6 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import am.mojtaba.armengo.core.domain.model.LastUpdate
-import am.mojtaba.armengo.core.domain.model.Report
 import am.mojtaba.armengo.core.domain.model.ReportMessage
 import am.mojtaba.armengo.core.domain.model.ReportType
 import am.mojtaba.armengo.core.domain.model.Resource
@@ -31,8 +30,6 @@ data class MetadataEntity(
     val resources: List<Resource> = emptyList(),
 
     val reportTypes: List<ReportType> = emptyList(),
-
-    val reports: List<Report> = emptyList(),
 
     val reportMessages: List<ReportMessage> = emptyList(),
 

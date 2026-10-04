@@ -8,7 +8,6 @@ data class Metadata(
     val errors: List<Error> = emptyList(),
     val resources: List<Resource> = emptyList(),
     val reportTypes: List<ReportType> = emptyList(),
-    val reports: List<Report> = emptyList(),
     val reportMessages: List<ReportMessage> = emptyList(),
     val appLanguages: AppLanguages = AppLanguages()
 )

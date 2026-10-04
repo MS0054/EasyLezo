@@ -11,7 +11,7 @@ class UpdateMetadataReportMessageUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(reportMessage: ReportMessage) {
         val reportMessages = metadataRepository.observeMetadata().map { it.reportMessages }.first()
-        val updatedList = reportMessages.map { if (it.key == reportMessage.key || (it.id != 0L && it.id == reportMessage.id)) reportMessage else it }
+        val updatedList = reportMessages.map { if (it.key == reportMessage.key || (it.id != "" && it.id == reportMessage.id)) reportMessage else it }
 
         try {
             metadataRepository.updateMetadataReportMessagesServer(updatedList)

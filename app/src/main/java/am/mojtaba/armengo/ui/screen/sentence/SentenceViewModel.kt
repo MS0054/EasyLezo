@@ -1,5 +1,6 @@
 package am.mojtaba.armengo.ui.screen.sentence
 
+import am.mojtaba.armengo.core.domain.usecase.metadata.GetMetadataReportMessagesUseCase
 import am.mojtaba.armengo.core.util.AudioHelper
 import am.mojtaba.armengo.core.domain.usecase.sentence.GetCategorySentencesUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.GetWordsUseCase
@@ -26,6 +27,7 @@ class SentenceViewModel @Inject constructor(
     private val audioManager: AudioHelper,
     private val getCategorySentencesUseCase: GetCategorySentencesUseCase,
     private val getWordsUseCase: GetWordsUseCase,
+    private val getMetadataReportMessagesUseCase: GetMetadataReportMessagesUseCase,
     private val errorMessageProvider: ErrorMessageProvider
 ) : ViewModel() {
 
@@ -50,14 +52,19 @@ class SentenceViewModel @Inject constructor(
         emit(emptyList())
     }
 
+    val reportMessagesFlow = getMetadataReportMessagesUseCase().catch { throwable ->
+        emit(emptyList())
+    }
+
     val uiState: StateFlow<SentenceUiState> =
-        combine(allWordsFlow, wordsFlow, sentencesFlow) { allWords, words, sentences ->
+        combine(allWordsFlow, wordsFlow, sentencesFlow, reportMessagesFlow) { allWords, words, sentences, reportMessages ->
             SentenceUiState(
                 isLoading = false,
                 title = categoryName,
                 allWords = allWords,
                 words = words,
-                sentences = sentences
+                sentences = sentences,
+                reportMessages = reportMessages
             )
         }
             .onStart {
