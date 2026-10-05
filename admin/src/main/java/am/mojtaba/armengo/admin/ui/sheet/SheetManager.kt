@@ -53,6 +53,7 @@ import am.mojtaba.armengo.admin.ui.screen.sentence.SentenceV
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.AddSentenceSheet
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.AssignSentencesSheet
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.EditSentenceSheet
+import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.ShowSentenceSheet
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.SortSentenceSheet
 import am.mojtaba.armengo.admin.ui.screen.user.UserV
 import am.mojtaba.armengo.admin.ui.screen.user.sheet.EditUserSheet
@@ -342,6 +343,22 @@ fun SheetManager(
                     is AppSheet.ShowReport -> {
                         ShowReportSheet(
                             report = currentSheet.report,
+                            onDismiss = { sheetV.closeSheet() },
+                            onInspectItem = { report ->
+                                if (report.reportType.equals("Sentence", ignoreCase = true) && report.itemId.isNotBlank()) {
+                                    val sentences = sentenceV.sentencesUiState.value.data ?: emptyList()
+                                    val foundSentence = sentences.find { it.id == report.itemId }
+                                    if (foundSentence != null) {
+                                        sheetV.openSheet(AppSheet.ShowSentence(foundSentence))
+                                    }
+                                }
+                            }
+                        )
+                    }
+
+                    is AppSheet.ShowSentence -> {
+                        ShowSentenceSheet(
+                            sentence = currentSheet.sentence,
                             onDismiss = { sheetV.closeSheet() }
                         )
                     }

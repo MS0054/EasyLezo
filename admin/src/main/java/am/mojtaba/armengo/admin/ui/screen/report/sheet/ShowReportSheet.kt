@@ -3,6 +3,7 @@ package am.mojtaba.armengo.admin.ui.screen.report.sheet
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -19,7 +20,8 @@ import java.util.Locale
 @Composable
 fun ShowReportSheet(
     report: Report,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onInspectItem: (Report) -> Unit = {}
 ) {
     val dateFormat = remember { SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()) }
     val formattedDate = remember(report.createdAt) {
@@ -55,7 +57,25 @@ fun ShowReportSheet(
                 ReportDetailItem(label = "Report ID", value = report.id)
                 ReportDetailItem(label = "Report Type", value = report.reportType)
                 ReportDetailItem(label = "Report Message Key", value = report.reportMessageKey)
-                ReportDetailItem(label = "Item ID", value = report.itemId)
+
+                if (report.itemId.isNotBlank()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        ReportDetailItem(label = "Item ID", value = report.itemId, modifier = Modifier.weight(1f))
+                        if (report.reportType.equals("Sentence", ignoreCase = true)) {
+                            IconButton(onClick = { onInspectItem(report) }) {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = "View Sentence"
+                                )
+                            }
+                        }
+                    }
+                }
+
                 ReportDetailItem(label = "User Comment", value = report.userComment)
                 ReportDetailItem(label = "App Version", value = report.appVersion)
                 ReportDetailItem(label = "Device Info", value = report.deviceInfo)
@@ -71,9 +91,13 @@ fun ShowReportSheet(
 }
 
 @Composable
-private fun ReportDetailItem(label: String, value: String) {
+private fun ReportDetailItem(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
     if (value.isNotBlank()) {
-        Column {
+        Column(modifier = modifier) {
             Text(
                 text = label,
                 fontSize = 12.sp,

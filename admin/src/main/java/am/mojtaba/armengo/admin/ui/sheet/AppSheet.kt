@@ -42,6 +42,7 @@ sealed class AppSheet {
 
     object AddSentence : AppSheet()
     class EditSentence(val sentence: Sentence) : AppSheet()
+    class ShowSentence(val sentence: Sentence) : AppSheet()
 
     object AssignCategorySentence : AppSheet()
     object SortCategorySentence : AppSheet()
