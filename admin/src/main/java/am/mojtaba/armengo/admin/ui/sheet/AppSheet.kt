@@ -28,6 +28,7 @@ sealed class AppSheet {
 
     object AddReport: AppSheet()
     class EditReport(val report: Report): AppSheet()
+    class ShowReport(val report: Report): AppSheet()
 
     object AddReportMessage: AppSheet()
     class EditReportMessage(val reportMessage: ReportMessage): AppSheet()

@@ -38,6 +38,7 @@ import am.mojtaba.armengo.admin.ui.screen.metadata.sheet.UpdateInfoSheet
 import am.mojtaba.armengo.admin.ui.screen.report.ReportV
 import am.mojtaba.armengo.admin.ui.screen.report.sheet.AddReportSheet
 import am.mojtaba.armengo.admin.ui.screen.report.sheet.EditReportSheet
+import am.mojtaba.armengo.admin.ui.screen.report.sheet.ShowReportSheet
 import am.mojtaba.armengo.admin.ui.screen.reportMessage.ReportMessageV
 import am.mojtaba.armengo.admin.ui.screen.reportMessage.sheet.AddReportMessageSheet
 import am.mojtaba.armengo.admin.ui.screen.reportMessage.sheet.EditReportMessageSheet
@@ -335,6 +336,13 @@ fun SheetManager(
                             onDelete = {
                                 reportV.deleteReport(it)
                             }
+                        )
+                    }
+
+                    is AppSheet.ShowReport -> {
+                        ShowReportSheet(
+                            report = currentSheet.report,
+                            onDismiss = { sheetV.closeSheet() }
                         )
                     }
 

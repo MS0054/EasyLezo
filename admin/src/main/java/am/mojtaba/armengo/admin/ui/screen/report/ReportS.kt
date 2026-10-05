@@ -30,6 +30,7 @@ import am.mojtaba.armengo.core.domain.model.Report
 @Composable
 fun ReportS(
     reportV: ReportV,
+    onShow: (Report) -> Unit,
     onEdit: (Report) -> Unit,
     onAdd: () -> Unit
 ) {
@@ -67,7 +68,9 @@ fun ReportS(
                                     .fillMaxWidth()
                                     .padding(vertical = 4.dp)
                                     .combinedClickable(
-                                        onClick = {},
+                                        onClick = {
+                                            onShow(report)
+                                        },
                                         onLongClick = {
                                             onEdit(report)
                                         }

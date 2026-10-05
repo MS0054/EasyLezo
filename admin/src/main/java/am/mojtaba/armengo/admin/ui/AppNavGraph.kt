@@ -279,6 +279,7 @@ fun MyNavHost(
         composable(Screen.Report.route) {
             ReportS (
                 reportV = reportV,
+                onShow = { sheetV.openSheet(AppSheet.ShowReport(it)) },
                 onEdit = { sheetV.openSheet(AppSheet.EditReport(it)) },
                 onAdd = { sheetV.openSheet(AppSheet.AddReport) }
             )
