@@ -42,7 +42,7 @@ sealed class AppSheet {
 
     object AddSentence : AppSheet()
     class EditSentence(val sentence: Sentence) : AppSheet()
-    class ShowSentence(val sentence: Sentence) : AppSheet()
+    class ShowReportItem(val sentence: Sentence? = null, val word: Word? = null) : AppSheet()
 
     object AssignCategorySentence : AppSheet()
     object SortCategorySentence : AppSheet()

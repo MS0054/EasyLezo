@@ -47,6 +47,7 @@ class WordV @Inject constructor(
 
 
     init {
+        observeWords()
         observeSyncStatus()
     }
 

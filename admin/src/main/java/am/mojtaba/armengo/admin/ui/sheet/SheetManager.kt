@@ -53,7 +53,7 @@ import am.mojtaba.armengo.admin.ui.screen.sentence.SentenceV
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.AddSentenceSheet
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.AssignSentencesSheet
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.EditSentenceSheet
-import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.ShowSentenceSheet
+import am.mojtaba.armengo.admin.ui.screen.report.sheet.ShowReportItem
 import am.mojtaba.armengo.admin.ui.screen.sentence.sheet.SortSentenceSheet
 import am.mojtaba.armengo.admin.ui.screen.user.UserV
 import am.mojtaba.armengo.admin.ui.screen.user.sheet.EditUserSheet
@@ -69,6 +69,7 @@ import am.mojtaba.armengo.admin.ui.screen.word.sheet.SortWordSheet
 import am.mojtaba.armengo.core.domain.model.AppLanguages
 import am.mojtaba.armengo.core.domain.model.Settings
 import am.mojtaba.armengo.core.domain.model.UpdateInfo
+import android.util.Log
 import kotlinx.coroutines.flow.merge
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -345,20 +346,30 @@ fun SheetManager(
                             report = currentSheet.report,
                             onDismiss = { sheetV.closeSheet() },
                             onInspectItem = { report ->
-                                if (report.reportType.equals("Sentence", ignoreCase = true) && report.itemId.isNotBlank()) {
-                                    val sentences = sentenceV.sentencesUiState.value.data ?: emptyList()
-                                    val foundSentence = sentences.find { it.id == report.itemId }
-                                    if (foundSentence != null) {
-                                        sheetV.openSheet(AppSheet.ShowSentence(foundSentence))
+                                if (report.itemId.isNotBlank()) {
+                                    if (report.reportType.equals("Sentence", ignoreCase = true)) {
+                                        val sentences = sentenceV.sentencesUiState.value.data ?: emptyList()
+                                        val foundSentence = sentences.find { it.id == report.itemId }
+                                        if (foundSentence != null) {
+                                            sheetV.openSheet(AppSheet.ShowReportItem(sentence = foundSentence))
+                                        }
+                                    } else if (report.reportType.equals("Word", ignoreCase = true)) {
+                                        val words = wordV.wordUiState.value.data ?: emptyList()
+
+                                        val foundWord = words.find { it.id == report.itemId }
+                                        if (foundWord != null) {
+                                            sheetV.openSheet(AppSheet.ShowReportItem(word = foundWord))
+                                        }
                                     }
                                 }
                             }
                         )
                     }
 
-                    is AppSheet.ShowSentence -> {
-                        ShowSentenceSheet(
+                    is AppSheet.ShowReportItem -> {
+                        ShowReportItem(
                             sentence = currentSheet.sentence,
+                            word = currentSheet.word,
                             onDismiss = { sheetV.closeSheet() }
                         )
                     }

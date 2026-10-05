@@ -65,11 +65,11 @@ fun ShowReportSheet(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         ReportDetailItem(label = "Item ID", value = report.itemId, modifier = Modifier.weight(1f))
-                        if (report.reportType.equals("Sentence", ignoreCase = true)) {
+                        if (report.reportType.equals("Sentence", ignoreCase = true) || report.reportType.equals("Word", ignoreCase = true)) {
                             IconButton(onClick = { onInspectItem(report) }) {
                                 Icon(
                                     imageVector = Icons.Default.Search,
-                                    contentDescription = "View Sentence"
+                                    contentDescription = "View Item"
                                 )
                             }
                         }
