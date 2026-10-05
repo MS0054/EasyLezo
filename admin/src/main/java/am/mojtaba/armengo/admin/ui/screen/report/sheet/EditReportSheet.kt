@@ -17,6 +17,7 @@ fun EditReportSheet(
     onDelete: (Report) -> Unit,
     onSubmit: (Report) -> Unit
 ) {
+    var reportType by remember { mutableStateOf(report.reportType) }
     var reportMessageKey by remember { mutableStateOf(report.reportMessageKey) }
     var itemId by remember { mutableStateOf(report.itemId) }
     var userComment by remember { mutableStateOf(report.userComment) }
@@ -30,6 +31,7 @@ fun EditReportSheet(
             Row {
                 IconButton (onClick = { onDelete(report) }) { Icon(Icons.Default.Delete, tint = Color.Red, contentDescription = "Delete") }
                 Button(onClick = { onSubmit(report.copy(
+                    reportType = reportType,
                     reportMessageKey = reportMessageKey,
                     itemId = itemId,
                     userComment = userComment,
@@ -40,6 +42,13 @@ fun EditReportSheet(
             }
         }
         Spacer(Modifier.size(16.dp))
+
+        OutlinedTextField(
+            value = reportType,
+            onValueChange = { reportType = it },
+            label = { Text("Report Type") },
+            modifier = Modifier.fillMaxWidth()
+        )
 
         OutlinedTextField(
             value = reportMessageKey,

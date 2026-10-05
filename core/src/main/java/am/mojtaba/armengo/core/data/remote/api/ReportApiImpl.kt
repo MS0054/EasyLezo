@@ -39,7 +39,11 @@ class ReportApiImpl @Inject constructor(
 
     override suspend fun deleteReport(reportId: String) {
         if (reportId.isNotBlank()) {
-            reportCol.document(reportId).delete().await()
+            try {
+                reportCol.document(reportId).delete().await()
+            } catch (e: Exception) {
+                db.collection("reports").document(reportId).delete().await()
+            }
         }
     }
 }

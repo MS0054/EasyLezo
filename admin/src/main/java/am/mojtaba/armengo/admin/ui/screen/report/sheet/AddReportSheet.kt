@@ -15,6 +15,7 @@ fun AddReportSheet(
     onDismiss: () -> Unit,
     onSubmit: (Report) -> Unit
 ) {
+    var reportType by remember { mutableStateOf("") }
     var reportMessageKey by remember { mutableStateOf("") }
     var itemId by remember { mutableStateOf("") }
     var userComment by remember { mutableStateOf("") }
@@ -28,6 +29,7 @@ fun AddReportSheet(
             Text("Add Report", style = MaterialTheme.typography.headlineSmall)
             Button(onClick = {
                 onSubmit(Report(
+                    reportType = reportType,
                     reportMessageKey = reportMessageKey,
                     itemId = itemId,
                     userComment = userComment,
@@ -38,6 +40,13 @@ fun AddReportSheet(
             }) { Text("Add") }
         }
         Spacer(Modifier.size(16.dp))
+
+        OutlinedTextField(
+            value = reportType,
+            onValueChange = { reportType = it },
+            label = { Text("Report Type") },
+            modifier = Modifier.fillMaxWidth()
+        )
 
         OutlinedTextField(
             value = reportMessageKey,

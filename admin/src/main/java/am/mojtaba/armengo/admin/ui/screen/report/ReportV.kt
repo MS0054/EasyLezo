@@ -49,21 +49,33 @@ class ReportV @Inject constructor(
 
     fun addReport(report: Report) {
         launchWithEvent(
-            action = { addReportUseCase(report) },
+            action = {
+                val res = addReportUseCase(report)
+                getReports()
+                res
+            },
             successMessage = "Added"
         )
     }
 
     fun editReport(report: Report) {
         launchWithEvent(
-            action = { addReportUseCase(report) },
+            action = {
+                val res = addReportUseCase(report)
+                getReports()
+                res
+            },
             successMessage = "Updated"
         )
     }
 
     fun deleteReport(report: Report) {
         launchWithEvent(
-            action = { deleteReportUseCase(report.id) },
+            action = {
+                val res = deleteReportUseCase(report.id)
+                getReports()
+                res
+            },
             successMessage = "Deleted"
         )
     }

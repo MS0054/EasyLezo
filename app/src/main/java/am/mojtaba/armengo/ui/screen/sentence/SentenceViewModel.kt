@@ -102,6 +102,7 @@ class SentenceViewModel @Inject constructor(
     }
 
     fun sendReport(
+        reportType: String,
         itemId: String,
         reportMessageKey: String,
         userComment: String
@@ -110,6 +111,7 @@ class SentenceViewModel @Inject constructor(
             val appLanguage = appLanguagesRepository.observeAppLanguages().firstOrNull()?.app ?: ""
             val report = Report(
                 id = UUID.randomUUID().toString(),
+                reportType = reportType,
                 reportMessageKey = reportMessageKey,
                 itemId = itemId,
                 userComment = userComment,

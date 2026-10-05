@@ -4,6 +4,7 @@ import java.util.UUID
 
 data class Report(
     val id: String = UUID.randomUUID().toString(),
+    val reportType: String = "",
     val reportMessageKey: String = "",
     val itemId: String = "",
     val userComment: String = "",

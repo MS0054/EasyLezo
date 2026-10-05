@@ -91,6 +91,7 @@ fun SentenceRoute(
             },
             onSubmit = { reportMessageKey, userComment ->
                 viewModel.sendReport(
+                    reportType = reportTargetType ?: "",
                     itemId = targetItemId,
                     reportMessageKey = reportMessageKey,
                     userComment = userComment

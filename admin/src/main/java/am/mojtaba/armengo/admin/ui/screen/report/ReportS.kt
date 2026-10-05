@@ -75,7 +75,7 @@ fun ReportS(
                             ) {
                                 Column(modifier = Modifier.padding(12.dp)) {
                                     Text(
-                                        text = "MessageKey: ${report.reportMessageKey}",
+                                        text = "Type: ${report.reportType} | Key: ${report.reportMessageKey}",
                                         fontSize = 16.sp,
                                         style = MaterialTheme.typography.titleLarge
                                     )
