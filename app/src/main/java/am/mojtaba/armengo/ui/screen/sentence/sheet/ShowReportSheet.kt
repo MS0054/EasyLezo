@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 fun ShowReportSheet(
     reportMessages: List<ReportMessage>,
     onDismiss: () -> Unit,
-    onSubmit: () -> Unit = {},
+    onSubmit: (reportMessageKey: String, userComment: String) -> Unit,
     onCancel: () -> Unit = onDismiss
 ) {
     var problemText by remember { mutableStateOf("") }
@@ -129,7 +129,9 @@ fun ShowReportSheet(
                 }
 
                 Button(
-                    onClick = onSubmit
+                    onClick = {
+                        onSubmit(selectedReportMessageKey ?: "", problemText)
+                    }
                 ) {
                     Text("Confirm")
                 }

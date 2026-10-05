@@ -78,9 +78,23 @@ fun SentenceRoute(
                 msg.reportTypes.any { it.equals(reportTargetType, ignoreCase = true) }
             }
         }
+        val targetItemId = if (reportTargetType == "Sentence") {
+            currentSentence?.id ?: ""
+        } else {
+            currentWord?.id ?: ""
+        }
         ShowReportSheet(
             reportMessages = filteredReportMessages,
             onDismiss = {
+                showReportSheet = false
+                reportTargetType = null
+            },
+            onSubmit = { reportMessageKey, userComment ->
+                viewModel.sendReport(
+                    itemId = targetItemId,
+                    reportMessageKey = reportMessageKey,
+                    userComment = userComment
+                )
                 showReportSheet = false
                 reportTargetType = null
             }

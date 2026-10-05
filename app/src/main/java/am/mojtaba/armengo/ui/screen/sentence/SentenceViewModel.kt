@@ -1,6 +1,10 @@
 package am.mojtaba.armengo.ui.screen.sentence
 
+import am.mojtaba.armengo.core.domain.model.Report
+import am.mojtaba.armengo.core.domain.repository.AppInfoProvider
+import am.mojtaba.armengo.core.domain.repository.AppLanguagesRepository
 import am.mojtaba.armengo.core.domain.usecase.metadata.GetMetadataReportMessagesUseCase
+import am.mojtaba.armengo.core.domain.usecase.report.AddReportUseCase
 import am.mojtaba.armengo.core.util.AudioHelper
 import am.mojtaba.armengo.core.domain.usecase.sentence.GetCategorySentencesUseCase
 import am.mojtaba.armengo.core.domain.usecase.word.GetWordsUseCase
@@ -17,8 +21,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,6 +35,9 @@ class SentenceViewModel @Inject constructor(
     private val getCategorySentencesUseCase: GetCategorySentencesUseCase,
     private val getWordsUseCase: GetWordsUseCase,
     private val getMetadataReportMessagesUseCase: GetMetadataReportMessagesUseCase,
+    private val addReportUseCase: AddReportUseCase,
+    private val appInfoProvider: AppInfoProvider,
+    private val appLanguagesRepository: AppLanguagesRepository,
     private val errorMessageProvider: ErrorMessageProvider
 ) : ViewModel() {
 
@@ -91,5 +101,30 @@ class SentenceViewModel @Inject constructor(
         audioManager.release()
     }
 
-
+    fun sendReport(
+        itemId: String,
+        reportMessageKey: String,
+        userComment: String
+    ) {
+        viewModelScope.launch {
+            val appLanguage = appLanguagesRepository.observeAppLanguages().firstOrNull()?.app ?: ""
+            val report = Report(
+                id = UUID.randomUUID().toString(),
+                reportMessageKey = reportMessageKey,
+                itemId = itemId,
+                userComment = userComment,
+                appVersion = appInfoProvider.getVersionName(),
+                deviceInfo = appInfoProvider.getDeviceInfo(),
+                createdAt = System.currentTimeMillis(),
+                userAppLanguage = appLanguage
+            )
+            addReportUseCase(report)
+                .onSuccess {
+                    _uiEvent.emit(UiEvent.ShowSnackbar("Report submitted successfully"))
+                }
+                .onFailure { e ->
+                    _uiEvent.emit(UiEvent.ShowSnackbar(errorMessageProvider.getMessage(e)))
+                }
+        }
+    }
 }

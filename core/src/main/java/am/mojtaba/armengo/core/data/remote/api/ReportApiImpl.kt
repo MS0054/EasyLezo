@@ -1,6 +1,7 @@
 package am.mojtaba.armengo.core.data.remote.api
 
 import am.mojtaba.armengo.core.domain.model.ReportDto
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -20,17 +21,25 @@ class ReportApiImpl @Inject constructor(
     override suspend fun getReports(): List<ReportDto> {
         val snap = reportCol.get().await()
         return snap.documents.mapNotNull { doc ->
-            doc.toObject(ReportDto::class.java)?.apply { id = doc.id }
+            doc.toObject(ReportDto::class.java)?.copy(id = doc.id)
         }
     }
 
     override suspend fun addReport(report: ReportDto) {
-        val docRef = if (report.id.isNotBlank()) reportCol.document(report.id) else reportCol.document()
-        report.id = docRef.id
-        docRef.set(report).await()
+        Log.i("Report", "$report")
+        val docRef = if (report.id.isNotBlank()) {
+            reportCol.document(report.id)
+        } else {
+            reportCol.document()
+        }
+
+        val updatedReport = report.copy(id = docRef.id)
+        docRef.set(updatedReport).await()
     }
 
     override suspend fun deleteReport(reportId: String) {
-        reportCol.document(reportId).delete().await()
+        if (reportId.isNotBlank()) {
+            reportCol.document(reportId).delete().await()
+        }
     }
 }

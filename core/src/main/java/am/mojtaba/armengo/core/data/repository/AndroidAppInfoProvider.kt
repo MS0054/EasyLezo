@@ -20,4 +20,16 @@ class AppInfoProviderImpl @Inject constructor(
             }
         }
     }
+
+    override fun getVersionName(): String {
+        return try {
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "1.0.0"
+        } catch (e: Exception) {
+            "1.0.0"
+        }
+    }
+
+    override fun getDeviceInfo(): String {
+        return "Android ${Build.VERSION.RELEASE} - ${Build.MANUFACTURER.replaceFirstChar { it.uppercase() }} ${Build.MODEL}"
+    }
 }

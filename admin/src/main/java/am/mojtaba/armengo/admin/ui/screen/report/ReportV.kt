@@ -7,6 +7,7 @@ import am.mojtaba.armengo.core.domain.model.Report
 import am.mojtaba.armengo.core.domain.usecase.report.AddReportUseCase
 import am.mojtaba.armengo.core.domain.usecase.report.DeleteReportUseCase
 import am.mojtaba.armengo.core.domain.usecase.report.GetReportsUseCase
+import android.util.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,6 +41,7 @@ class ReportV @Inject constructor(
                     _reportsUiState.value = UiState(error = e.message ?: "Unknown error")
                 }
                 .collect { reports ->
+//                    Log.i("Reports", "$reports")
                     _reportsUiState.value = UiState(data = reports)
                 }
         }
