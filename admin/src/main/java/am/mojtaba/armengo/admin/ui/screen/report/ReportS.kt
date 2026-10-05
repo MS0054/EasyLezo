@@ -78,22 +78,15 @@ fun ReportS(
                             ) {
                                 Column(modifier = Modifier.padding(12.dp)) {
                                     Text(
-                                        text = "Type: ${report.reportType} | Key: ${report.reportMessageKey}",
+                                        text = "${report.reportMessageKey} | ${report.reportType}",
                                         fontSize = 16.sp,
                                         style = MaterialTheme.typography.titleLarge
                                     )
                                     if (report.userComment.isNotBlank()) {
                                         Text(
-                                            text = "Comment: ${report.userComment}",
+                                            text = " ${report.userComment}",
                                             fontSize = 14.sp,
                                             style = MaterialTheme.typography.bodyLarge
-                                        )
-                                    }
-                                    if (report.itemId.isNotBlank()) {
-                                        Text(
-                                            text = "Item ID: ${report.itemId}",
-                                            fontSize = 13.sp,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
                                     Text(
