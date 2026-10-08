@@ -5,6 +5,7 @@ import am.mojtaba.armengo.core.domain.model.Error
 import am.mojtaba.armengo.core.domain.model.Language
 import am.mojtaba.armengo.core.domain.model.Report
 import am.mojtaba.armengo.core.domain.model.ReportMessage
+import am.mojtaba.armengo.core.domain.model.ReportStatusType
 import am.mojtaba.armengo.core.domain.model.ReportType
 import am.mojtaba.armengo.core.domain.model.Resource
 import am.mojtaba.armengo.core.domain.model.Sentence
@@ -26,9 +27,13 @@ sealed class AppSheet {
     object AddReportType: AppSheet()
     class EditReportType(val reportType: ReportType): AppSheet()
 
+    object AddReportStatusType: AppSheet()
+    class EditReportStatusType(val reportStatusType: ReportStatusType): AppSheet()
+
     object AddReport: AppSheet()
     class EditReport(val report: Report): AppSheet()
     class ShowReport(val report: Report): AppSheet()
+    class ChangeReportStatus(val report: Report): AppSheet()
 
     object AddReportMessage: AppSheet()
     class EditReportMessage(val reportMessage: ReportMessage): AppSheet()

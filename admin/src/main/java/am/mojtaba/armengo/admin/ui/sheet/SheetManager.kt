@@ -37,11 +37,15 @@ import am.mojtaba.armengo.admin.ui.screen.metadata.sheet.SyncSheet
 import am.mojtaba.armengo.admin.ui.screen.metadata.sheet.UpdateInfoSheet
 import am.mojtaba.armengo.admin.ui.screen.report.ReportV
 import am.mojtaba.armengo.admin.ui.screen.report.sheet.AddReportSheet
+import am.mojtaba.armengo.admin.ui.screen.report.sheet.ChangeReportStatusSheet
 import am.mojtaba.armengo.admin.ui.screen.report.sheet.EditReportSheet
 import am.mojtaba.armengo.admin.ui.screen.report.sheet.ShowReportSheet
 import am.mojtaba.armengo.admin.ui.screen.reportMessage.ReportMessageV
 import am.mojtaba.armengo.admin.ui.screen.reportMessage.sheet.AddReportMessageSheet
 import am.mojtaba.armengo.admin.ui.screen.reportMessage.sheet.EditReportMessageSheet
+import am.mojtaba.armengo.admin.ui.screen.reportStatusType.ReportStatusTypeV
+import am.mojtaba.armengo.admin.ui.screen.reportStatusType.sheet.AddReportStatusTypeSheet
+import am.mojtaba.armengo.admin.ui.screen.reportStatusType.sheet.EditReportStatusTypeSheet
 import am.mojtaba.armengo.admin.ui.screen.reportType.ReportTypeV
 import am.mojtaba.armengo.admin.ui.screen.reportType.sheet.AddReportTypeSheet
 import am.mojtaba.armengo.admin.ui.screen.reportType.sheet.EditReportTypeSheet
@@ -87,6 +91,7 @@ fun SheetManager(
     metadataV: MetadataV,
     resourceV: ResourceV,
     reportTypeV: ReportTypeV,
+    reportStatusTypeV: ReportStatusTypeV,
     reportV: ReportV,
     reportMessageV: ReportMessageV,
     errorV: ErrorV,
@@ -112,6 +117,7 @@ fun SheetManager(
             userV.event,
             resourceV.event,
             reportTypeV.event,
+            reportStatusTypeV.event,
             reportV.event,
             reportMessageV.event,
             errorV.event,
@@ -320,6 +326,27 @@ fun SheetManager(
                         )
                     }
 
+                    is AppSheet.AddReportStatusType -> {
+                        AddReportStatusTypeSheet(
+                            onDismiss = { sheetV.closeSheet() },
+                            onSubmit = {
+                                reportStatusTypeV.addReportStatusType(it)
+                            }
+                        )
+                    }
+
+                    is AppSheet.EditReportStatusType -> {
+                        EditReportStatusTypeSheet(
+                            reportStatusType = currentSheet.reportStatusType,
+                            onSubmit = {
+                                reportStatusTypeV.editReportStatusType(it)
+                            },
+                            onDelete = {
+                                reportStatusTypeV.deleteReportStatusType(it)
+                            }
+                        )
+                    }
+
                     is AppSheet.AddReport -> {
                         AddReportSheet(
                             onDismiss = { sheetV.closeSheet() },
@@ -337,6 +364,18 @@ fun SheetManager(
                             },
                             onDelete = {
                                 reportV.deleteReport(it)
+                            }
+                        )
+                    }
+
+                    is AppSheet.ChangeReportStatus -> {
+                        val statusTypes by reportV.reportStatusTypesState.collectAsState()
+                        ChangeReportStatusSheet(
+                            statusTypes = statusTypes,
+                            currentStatus = currentSheet.report.reportStatusType,
+                            onDismiss = { sheetV.closeSheet() },
+                            onSubmit = { newStatus ->
+                                reportV.editReport(currentSheet.report.copy(reportStatusType = newStatus))
                             }
                         )
                     }

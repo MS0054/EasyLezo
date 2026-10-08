@@ -57,6 +57,7 @@ fun ShowReportSheet(
                 ReportDetailItem(label = "Report ID", value = report.id)
                 ReportDetailItem(label = "Report Type", value = report.reportType)
                 ReportDetailItem(label = "Report Message Key", value = report.reportMessageKey)
+                ReportDetailItem(label = "Report Status Type", value = report.reportStatusType.key.ifEmpty { report.reportStatusType.description })
 
                 if (report.itemId.isNotBlank()) {
                     Row(

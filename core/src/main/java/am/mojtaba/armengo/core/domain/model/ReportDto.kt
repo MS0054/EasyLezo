@@ -6,6 +6,7 @@ data class ReportDto(
     @get:PropertyName("id") @set:PropertyName("id") var id: String = "",
     @get:PropertyName("reportType") @set:PropertyName("reportType") var reportType: String = "",
     @get:PropertyName("reportMessageKey") @set:PropertyName("reportMessageKey") var reportMessageKey: String = "",
+    @get:PropertyName("reportStatusType") @set:PropertyName("reportStatusType") var reportStatusType: ReportStatusType = ReportStatusType(),
     @get:PropertyName("item_id") @set:PropertyName("item_id") var itemId: String = "",
     @get:PropertyName("user_comment") @set:PropertyName("user_comment") var userComment: String = "",
     @get:PropertyName("app_version") @set:PropertyName("app_version") var appVersion: String = "",

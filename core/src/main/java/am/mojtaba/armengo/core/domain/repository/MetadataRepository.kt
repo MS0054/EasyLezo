@@ -4,6 +4,7 @@ import am.mojtaba.armengo.core.domain.model.AppLanguages
 import am.mojtaba.armengo.core.domain.model.Error
 import am.mojtaba.armengo.core.domain.model.LastUpdate
 import am.mojtaba.armengo.core.domain.model.ReportMessage
+import am.mojtaba.armengo.core.domain.model.ReportStatusType
 import am.mojtaba.armengo.core.domain.model.ReportType
 import am.mojtaba.armengo.core.domain.model.Resource
 import am.mojtaba.armengo.core.domain.model.Settings
@@ -23,6 +24,7 @@ interface MetadataRepository {
     suspend fun updateMetadataUpdateInfo( updateInfo: UpdateInfo)
     suspend fun updateMetadataResourcesServer( resources: List<Resource>)
     suspend fun updateMetadataReportTypesServer( reportTypes: List<ReportType>)
+    suspend fun updateMetadataReportStatusTypesServer( reportStatusTypes: List<ReportStatusType>)
     suspend fun updateMetadataReportMessagesServer( reportMessages: List<ReportMessage>)
     suspend fun updateMetadataErrorsServer( errors: List<Error>)
 }

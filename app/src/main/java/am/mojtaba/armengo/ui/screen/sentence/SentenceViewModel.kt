@@ -1,9 +1,11 @@
 package am.mojtaba.armengo.ui.screen.sentence
 
 import am.mojtaba.armengo.core.domain.model.Report
+import am.mojtaba.armengo.core.domain.model.ReportStatusType
 import am.mojtaba.armengo.core.domain.repository.AppInfoProvider
 import am.mojtaba.armengo.core.domain.repository.AppLanguagesRepository
 import am.mojtaba.armengo.core.domain.usecase.metadata.GetMetadataReportMessagesUseCase
+import am.mojtaba.armengo.core.domain.usecase.metadata.GetMetadataReportStatusTypesUseCase
 import am.mojtaba.armengo.core.domain.usecase.report.AddReportUseCase
 import am.mojtaba.armengo.core.util.AudioHelper
 import am.mojtaba.armengo.core.domain.usecase.sentence.GetCategorySentencesUseCase
@@ -35,6 +37,7 @@ class SentenceViewModel @Inject constructor(
     private val getCategorySentencesUseCase: GetCategorySentencesUseCase,
     private val getWordsUseCase: GetWordsUseCase,
     private val getMetadataReportMessagesUseCase: GetMetadataReportMessagesUseCase,
+    private val getMetadataReportStatusTypesUseCase: GetMetadataReportStatusTypesUseCase,
     private val addReportUseCase: AddReportUseCase,
     private val appInfoProvider: AppInfoProvider,
     private val appLanguagesRepository: AppLanguagesRepository,
@@ -109,10 +112,13 @@ class SentenceViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             val appLanguage = appLanguagesRepository.observeAppLanguages().firstOrNull()?.app ?: ""
+            val pendingStatus = getMetadataReportStatusTypesUseCase().firstOrNull()?.find { it.key.equals("PENDING", ignoreCase = true) }
+                ?: ReportStatusType(key = "PENDING")
             val report = Report(
                 id = UUID.randomUUID().toString(),
                 reportType = reportType,
                 reportMessageKey = reportMessageKey,
+                reportStatusType = pendingStatus,
                 itemId = itemId,
                 userComment = userComment,
                 appVersion = appInfoProvider.getVersionName(),

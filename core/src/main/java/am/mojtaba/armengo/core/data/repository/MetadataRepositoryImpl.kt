@@ -11,6 +11,7 @@ import am.mojtaba.armengo.core.domain.model.Error
 import am.mojtaba.armengo.core.domain.model.LastUpdate
 import am.mojtaba.armengo.core.domain.model.Metadata
 import am.mojtaba.armengo.core.domain.model.ReportMessage
+import am.mojtaba.armengo.core.domain.model.ReportStatusType
 import am.mojtaba.armengo.core.domain.model.ReportType
 import am.mojtaba.armengo.core.domain.model.Resource
 import am.mojtaba.armengo.core.domain.model.Settings
@@ -125,6 +126,11 @@ class MetadataRepositoryImpl @Inject constructor(
 
     override suspend fun updateMetadataReportTypesServer(reportTypes: List<ReportType>) {
         metadataApi.updateMetadataReportTypes(reportTypes.map { it.toDto() })
+        syncMetadata()
+    }
+
+    override suspend fun updateMetadataReportStatusTypesServer(reportStatusTypes: List<ReportStatusType>) {
+        metadataApi.updateMetadataReportStatusTypes(reportStatusTypes.map { it.toDto() })
         syncMetadata()
     }
 

@@ -49,6 +49,8 @@ import am.mojtaba.armengo.admin.ui.screen.report.ReportS
 import am.mojtaba.armengo.admin.ui.screen.report.ReportV
 import am.mojtaba.armengo.admin.ui.screen.reportMessage.ReportMessageS
 import am.mojtaba.armengo.admin.ui.screen.reportMessage.ReportMessageV
+import am.mojtaba.armengo.admin.ui.screen.reportStatusType.ReportStatusTypeS
+import am.mojtaba.armengo.admin.ui.screen.reportStatusType.ReportStatusTypeV
 import am.mojtaba.armengo.admin.ui.screen.reportType.ReportTypeS
 import am.mojtaba.armengo.admin.ui.screen.reportType.ReportTypeV
 import am.mojtaba.armengo.admin.ui.screen.resource.ResourceS
@@ -79,6 +81,7 @@ sealed class Screen(val route: String) {
     data object Language : Screen("language")
     data object Resource : Screen("resource")
     data object ReportType : Screen("reportType")
+    data object ReportStatusType : Screen("reportStatusType")
     data object Report : Screen("report")
     data object ReportMessage : Screen("reportMessage")
     data object Error : Screen("error")
@@ -115,6 +118,7 @@ fun AppNavGraph() {
     val metadataV: MetadataV = hiltViewModel()
     val resourceV: ResourceV = hiltViewModel()
     val reportTypeV: ReportTypeV = hiltViewModel()
+    val reportStatusTypeV: ReportStatusTypeV = hiltViewModel()
     val reportV: ReportV = hiltViewModel()
     val reportMessageV: ReportMessageV = hiltViewModel()
     val errorV: ErrorV = hiltViewModel()
@@ -135,6 +139,7 @@ fun AppNavGraph() {
         metadataV,
         resourceV,
         reportTypeV,
+        reportStatusTypeV,
         reportV,
         reportMessageV,
         errorV,
@@ -186,6 +191,7 @@ fun AppNavGraph() {
             languageV,
             resourceV,
             reportTypeV,
+            reportStatusTypeV,
             reportV,
             reportMessageV,
             errorV,
@@ -211,6 +217,7 @@ fun MyNavHost(
     languageV: LanguageV,
     resourceV: ResourceV,
     reportTypeV: ReportTypeV,
+    reportStatusTypeV: ReportStatusTypeV,
     reportV: ReportV,
     reportMessageV: ReportMessageV,
     errorV: ErrorV,
@@ -276,11 +283,19 @@ fun MyNavHost(
                 onAdd = { sheetV.openSheet(AppSheet.AddReportType) }
             )
         }
+        composable(Screen.ReportStatusType.route) {
+            ReportStatusTypeS (
+                reportStatusTypeV = reportStatusTypeV,
+                onEdit = { sheetV.openSheet(AppSheet.EditReportStatusType(it)) },
+                onAdd = { sheetV.openSheet(AppSheet.AddReportStatusType) }
+            )
+        }
         composable(Screen.Report.route) {
             ReportS (
                 reportV = reportV,
                 onShow = { sheetV.openSheet(AppSheet.ShowReport(it)) },
                 onEdit = { sheetV.openSheet(AppSheet.EditReport(it)) },
+                onChangeStatus = { sheetV.openSheet(AppSheet.ChangeReportStatus(it)) },
                 onAdd = { sheetV.openSheet(AppSheet.AddReport) }
             )
         }
@@ -392,6 +407,9 @@ fun DynamicHeader(
                 DropdownMenuItem(
                     text = { Text("ReportType") },
                     onClick = { showMenu = false; onScreenOpen(Screen.ReportType) })
+                DropdownMenuItem(
+                    text = { Text("ReportStatusType") },
+                    onClick = { showMenu = false; onScreenOpen(Screen.ReportStatusType) })
                 DropdownMenuItem(
                     text = { Text("Report") },
                     onClick = { showMenu = false; onScreenOpen(Screen.Report) })

@@ -9,6 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import am.mojtaba.armengo.core.domain.model.Report
 
+import am.mojtaba.armengo.core.domain.model.ReportStatusType
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddReportSheet(
@@ -17,6 +19,7 @@ fun AddReportSheet(
 ) {
     var reportType by remember { mutableStateOf("") }
     var reportMessageKey by remember { mutableStateOf("") }
+    var reportStatusTypeKey by remember { mutableStateOf("") }
     var itemId by remember { mutableStateOf("") }
     var userComment by remember { mutableStateOf("") }
     var appVersion by remember { mutableStateOf("1.0.0") }
@@ -31,6 +34,7 @@ fun AddReportSheet(
                 onSubmit(Report(
                     reportType = reportType,
                     reportMessageKey = reportMessageKey,
+                    reportStatusType = ReportStatusType(key = reportStatusTypeKey),
                     itemId = itemId,
                     userComment = userComment,
                     appVersion = appVersion,
@@ -52,6 +56,13 @@ fun AddReportSheet(
             value = reportMessageKey,
             onValueChange = { reportMessageKey = it },
             label = { Text("Report Message Key") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = reportStatusTypeKey,
+            onValueChange = { reportStatusTypeKey = it },
+            label = { Text("Report Status Type Key") },
             modifier = Modifier.fillMaxWidth()
         )
 

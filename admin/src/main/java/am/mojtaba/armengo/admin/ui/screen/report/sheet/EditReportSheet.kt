@@ -19,6 +19,7 @@ fun EditReportSheet(
 ) {
     var reportType by remember { mutableStateOf(report.reportType) }
     var reportMessageKey by remember { mutableStateOf(report.reportMessageKey) }
+    var reportStatusTypeKey by remember { mutableStateOf(report.reportStatusType.key) }
     var itemId by remember { mutableStateOf(report.itemId) }
     var userComment by remember { mutableStateOf(report.userComment) }
     var appVersion by remember { mutableStateOf(report.appVersion) }
@@ -33,6 +34,7 @@ fun EditReportSheet(
                 Button(onClick = { onSubmit(report.copy(
                     reportType = reportType,
                     reportMessageKey = reportMessageKey,
+                    reportStatusType = report.reportStatusType.copy(key = reportStatusTypeKey),
                     itemId = itemId,
                     userComment = userComment,
                     appVersion = appVersion,
@@ -54,6 +56,13 @@ fun EditReportSheet(
             value = reportMessageKey,
             onValueChange = { reportMessageKey = it },
             label = { Text("Report Message Key") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = reportStatusTypeKey,
+            onValueChange = { reportStatusTypeKey = it },
+            label = { Text("Report Status Type Key") },
             modifier = Modifier.fillMaxWidth()
         )
 

@@ -4,7 +4,7 @@ import am.mojtaba.armengo.core.domain.model.Report
 import am.mojtaba.armengo.core.domain.model.ReportDto
 
 fun Report.toDto() =
-    ReportDto(id, reportType, reportMessageKey, itemId, userComment, appVersion, deviceInfo, createdAt, userAppLanguage)
+    ReportDto(id, reportType, reportMessageKey, reportStatusType, itemId, userComment, appVersion, deviceInfo, createdAt, userAppLanguage)
 
 fun ReportDto.toDomain() =
-    Report(id, reportType, reportMessageKey, itemId, userComment, appVersion, deviceInfo, createdAt, userAppLanguage)
+    Report(id, reportType, reportMessageKey, reportStatusType, itemId, userComment, appVersion, deviceInfo, createdAt, userAppLanguage)
