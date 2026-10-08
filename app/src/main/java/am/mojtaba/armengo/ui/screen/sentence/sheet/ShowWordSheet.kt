@@ -58,17 +58,7 @@ fun ShowWordSheet(
                 .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                IconButton(onClick = onReportClick) {
-                    Icon(
-                        imageVector = Icons.Default.Warning,
-                        contentDescription = "Report"
-                    )
-                }
-            }
+
 
             if (word.image.isNotEmpty()) {
                 AsyncImage(
@@ -136,6 +126,18 @@ fun ShowWordSheet(
                     Icon(
                         imageVector = Icons.Rounded.PlayArrow,
                         contentDescription = "Play"
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                IconButton(onClick = onReportClick) {
+                    Icon(
+                        imageVector = Icons.Default.Warning,
+                        contentDescription = "Report"
                     )
                 }
             }

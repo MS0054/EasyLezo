@@ -25,9 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import am.mojtaba.armengo.core.domain.model.Sentence
 import am.mojtaba.armengo.ui.component.LanguageAwareText
-import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -56,17 +56,7 @@ fun ShowSentenceSheet(
                 .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                IconButton(onClick = onReportClick) {
-                    Icon(
-                        imageVector = Icons.Default.Warning,
-                        contentDescription = "Report"
-                    )
-                }
-            }
+
             LanguageAwareText(
                 text = sentence.toText ,
                 fontSize = 28.sp,
@@ -122,6 +112,17 @@ fun ShowSentenceSheet(
                     Icon(
                         imageVector = Icons.Rounded.PlayArrow,
                         contentDescription = "Play"
+                    )
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                IconButton(onClick = onReportClick) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "Report"
                     )
                 }
             }
